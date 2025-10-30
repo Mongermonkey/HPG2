@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>HPG2</title>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    :root{
+      --c-blue:     #a1c4ff;
+      --c-red:      #fab8ff;
+      --c-orange:   #ffca9f;
+      --c-yellow:   #fff692;
+      --c-green:    #baffc3;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: rgb(8, 8, 16);
+      color: rgb(232, 232, 240);
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding-bottom: 180px;
+    }
+
+    #game-output {
+      text-align: center;
+      width: 128ch;
+      font-size: 20px;
+      margin-bottom: 2px;
+      min-height: 2.4em; /* riserva spazio per almeno due righe */
+    }
+
+    .wheel-area {
+      position: relative;
+      width: 380px; /* era 400px */
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+    }
+
+    #canvas {
+      display: block;
+      margin: 0;
+      width: 380px;   /* era 400px */
+      height: 380px;  /* era 400px */
+      max-width: none;
+    }
+
+    #spin-btn {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%) translateX(8px);
+      margin-left: 0;
+      padding: 8px 20px;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #spin-btn:hover {
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+
+    /* Pointer SVG: nessun CSS necessario, si gestisce da solo */
+
+    .bottom-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      background-color: rgb(40, 40, 48);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    .bottom-bar input {
+      width: 220px;
+      margin: 0 8px;
+      padding: 5px 16px;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      font-family: monospace;
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .bottom-bar input:focus {
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+
+    .bottom-bar button {
+      padding: 5px 15px;
+      cursor: pointer;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .bottom-bar button:focus {
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+
+    #player-input {
+      font-size: 16px;
+      height: 48px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      width: 310px;
+      box-sizing: border-box;
+    }
+
+    .settings-container {
+      position: absolute;
+      top: 12px;
+      left: 18px;
+    }
+
+    .settings-menu {
+      visibility: hidden;
+      opacity: 0;
+      margin-top: 0px;
+      border: none;
+      border-radius: 0px;
+      padding: 2px;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .settings-menu.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    #wheel-output {
+      text-align: center;
+      width: 100ch;
+      font-size: 20px;
+      margin-top: 0;
+      color: #ffd700;
+      min-height: 1.5em; /* riserva spazio anche quando è vuoto */
+      white-space: nowrap;        /* <--- aggiungi questa riga */
+      overflow: hidden;           /* <--- opzionale: nasconde il testo che esce */
+      text-overflow: ellipsis;    /* <--- opzionale: mostra "..." se il testo è troppo lungo */
+    }
+  </style>
+</head>
+<body>
+  <!-- MENU SETTINGS -->
+  <div class="settings-container">
+    <button id="settings-btn">⚙</button>
+    <div id="settings-menu" class="settings-menu">
+      <button id="color-btn">Change color: OFF</button>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div id="game-output"></div>
+    <div id="wheel-output"></div>
+    <div id="wheel-area" class="wheel-area">
+      <canvas id="canvas" width="380" height="380"></canvas>
+      <button id="spin-btn" type="button">Spin</button>
+      <svg class="pointer" width="28" height="28" style="position: absolute; top: 50%; left: 100%; transform: translateY(-50%) translateX(-20px);">
+        <polygon points="0,14 24,4 24,24" fill="#ffffff" stroke="#000" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <input type="text" id="player-input" maxlength="30" placeholder="" autocomplete="off" />
+    <button id="next-btn">❯</button>
+  </div>
+
+  <script>
+    const colorPalette = [
+      getComputedStyle(document.documentElement).getPropertyValue('--c-blue').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--c-red').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--c-orange').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--c-yellow').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--c-green').trim()
+    ];
+
+    function hexToRgb(hex) {
+      const h = String(hex).trim().replace(/^#/, '');
+      const bigint = parseInt(h, 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    let colorInterval = null;
+    let startColor = hexToRgb(colorPalette[1]);
+    let endColorIndex = 2 % colorPalette.length;
+    let progress = 0;
+    const step = 0.02;
+
+    function rainbowWheel() {
+      const endColor = hexToRgb(colorPalette[endColorIndex]);
+      const currentColor = {
+        r: Math.round(startColor.r + (endColor.r - startColor.r) * progress),
+        g: Math.round(startColor.g + (endColor.g - startColor.g) * progress),
+        b: Math.round(startColor.b + (endColor.b - startColor.b) * progress)
+      };
+
+      // Se la ruota è stata creata (main.ts espone window.myWheel), usala
+      if (window.myWheel)
+      {
+        const segments = window.myWheel.getSegments();
+        if (segments && segments.length)
+        {
+          for (let i = 0; i < segments.length; i++)
+          {
+            // assicurati che esista fillStyle
+            segments[i].fillStyle = `rgb(${currentColor.r},${currentColor.g},${currentColor.b})`;
+          }
+          // ridisegna la ruota usando l'API esposta
+          if (window.myWheel.draw) window.myWheel.draw();
+          else if (window.myWheel.wheel && typeof window.myWheel.wheel.draw === 'function') window.myWheel.wheel.draw();
+        }
+      }
+
+      progress += step;
+      if (progress >= 1)
+      {
+        progress = 0;
+        startColor = endColor;
+        endColorIndex = (endColorIndex + 1) % colorPalette.length;
+      }
+    }
+
+    function changeColor() {
+      const btn = document.getElementById('color-btn');
+      if (!colorInterval)
+      {
+        colorInterval = setInterval(rainbowWheel, 50);
+        btn.textContent = "Change color: ON";
+      }
+      else
+      {
+        clearInterval(colorInterval);
+        colorInterval = null;
+        btn.textContent = "Change color: OFF";
+      }
+    }
+
+    document.getElementById('color-btn').addEventListener('click', changeColor);
+
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsMenu = document.getElementById('settings-menu');
+    settingsBtn.addEventListener('click', () => { settingsMenu.classList.toggle('show'); });
+
+    document.addEventListener(
+      'click', (e) => {
+      if (settingsMenu.classList.contains('show') && !settingsMenu.contains(e.target) && e.target !== settingsBtn)
+      {
+        settingsMenu.classList.remove('show');
+      }
+    });
+
+    // Inizia con il cambio colore attivo
+    changeColor();
+  </script>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
