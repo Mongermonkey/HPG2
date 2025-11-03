@@ -1,6 +1,6 @@
 
 import * as random from '../utilities/Random';
-import { characterList } from "../characters";
+import { characterList } from "../characters/characters";
 import { sevenNums } from "../utilities/basetypes";
 import { Grade } from '../utilities/compositetypes';
 import * as wheels from "../wheel_magic/wheel_helpers";
@@ -8,7 +8,7 @@ import * as io from "../utilities/input_output_helpers";
 import { animal, subject } from '../utilities/basetypes';
 import { newSegment } from '../wheel_magic/wheel_helpers';
 import { Wheel } from '../wheel_magic/Wheel';
-import { Baseclass, MainChara, Gifts, Pet } from '../maincharacter';
+import { Baseclass, MainChara, Gifts, Pet } from './maincharacter';
 
 const myWheel = (window as any).myWheel as Wheel;
 const nextBtn = (window as any).nextBtn as HTMLButtonElement;
@@ -195,7 +195,7 @@ export async function urawizard(chara: Baseclass<'Default'>): Promise<MainChara<
         blood: chara.blood,
         gifts: chara.gifts,
         pet: pet,
-        alignement: "neutral",
+        alignment: "neutral",
         house: 'none',
         housePoints: 0,
         quidditchRole: "none",
@@ -241,11 +241,10 @@ async function sortPet(): Promise<Pet>
     do { name = await io.handleInput(); }
     while (!name || name.length < 2);
     await io.nextEvent();
+    wheels.seeWheel(false);
 
     wheels.showWheelResult(`Your ${petType}'s name is: '${name}'.`);
-    await io.nextEvent();
 
-    wheels.seeWheel(false);
     return {type: petType, name: name};
 }
 
@@ -260,17 +259,7 @@ export async function sortSkills(): Promise<Grade[]>
     wheels.seeWheel(true);
     await io.nextEvent();
 
-    let scores =
-    [
-        newSegment('1', 0.10),
-        newSegment('2', 0.15),
-        newSegment('3', 0.21),
-        newSegment('4', 0.21),
-        newSegment('5', 0.15),
-        newSegment('6', 0.10),
-        newSegment('7', 0.08),
-    ];
-    myWheel.setSegments(scores);
+    myWheel.setSegments(wheels.sevenSegments);
     let grades: Grade[] = [];   
 
     for (let subj of ['Astronomy', 'Charms', 'Defense Against the Dark Arts', 'Flying', 'Herbology', 'History of Magic', 'Potions', 'Transfiguration'] as subject[])

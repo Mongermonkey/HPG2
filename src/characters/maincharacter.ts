@@ -1,7 +1,7 @@
 
 import { characterList } from "./characters";
-import { Gifts, Grade, Pet, QuidditchGame } from "./utilities/compositetypes";
-import { alignement, bloodStatus, gameclass, gender, hogwartsHouse, quidditchRole, sevenBool, sevenNums, subject } from "./utilities/basetypes";
+import { Gifts, Grade, Pet, QuidditchGame } from "../utilities/compositetypes";
+import { alignement as alignment, bloodStatus, gameclass, gender, hogwartsHouse, quidditchRole, sevenBool, sevenNums, subject } from "../utilities/basetypes";
 
 // #region composite types
 
@@ -16,7 +16,7 @@ export type Baseclass<T extends gameclass> =
 export type Wizard =
 {
     pet: Pet;
-    alignement: alignement;
+    alignment: alignment;
     house: hogwartsHouse;
     housePoints: number;
     quidditchRole: quidditchRole;

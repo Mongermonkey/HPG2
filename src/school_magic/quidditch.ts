@@ -1,5 +1,5 @@
 
-import { MainChara } from "../maincharacter";
+import { MainChara } from "../characters/maincharacter";
 import { hogwartsHouse } from "../utilities/basetypes";
 
 /**

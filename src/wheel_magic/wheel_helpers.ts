@@ -11,6 +11,17 @@ export type WheelSegment =
 export const newSegment = (text: string, fraction: number, fillStyle?: string): WheelSegment =>
   ({ text, fraction, fillStyle: fillStyle ?? '#a1c4ff' });
 
+export const sevenSegments: WheelSegment[] =
+[
+  newSegment('1', 0.10),
+  newSegment('2', 0.15),
+  newSegment('3', 0.21),
+  newSegment('4', 0.21),
+  newSegment('5', 0.15),
+  newSegment('6', 0.10),
+  newSegment('7', 0.08),
+];
+
 /**
  * Mostra il risultato della ruota nell'elemento #wheel-output, in giallo.
  */

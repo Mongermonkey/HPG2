@@ -10,7 +10,7 @@ async function write(msg: string)
 /**
  * Handles the arrival at Hogwarts.
  */
-export async function arrivalAtHogwarts()
+export async function arrivalAtHogwarts(): Promise<void>
 {
     await write("On the first of September, you board the Hogwarts Express from platform nine and three-quarters at King's Cross Station.");
     await write("By the same evening, you arrive at the magnificent and mysterious Hogwarts Castle.");
@@ -19,7 +19,7 @@ export async function arrivalAtHogwarts()
 /**
  * Handles the sorting ceremony dialogues.
  */
-export async function sort()
+export async function sort(): Promise<void>
 {
     await write("In the Great Hall, under a velvety black ceiling dotted with stars, the Sorting Ceremony is about to begin...");
     await write("Everyone seems very excited about it.");
@@ -33,7 +33,7 @@ export async function sort()
  * Handles Dumbledore's speech after the sorting ceremony.
  * @param clue Whether the player has the clue about the third-floor corridor.
  */
-export async function dumbledoresSpeech(clue: boolean)
+export async function dumbledoresSpeech(clue: boolean): Promise<void>
 {
     await write("After the sorting ceremony, a silver-haired man stands up from his golden chair.");
     await write("It's Albus Dumbledore, Hogwarts' headmaster.");
@@ -49,7 +49,7 @@ export async function dumbledoresSpeech(clue: boolean)
  */
 export async function remembrallIntro(): Promise<void>
 {
-    await write("During a break between classes, you notice a boy struggling with his broom.");
+    await write("During the first exercise, you notice a boy struggling with his broom.");
     await write("It's Neville Longbottom, a clumsy-looking Gryffindor student.");
     await write("Suddenly he takes flight, and starts speeding around dangerously!");
     await write("Madam Hooch, the flying instructor, blows her whistle and tries to stop him, without success.");
@@ -58,4 +58,11 @@ export async function remembrallIntro(): Promise<void>
     await write("While leaving, she makes VERY CLEAR that no one is to fly until she comes back.");
     await write("As Neville is taken away, you notice Draco Malfoy smirking and holding a small, round object.");
     await write("It's Neville's Remembrall! He must have lost it during the fall.\nDraco is making fun of Neville with his friends.");
+}
+
+export async function flyingLesson(): Promise<void>
+{
+    await write("Madame Hooch makes seven circles of light appear in the air, all at different heights and distances from each other.");
+    await write("She explains that you'll take turns trying to get through as many hoops as possible.");
+    await write("Each one will have two attempts, and you can practice on the broom while the others are trying.");   
 }

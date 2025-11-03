@@ -1,4 +1,4 @@
-import { Character } from "../characters";
+import { Character } from "../characters/characters";
 
 /**
  * Estrae un elemento casuale da un array (probabilità uniforme).

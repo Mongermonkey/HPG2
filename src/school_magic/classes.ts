@@ -1,13 +1,15 @@
 
-import * as npc from '../characters';
+import * as npc from '../characters/characters';
 import { Wheel } from "../wheel_magic/Wheel";
-import { MainChara } from "../maincharacter";
+import { MainChara } from "../characters/maincharacter";
 import { subject } from "../utilities/basetypes";
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
+import { remembrall } from '../story/sidequest/remembrall';
 import { WheelSegment } from "../wheel_magic/wheel_helpers";
+import * as chitchat from "../dialogues/year-one-dialogues";
 import { spinEqual, randomClassEvent } from "../utilities/Random";
-import { Character, getProfessorFromSubject, getRandomClassStudent } from "../characters";
+import { Character, getProfessorFromSubject, getRandomClassStudent } from "../characters/characters";
 
 // #region class wheel
 
@@ -44,7 +46,7 @@ export async function classWheel(chara: MainChara<'Wizard'>, subjects: subject[]
  */
 export function getClassWheelSegments(chara: MainChara<'Wizard'>, sub: subject): WheelSegment[]
 {
-    let skipChance = chara.alignement === 'chaos' ? 0.15 : chara.alignement === 'death_eater' ? 0.10 : 0.07;
+    let skipChance = chara.alignment === 'chaos' ? 0.15 : chara.alignment === 'death_eater' ? 0.10 : 0.07;
     let attentionChance = chara.stress >= 50 ? 0.07 : chara.stress >= 15 ? 0.14 : 0.21;
     let distractionChance = chara.stress >= 50 ? 0.21 : chara.stress >= 15 ? 0.14 : 0.07;
     let answerGoodChance = chara.stress >= 50 ? 0.07 : chara.stress >= 15 ? 0.11 : 0.15;
@@ -134,6 +136,8 @@ export async function classWheelOutcome(chara: MainChara<'Wizard'>, sub: subject
 
 // #endregion
 
+// #region special classes
+
 /**
  * Handles the first flying lesson.
  * @param chara The mc.
@@ -147,18 +151,86 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     io.showText("It's your first flying lesson! Time to get on your broomstick and learn to fly.");
     const neville = chara.house === 'Gryffindor' || chara.house === 'Slytherin';
 
-    if (!neville)
+    if (neville)
     {
+        // Remembrall quest
         await io.nextEvent();
-        io.showText("Class Wheel! What do you do?");
-
-        myWheel.setSegments(getClassWheelSegments(chara, 'Flying'));
-        wheels.seeWheel(true);
-        let wheelStop = await wheels.spinWheel(myWheel);
-        let prof = getProfessorFromSubject(chara.characterList, 'Flying');
-        await classWheelOutcome(chara, 'Flying', prof, wheelStop.text);
-        wheels.seeWheel(false);
-        await io.nextEvent();
+        await remembrall(chara);
         return;
     }
+
+    await io.nextEvent();
+    await chitchat.flyingLesson();
+
+    io.showText("How many hoops can you get through?");
+    myWheel.setSegments(wheels.sevenSegments);
+    wheels.seeWheel(true);
+    let wheelStop = await wheels.spinWheel(myWheel);
+    await flightWheelOutcome(chara, wheelStop.text);
+
+    wheels.seeWheel(false);
+    await io.nextEvent();
+
+    io.showText("Second try! How many hoops can you get through?");
+    myWheel.setSegments(wheels.sevenSegments);
+    wheels.seeWheel(true);
+    wheelStop = await wheels.spinWheel(myWheel);
+    await flightWheelOutcome(chara, wheelStop.text);
+
+    wheels.seeWheel(false);
+    await io.nextEvent();
+    return;
 }
+
+
+/**
+ * Outputs the result of the first flying class event based on the wheel spin result.
+ * @param chara The main character.
+ * @param wheelOutput The result of the wheel spin.
+ */
+export async function flightWheelOutcome(chara: MainChara<'Wizard'>, wheelOutput: string): Promise<void>
+{
+    let grade = chara.grades.find(g => g.subject === "Flying");
+    if (!grade) throw new Error(`Subject Flying not found in character grades.`);
+
+    let classOutcome = "";
+    await io.nextEvent();
+    switch(wheelOutput)
+    {
+        case '1':
+            io.showText("You managed to get only through only through the first hoop, barely above the grass.");
+            chara.stress ++;
+            classOutcome = `stress++`;
+            break;
+        case '2':
+        case '3':
+            io.showText(`You flew through the first ${wheelOutput} hoops. Not bad, for a first timer.`);
+            break;
+        case '4':
+        case '5':
+            io.showText(`Great job! You flew through the first ${wheelOutput} hoops.`);
+            grade.score++;
+            classOutcome = `Flight++`;
+            break;
+        case '6':
+            io.showText("Amazing! You flew through the first 6 hoops, impressing everyone!");
+            chara.stress = Math.max(0, chara.stress - 1);
+            grade.score++;
+            classOutcome = `Flight++\nstress--`;
+            break;
+        case '7':
+            io.showText("Incredible! You flew through all 7 hoops flawlessly, showing some great flying talent!");
+            await io.nextEvent();
+            io.showText("Madame Hooch praises your skills and awards 5 points to your house.");
+            chara.stress = Math.max(0, chara.stress - 1);
+            grade.score++;
+            chara.housePoints += 5;
+            classOutcome = `Flight++\nstress--\n+5 house points`;
+            break;
+    }
+    await io.nextEvent();
+    wheels.seeWheel(false);
+    wheels.showWheelResult(classOutcome);
+}
+
+// #endregion

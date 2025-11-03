@@ -1,7 +1,7 @@
 
-import * as npc from '../../characters';
+import * as npc from '../../characters/characters';
 import { Wheel } from '../../wheel_magic/Wheel';
-import { MainChara } from '../../maincharacter';
+import { MainChara } from '../../characters/maincharacter';
 import * as random from '../../utilities/Random';
 import { sortGames } from '../../school_magic/quidditch';
 import * as wheels from "../../wheel_magic/wheel_helpers";
@@ -21,17 +21,16 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
  */
 export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wizard'>>
 {
-    // await chooseamovie();
     // first clue
     // await schoolIntro(chara);
 
     // semester #1 *******************************************
 
     // prima lezione di volo
-    // await firstFlyingLesson(chara);
+    await firstFlyingLesson(chara);
 
-    // distribuire durante i semestri class wheels
-    for (let i = 0; i < 100; i++)
+    // distribuire class wheels durante i semestri
+    // for (let i = 0; i < 100; i++)
     await classWheel(chara, chara.grades.map(g => g.subject));
     
     // selezioni di quidditch

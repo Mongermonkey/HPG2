@@ -1,13 +1,16 @@
 
-import { characterList } from "../characters";
-import { MainChara, print } from "../maincharacter";
+import { characterList } from "../characters/characters";
+import { MainChara, print } from "../characters/maincharacter";
+import { chooseamovie } from "../utilities/horrormovies";
 
 export async function startStory()
 {
   const wheels = await import("../wheel_magic/wheel_helpers");
-  const init = await import("./character-creation");
+  const init = await import("../characters/character-creation");
   const yearOne = await import("./school-years/year1");
 
+  // await chooseamovie();
+  
   wheels.seeWheel(false);
 
   let wiz: MainChara<'Wizard'> =
@@ -18,8 +21,8 @@ export async function startStory()
     blood: 'half',
     gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0, lycanthropy: 0 },
     pet: { type: "cat", name: "Carus" },
-    alignement: "neutral",
-    house: "Ravenclaw",
+    alignment: "neutral",
+    house: "Gryffindor",
     housePoints: 0,
     quidditchRole: "none",
     quidditchCaptain: false,
@@ -40,6 +43,7 @@ export async function startStory()
 
   // let chara = await init.createCharacter();
   // wiz = await init.urawizard(chara);
+
   // print(wiz);
 
   yearOne.attend(wiz);
