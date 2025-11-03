@@ -37,6 +37,8 @@ export type Student =
 export type Teacher =
 {
     subject: subject;
+    isHeadofHouse: boolean;
+    house: hogwartsHouse;
 }
 
 /**
@@ -78,14 +80,14 @@ export const characterList: Character<hogwartsRole>[] =
     // Externals (10-13)
 
     // Hogwarts Teachers (20-36)
-    { role: 'Teacher', id: 20, name: 'Minerva', surname: 'McGonagall', longname: 'Professor McGonagall', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Transfiguration' },
-    { role: 'Teacher', id: 21, name: 'Pomona', surname: 'Sprout', longname: 'Professor Sprout', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Herbology' },
-    { role: 'Teacher', id: 22, name: 'Filius', surname: 'Flitwick', longname: 'Professor Flitwick', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Charms' },
-    { role: 'Teacher', id: 23, name: 'Severus', surname: 'Snape', longname: 'Professor Snape', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Potions' },
-    { role: 'Teacher', id: 24, name: 'Aurora', surname: 'Sinistra', longname: 'Professor Sinistra', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Astronomy' },
-    { role: 'Teacher', id: 25, name: 'Cuthbert', surname: 'Binns', longname: 'Professor Binns', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'History of Magic' },
-    { role: 'Teacher', id: 26, name: 'Rolanda', surname: 'Hooch', longname: 'Madam Hooch', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Flying' },
-    { role: 'Teacher', id: 27, name: 'Quirinus', surname: 'Quirrell', longname: 'Professor Quirrell', male: true, alignement: 'death_eater', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts' },
+    { role: 'Teacher', id: 20, name: 'Minerva', surname: 'McGonagall', longname: 'Professor McGonagall', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Transfiguration', isHeadofHouse: true, house: 'Gryffindor' },
+    { role: 'Teacher', id: 21, name: 'Pomona', surname: 'Sprout', longname: 'Professor Sprout', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Herbology', isHeadofHouse: true, house: 'Hufflepuff' },
+    { role: 'Teacher', id: 22, name: 'Filius', surname: 'Flitwick', longname: 'Professor Flitwick', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Charms', isHeadofHouse: true, house: 'Ravenclaw' },
+    { role: 'Teacher', id: 23, name: 'Severus', surname: 'Snape', longname: 'Professor Snape', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Potions', isHeadofHouse: true, house: 'Slytherin' },
+    { role: 'Teacher', id: 24, name: 'Aurora', surname: 'Sinistra', longname: 'Professor Sinistra', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Astronomy', isHeadofHouse: false, house: 'none' },
+    { role: 'Teacher', id: 25, name: 'Cuthbert', surname: 'Binns', longname: 'Professor Binns', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'History of Magic', isHeadofHouse: false, house: 'none' },
+    { role: 'Teacher', id: 26, name: 'Rolanda', surname: 'Hooch', longname: 'Madam Hooch', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Flying', isHeadofHouse: false, house: 'none' },
+    { role: 'Teacher', id: 27, name: 'Quirinus', surname: 'Quirrell', longname: 'Professor Quirrell', male: true, alignement: 'death_eater', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' },
 
     // Hogwarts Students (senior) (40-54)
     { role: 'Student', id: 40, name: 'Oliver', surname: 'Wood', longname: 'Oliver Wood', male: true, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'keeper', senior: true, captain: true, house: 'Gryffindor' },
@@ -166,7 +168,7 @@ export function characterListUpd_Y2()
         { role: 'Student', id: 87, name: 'Zacharias', surname: 'Smith', longname: 'Zacharias Smith', male: true, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Hufflepuff' },
         { role: 'Student', id: 88, name: 'Luna', surname: 'Lovegood', longname: 'Luna Lovegood', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Ravenclaw' }
     );
-    replaceCharacter('Teacher', 27, { role: 'Teacher', id: 28, name: 'Gilderoy', surname: 'Lockhart', longname: 'Professor Lockhart', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts' });
+    replaceCharacter('Teacher', 27, { role: 'Teacher', id: 28, name: 'Gilderoy', surname: 'Lockhart', longname: 'Professor Lockhart', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
 }
 
 /**
@@ -184,10 +186,11 @@ export function characterListUpd_Y3()
         { role: 'Teacher', id: 32, name: 'Charity', surname: 'Burbage', longname: 'Professor Burbage', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Muggle Studies' },
         { role: 'Teacher', id: 33, name: 'Bathesda', surname: 'Bagshot', longname: 'Professor Bagshot', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Ancient Runes' }
     );
-    replaceCharacter('Teacher', 28, { role: 'Teacher', id: 29, name: 'Remus', surname: 'Lupin', longname: 'Professor Lupin', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts' });
+    replaceCharacter('Teacher', 28, { role: 'Teacher', id: 29, name: 'Remus', surname: 'Lupin', longname: 'Professor Lupin', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
     
     const hagrid = characterList.find(c => c.role === 'Staff' && c.id === 2);
-    if (hagrid) {
+    if (hagrid)
+    {
         hagrid.role = 'Teacher';
         (hagrid as Character<'Teacher'>).subject = 'Care of Magical Creatures';
     }
@@ -204,7 +207,7 @@ export function characterListUpd_Y4()
         { role: 'External', id: 12, name: 'Fleur', surname: 'Delacour', longname: 'Fleur Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' },
         { role: 'External', id: 13, name: 'Gabrielle', surname: 'Delacour', longname: 'Gabrielle Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' }
     );
-    replaceCharacter('Teacher', 29, { role: 'Teacher', id: 34, name: 'Alastor', surname: 'Mood', longname: 'Professor Mood', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts' });
+    replaceCharacter('Teacher', 29, { role: 'Teacher', id: 34, name: 'Alastor', surname: 'Mood', longname: 'Professor Mood', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
 }
 
 /**
@@ -214,7 +217,7 @@ export function characterListUpd_Y4()
 export function characterListUpd_Y5()
 {
     characterList.push({ role: 'Creature', id: 9, name: 'Grawp', surname: '', longname: 'Grawp', male: true, alignement: 'neutral', connectionlvl: 'neutral' });
-    replaceCharacter('Teacher', 34, { role: 'Teacher', id: 35, name: 'Dolores', surname: 'Umbridge', longname: 'Dolores Umbridge', male: false, alignement: 'death_eater', connectionlvl: 'foe' });
+    replaceCharacter('Teacher', 34, { role: 'Teacher', id: 35, name: 'Dolores', surname: 'Umbridge', longname: 'Dolores Umbridge', male: false, alignement: 'death_eater', connectionlvl: 'foe', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
 }
 
 /**
@@ -223,7 +226,7 @@ export function characterListUpd_Y5()
  */
 export function characterListUpd_Y6()
 {
-    replaceCharacter('Teacher', 35, { role: 'Teacher', id: 36, name: 'Horace', surname: 'Slughorn', longname: 'Professor Slughorn', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Potions' });
+    replaceCharacter('Teacher', 35, { role: 'Teacher', id: 36, name: 'Horace', surname: 'Slughorn', longname: 'Professor Slughorn', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Potions', isHeadofHouse: false, house: 'none' });
     
     const snape = characterList.find(c => c.role === 'Teacher' && c.id === 23);
     if (snape) (snape as Character<'Teacher'>).subject = 'Defense Against the Dark Arts';

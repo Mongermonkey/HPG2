@@ -150,7 +150,6 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
  * @param chara The main character.
  * @returns A list of student segments.
  */
-
 function getStudentList(chara: MainChara<'Wizard'>, senior?: boolean): WheelSegment[]
 {
     let students = chara.characterList.filter(
@@ -239,4 +238,15 @@ export function getRandomClassStudent(characterList: any[]): any
     
     const idx = Math.floor(Math.random() * students.length);
     return students[idx];
+}
+
+/**
+ * Gets the head of house for a specific house.
+ * @param characterList The list of characters to search.
+ * @param house The house to find the head for.
+ * @returns The head of house character, or undefined if not found.
+ */
+export function getHeadOfHouse(characterList: any[], house: hogwartsHouse): Character<'Teacher'>
+{
+    return characterList.find(c => c.role === 'Teacher' && c.isHeadofHouse && c.house === house);
 }

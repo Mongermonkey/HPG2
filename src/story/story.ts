@@ -37,7 +37,7 @@ export async function startStory()
       {subject: 'Astronomy', score: 5}, {subject: 'Charms', score: 6},
       {subject: 'Defense Against the Dark Arts', score: 4}, {subject: 'Herbology', score: 2},
       {subject: 'History of Magic', score: 3}, {subject: 'Potions', score: 4},
-      {subject: 'Transfiguration', score: 4}, {subject: 'Flying', score: 6}
+      {subject: 'Transfiguration', score: 4}, {subject: 'Flying', score: 4}
     ],
   };
 

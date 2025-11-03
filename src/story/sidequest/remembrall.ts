@@ -15,7 +15,6 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
 export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
 {
     await chitchat.remembrallIntro();
-    await io.nextEvent();
     io.showText("What do you do?");
 
     let laughChance = 0.15, askChance = 0.15, actChance = 0.010;
@@ -38,6 +37,7 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
     
     wheels.seeWheel(true);    
     const wheelStop = await wheels.spinWheel(myWheel);
+    await remembrallOutcome(chara, wheelStop.text);
 }
 
     // choices:
@@ -47,28 +47,55 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
     // 3.1 success: neville becomes a friend, fame++;
     // 3.2 fail: neville becomes a friend, stress++;
     // 4. mind your business -> if neville friend, neville becomes enemy; nothing
-async function handleRemembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string): Promise<void>
+async function remembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string): Promise<void>
 {
     let draco = npc.getCharacterByLongname(chara.characterList, 'Draco Malfoy') as Character<'Student'>,
         neville = npc.getCharacterByLongname(chara.characterList, 'Neville Longbottom') as Character<'Student'>;
 
+    wheelOutput = 'Act'; // DEBUG
     switch (wheelOutput)
     {
         case "Laugh":
-            chara.alignment = "death_eater";
+            await io.nextEvent();
+            io.showText("You find it very funny, and laugh along with Draco as he mocks Neville for losing his Remembrall.");
+            if (chara.alignment !== "death_eater")
+            {
+                chara.alignment = "death_eater";
+                await io.nextEvent();
+                io.showText("Your alignment has shifted.");
+            }
             if (chara.house === "Slytherin") npc.handleFriendshipOutcome(chara, draco);            
             break;
         case "Ask it back":
-            if (chara.alignment === "death_eater") chara.alignment = "neutral";
+            await io.nextEvent();
+            io.showText("You decide to ask Draco for the Remembrall back.");
+            if (chara.alignment === "death_eater")
+            {
+                chara.alignment = "neutral";
+                await io.nextEvent();
+                io.showText("Your alignment has shifted.");
+            }
+            await io.nextEvent();
             await trial(chara, draco, neville);
             break;
         case "Act":
+            await io.nextEvent();
+            io.showText("You decide to take matters into your own hands and take the Remembrall from Draco's hand.");
+            if (chara.alignment !== "phoenix_order")
+            {
+                await io.nextEvent();
+                io.showText("Your alignment has shifted.");
+            }
             chara.alignment = "phoenix_order";
+            await io.nextEvent();
             await ninja(chara, draco, neville);
             break;
         case "Mind your business":
+            await io.nextEvent();
+            io.showText("You decide to mind your own business and not get involved.");
             if (npc.isFriend(neville))
             {
+                await io.nextEvent();
                 io.showText("Neville is now angry at you. He expected more from a friend.");
                 neville.connectionlvl = "foe";
             }
@@ -78,9 +105,12 @@ async function handleRemembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: 
     await io.nextEvent();
 }
 
+/**
+ * Handles the outcome of the Remembrall event 'Act'.
+ */
 async function ninja(chara: MainChara<'Wizard'>, draco: Character<'Student'>, neville: Character<'Student'>): Promise<void>
 {
-    io.showText("You decide to go for the Remembrall in Draco's hand. Do you succeed?");
+    io.showText("Do you succeed?");
     myWheel.setSegments([
         wheels.newSegment("Success", 0.5),
         wheels.newSegment("Fail", 0.5)
@@ -90,33 +120,39 @@ async function ninja(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
     await io.nextEvent();
     wheels.seeWheel(false);
 
+    wheelStop.text = "Success"; // DEBUG
     if (wheelStop.text === "Success")
     {
         io.showText("You swiftly grab the Remembrall from Draco's hand! This swift move will make you popular.");
+        await io.nextEvent();
         chara.fame++;
+        wheels.showWheelResult("fame++");
+        await io.nextEvent();
+        io.showText("You managed to keep it from him until the teacher arrives.");
+        await io.nextEvent();
         io.showText("Draco now despises you. He squeaks something about his father.");
         draco.connectionlvl = "foe";
-        io.showText("You managed to keep it from him until the teacher arrives.");
+        await io.nextEvent();
         io.showText("In the afternoon, you give it back to Neville in the infirmatory. He is very grateful to you.");
         npc.handleFriendshipOutcome(chara, neville);
         return;
     }
     
-    io.showText("Alas, as you try to snatch the Remembrall, Draco quickly pulls it away.");
-    io.showText("You fall to the ground, and Draco laughs at you.");
-    io.showText("Draco now despises you. He squeaks something about his father.");
+    await chitchat.remembrallNinja();
     draco.connectionlvl = "foe";
     chara.stress++;
+    await io.nextEvent();
+    wheels.showWheelResult("stress++");
 }
 
+/**
+ * Handles the outcome of the Remembrall event 'Trial'.
+ */
 async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, neville: Character<'Student'>): Promise<void>
 {
-    io.showText("You decide to make things right, but Draco disagrees with you.");
-    io.showText("Draco taunts you, flying quickly up and daring you to catch the remembrall.");
-    io.showText("You realize that you need to act fast to get it back.");
-    io.showText("As you reach for it, Draco throws the Remembrall high into the air. Do you catch it?");
-
-    let catchChance =  0.1 + Math.min(0.85, 0.1 * (chara.grades.find(g => g.subject === "Flying")?.score ?? 0));
+    wheels.seeWheel(false);
+    await chitchat.remembrallTrial();
+    let catchChance = 0.1 + Math.min(0.85, 0.1 * (chara.grades.find(g => g.subject === "Flying")?.score ?? 0));
 
     myWheel.setSegments([
         wheels.newSegment("Catch", catchChance),
@@ -128,19 +164,33 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
     if (wheelStop.text === "Miss")
     {
         io.showText("You jump to catch the Remembrall, but miss it as it falls back down.");
+        await io.nextEvent();
         io.showText("Draco laughs at you, and flies away with the Remembrall.");
         chara.stress++;
+        await io.nextEvent();
+        wheels.showWheelResult("stress++");
         return;
     }
 
-    io.showText("You leap into the air and catch the Remembrall! Well done!");
+    await io.nextEvent();
+    wheels.seeWheel(false);
+    io.showText("You leap into the air and, in a move worthy of a Quidditch player, catch the Remembrall!\nWell done! This brave move will make you popular.");
+    chara.fame += 5;
+        await io.nextEvent();
+    wheels.showWheelResult("fame++");
+    await io.nextEvent();
     io.showText("Draco looks furious as you retrieve the Remembrall.");
-        io.showText("In the afternoon, you give it back to Neville in the infirmatory. He is very grateful to you.");
+    draco.connectionlvl = "foe";
+    await io.nextEvent();
+    io.showText("In the afternoon, you give it back to Neville in the infirmatory. He is very grateful to you.");
+    await io.nextEvent();
     npc.handleFriendshipOutcome(chara, neville);
 
     // add chance to quidditch
-
-    
+    let head = npc.getHeadOfHouse(chara.characterList, chara.house);
     await io.nextEvent();
-    wheels.seeWheel(false);
+    io.showText(`A bit later in the evening, you receive a note from ${head?.longname}.`);
+    await io.nextEvent();
+    io.showText(`It seems that your actions have not gone unnoticed, and you are being considered for the Quidditch team!`);
+    chara.quidditchRole = "candidate";
 }

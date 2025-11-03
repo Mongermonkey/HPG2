@@ -66,3 +66,17 @@ export async function flyingLesson(): Promise<void>
     await write("She explains that you'll take turns trying to get through as many hoops as possible.");
     await write("Each one will have two attempts, and you can practice on the broom while the others are trying.");   
 }
+
+export async function remembrallNinja(): Promise<void>
+{    
+    await write("Alas, as you try to snatch the Remembrall, Draco quickly pulls it away.");
+    await write("You fall to the ground, and Draco laughs at you.");
+    await write("Draco now despises you. He squeaks something about his father.");
+}
+
+export async function remembrallTrial(): Promise<void>
+{
+    await write("Draco taunts you, flying quickly up and daring you to catch the remembrall.");
+    await write("You realize that you need to act fast to get it back.");
+    await write("As you reach for it, Draco throws the Remembrall high into the air, very far away. Do you catch it?");
+}

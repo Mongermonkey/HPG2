@@ -1,15 +1,15 @@
 
-import * as npc from '../characters/characters';
 import { Wheel } from "../wheel_magic/Wheel";
-import { MainChara } from "../characters/maincharacter";
 import { subject } from "../utilities/basetypes";
+import { Character } from "../characters/characters";
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
+import { MainChara } from "../characters/maincharacter";
+import * as npc from "../characters/character-functions";
 import { remembrall } from '../story/sidequest/remembrall';
 import { WheelSegment } from "../wheel_magic/wheel_helpers";
 import * as chitchat from "../dialogues/year-one-dialogues";
 import { spinEqual, randomClassEvent } from "../utilities/Random";
-import { Character, getProfessorFromSubject, getRandomClassStudent } from "../characters/characters";
 
 // #region class wheel
 
@@ -33,7 +33,7 @@ export async function classWheel(chara: MainChara<'Wizard'>, subjects: subject[]
     wheels.seeWheel(true);
 
     let wheelStop = await wheels.spinWheel(myWheel);
-    let prof = getProfessorFromSubject(chara.characterList, sub);
+    let prof = npc.getProfessorFromSubject(chara.characterList, sub);
 
     await classWheelOutcome(chara, sub, prof, wheelStop.text);
     
@@ -125,7 +125,7 @@ export async function classWheelOutcome(chara: MainChara<'Wizard'>, sub: subject
             io.showText("You attend the class as usual.");
             await io.nextEvent();            
             // student for random interaction
-            let buddy = getRandomClassStudent(chara.characterList);
+            let buddy = npc.getRandomClassStudent(chara.characterList);
             io.showText(randomClassEvent(prof, buddy));
             return;
     }
