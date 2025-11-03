@@ -22,7 +22,7 @@ export async function startStory()
     gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0, lycanthropy: 0 },
     pet: { type: "cat", name: "Carus" },
     alignment: "neutral",
-    house: "Gryffindor",
+    house: "Ravenclaw",
     housePoints: 0,
     quidditchRole: "none",
     quidditchCaptain: false,

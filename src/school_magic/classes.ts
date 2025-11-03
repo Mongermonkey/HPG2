@@ -182,7 +182,6 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     return;
 }
 
-
 /**
  * Outputs the result of the first flying class event based on the wheel spin result.
  * @param chara The main character.

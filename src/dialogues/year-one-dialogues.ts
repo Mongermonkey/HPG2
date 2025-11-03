@@ -80,3 +80,10 @@ export async function remembrallTrial(): Promise<void>
     await write("You realize that you need to act fast to get it back.");
     await write("As you reach for it, Draco throws the Remembrall high into the air, very far away. Do you catch it?");
 }
+
+export async function QuidditchSelection(captain: string, house: string): Promise<void>
+{
+    await write(`The Quidditch tryouts are held by ${captain}, the ${house} captain.`);
+    await write("After a brief explanation of the game, you are asked to demonstrate your flying skills.");
+    await write("Do you pass the Quidditch selection?");
+}

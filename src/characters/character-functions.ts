@@ -250,3 +250,11 @@ export function getHeadOfHouse(characterList: any[], house: hogwartsHouse): Char
 {
     return characterList.find(c => c.role === 'Teacher' && c.isHeadofHouse && c.house === house);
 }
+
+/**
+ * Gets the Quidditch captain for a specific house.
+ */
+export function getQuidditchCaptain(characterList: any[], house: hogwartsHouse): Character<'Student'>
+{
+    return characterList.find(c => c.role === 'Student' && c.captain && c.house === house);
+}

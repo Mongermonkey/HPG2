@@ -40,13 +40,11 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
     await remembrallOutcome(chara, wheelStop.text);
 }
 
-    // choices:
-    // 1. laugh with Draco -> alignement = deatheater; if slytherin, draco, crabbe and goyle become friends
-    // 2. ask for the remembrall back -> if bad, alignement shifts to neutral; draco's trial
-    // 3. act and go for the Remembrall -> alignement = phoenix; draco becomes enemy
-    // 3.1 success: neville becomes a friend, fame++;
-    // 3.2 fail: neville becomes a friend, stress++;
-    // 4. mind your business -> if neville friend, neville becomes enemy; nothing
+/**
+ * Handles the outcome of the Remembrall sidequest.
+ * @param chara The mc.
+ * @param wheelOutput The outcome of the wheel spin.
+ */
 async function remembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string): Promise<void>
 {
     let draco = npc.getCharacterByLongname(chara.characterList, 'Draco Malfoy') as Character<'Student'>,

@@ -1,15 +1,16 @@
 
-import * as npc from '../../characters/characters';
 import { Wheel } from '../../wheel_magic/Wheel';
-import { MainChara } from '../../characters/maincharacter';
 import * as random from '../../utilities/Random';
-import { sortGames } from '../../school_magic/quidditch';
 import * as wheels from "../../wheel_magic/wheel_helpers";
 import { hogwartsHouse } from '../../utilities/basetypes';
+import { MainChara } from '../../characters/maincharacter';
 import * as io from "../../utilities/input_output_helpers";
+import * as npc from '../../characters/character-functions';
 import { newSegment } from '../../wheel_magic/wheel_helpers';
 import * as chitchat from "../../dialogues/year-one-dialogues";
+import { QuidditchSelection, sortGames } from '../../quidditch/quidditch';
 import { classWheel, firstFlyingLesson } from '../../school_magic/classes';
+
 import { chooseamovie } from '../../utilities/horrormovies';
 
 const myWheel = (window as any).myWheel as Wheel;
@@ -27,10 +28,10 @@ export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wiz
     // semester #1 *******************************************
 
     // prima lezione di volo
-    await firstFlyingLesson(chara);
+    // await firstFlyingLesson(chara);
 
+    await QuidditchSelection(chara);
     // distribuire class wheels durante i semestri
-    // for (let i = 0; i < 100; i++)
     await classWheel(chara, chara.grades.map(g => g.subject));
     
     // selezioni di quidditch
