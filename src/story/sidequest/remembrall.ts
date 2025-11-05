@@ -2,7 +2,7 @@
 import { Wheel } from '../../wheel_magic/Wheel';
 import { Character } from '../../characters/characters';
 import * as wheels from "../../wheel_magic/wheel_helpers";
-import { MainChara } from '../../characters/maincharacter';
+import { getSkill, MainChara } from '../../characters/maincharacter';
 import * as io from "../../utilities/input_output_helpers";
 import * as npc from '../../characters/character-functions';
 import * as chitchat from "../../dialogues/year-one-dialogues";
@@ -15,7 +15,6 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
 export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
 {
     await chitchat.remembrallIntro();
-    io.showText("What do you do?");
 
     let laughChance = 0.15, askChance = 0.15, actChance = 0.010;
 
@@ -61,6 +60,12 @@ async function remembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string
                 chara.alignment = "death_eater";
                 await io.nextEvent();
                 io.showText("Your alignment has shifted.");
+            }
+            if (npc.isFriend(neville))
+            {
+                await io.nextEvent();
+                io.showText("Neville is now angry at you. He expected more from a friend.");
+                neville.connectionlvl = "foe";
             }
             if (chara.house === "Slytherin") npc.handleFriendshipOutcome(chara, draco);            
             break;
@@ -150,7 +155,7 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
 {
     wheels.seeWheel(false);
     await chitchat.remembrallTrial();
-    let catchChance = 0.1 + Math.min(0.85, 0.1 * (chara.grades.find(g => g.subject === "Flying")?.score ?? 0));
+    let catchChance = 0.1 + Math.min(0.85, getSkill(chara, 'Flying') / 10);
 
     myWheel.setSegments([
         wheels.newSegment("Catch", catchChance),
@@ -172,9 +177,9 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
 
     await io.nextEvent();
     wheels.seeWheel(false);
-    io.showText("You leap into the air and, in a move worthy of a Quidditch player, catch the Remembrall!\nWell done! This brave move will make you popular.");
+    io.showText("You leap into the air and, in a move worthy of a Quidditch player, catch the Remembrall!\nWell done! This brave move will make you more popular.");
     chara.fame += 5;
-        await io.nextEvent();
+    await io.nextEvent();
     wheels.showWheelResult("fame++");
     await io.nextEvent();
     io.showText("Draco looks furious as you retrieve the Remembrall.");

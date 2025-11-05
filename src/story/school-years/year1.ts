@@ -12,6 +12,7 @@ import { QuidditchSelection, sortGames } from '../../quidditch/quidditch';
 import { classWheel, firstFlyingLesson } from '../../school_magic/classes';
 
 import { chooseamovie } from '../../utilities/horrormovies';
+import { troll } from '../sidequest/troll';
 
 const myWheel = (window as any).myWheel as Wheel;
 const nextBtn = (window as any).nextBtn as HTMLButtonElement;
@@ -27,14 +28,15 @@ export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wiz
 
     // semester #1 *******************************************
 
-    // prima lezione di volo
     // await firstFlyingLesson(chara);
 
-    await QuidditchSelection(chara);
+    // await QuidditchSelection(chara);
+
+    await troll(chara);
+
     // distribuire class wheels durante i semestri
     await classWheel(chara, chara.grades.map(g => g.subject));
     
-    // selezioni di quidditch
     // gringott's theft
     // chocolate frog
     // library

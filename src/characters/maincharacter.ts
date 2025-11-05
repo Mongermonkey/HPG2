@@ -3,8 +3,6 @@ import { characterList } from "./characters";
 import { Gifts, Grade, Pet, QuidditchGame } from "../utilities/compositetypes";
 import { alignement as alignment, bloodStatus, gameclass, gender, hogwartsHouse, quidditchRole, sevenBool, sevenNums, subject } from "../utilities/basetypes";
 
-// #region composite types
-
 export type Baseclass<T extends gameclass> =
 {
     gameclass: T;
@@ -38,10 +36,13 @@ export type CustomClass =
 }
 
 export type MainChara<T extends gameclass> = Baseclass<T> & CustomClass[T];
-// #endregion
 
 // #region functions
 
+/**
+ * Prints the details of a character.
+ * @param character The character to print.
+ */
 export function print<T extends gameclass>(character: Baseclass<T> | MainChara<T>): void
 {
     for (const key in character)
@@ -62,6 +63,37 @@ export function print<T extends gameclass>(character: Baseclass<T> | MainChara<T
     }
 }
 
+/**
+ * Retrieves the subjects the character is studying.
+ * @param chara The mc.
+ * @returns The list of subjects the character is studying.
+ */
+export function getSubjects(chara: MainChara<'Wizard'>): subject[]
+{
+    return chara.grades.map(g => g.subject).filter(s => s !== 'none');
+}
 
-export { Pet, Gifts };
+/**
+ * Retrieves the skill value for a specific subject.
+ * @param chara The mc.
+ * @param subject The subject to check.
+ * @returns The skill value for the subject.
+ */
+export function getSkill(chara: MainChara<'Wizard'>, subject: subject): number
+{
+    const grade = chara.grades.find(g => g.subject === subject);
+    return grade ? grade.score : 0;
+}
+
+/**
+ * Retrieves the maximum skill value among the given subjects.
+ * @param chara The mc.
+ * @param subjects The subjects to check.
+ * @returns The maximum skill value.
+ */
+export function getMaxSkill(chara: MainChara<'Wizard'>, subjects: subject[]): number
+{
+    return Math.max(...subjects.map(subject => getSkill(chara, subject)));
+}
+
 // #endregion

@@ -39,12 +39,33 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
     io.showText("You made friends!");
     await io.nextEvent();
     io.showText("Who did you befriend?");
-    let list = getStudentList(chara, senior);
+
+    await befriend(chara, false, senior);
+    // let list = getStudentList(chara, senior);
+    // myWheel.setSegments(list);
+    // wheelStop = await wheels.spinWheel(myWheel);
+    // let newFriend = getCharacterByLongname(characterList, wheelStop.text) as Character<'Student'>;
+
+    // await handleFriendshipOutcome(chara, newFriend);
+}
+
+export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, senior?: boolean): Promise<void>
+{
+    const myWheel = (window as any).myWheel as Wheel;
+    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
+
+    nextBtn.disabled = true;
+    let wheelStop: WheelSegment;
+
+    let list = getStudentList(chara, sameHouse, senior);
+
     myWheel.setSegments(list);
+    wheels.seeWheel(true);
     wheelStop = await wheels.spinWheel(myWheel);
     let newFriend = getCharacterByLongname(characterList, wheelStop.text) as Character<'Student'>;
 
     await handleFriendshipOutcome(chara, newFriend);
+    wheels.seeWheel(false);    
 }
 
 /**
@@ -71,8 +92,8 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
             break;
         case 'bff':
             newFriend.connectionlvl = 'lover';
-            io.showText(`Something changed between you and ${newFriend.longname}.
-                After what you've been through, you and ${newFriend.name} became lovers!`);
+            io.showText(`Something changed between you and ${newFriend.longname}.\nAfter what you've been through, you and ${newFriend.name} became lovers!`);
+            break;
     }
 
     // Mappa del golden trio (bidirezionale)
@@ -105,6 +126,7 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
 
         chara.alignment = 'phoenix_order';
         if (firstEnc) io.showText(`Your alignement has shifted.`);
+        await io.nextEvent();
         return;
     }
 
@@ -126,6 +148,7 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
         }
         chara.alignment = 'death_eater';
         if (firstEnc) io.showText(`Your alignement has shifted.`);
+        await io.nextEvent();
         return;
     }
 
@@ -141,6 +164,7 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
             const relationWord = newFriend.id < 60 ? 'his twin brother' : 'her twin sister';
             await io.nextEvent();
             io.showText(`You got to know ${newFriend.name}'s ${newFriend.id == 45 || newFriend.id == 46 ? 'twin brother' : 'twin sister'} ${other!.name} as well!`);
+            await io.nextEvent();
         }
     }
 }
@@ -148,14 +172,17 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
 /**
  * Gets a list of student segments.
  * @param chara The main character.
+ * @param senior Whether to filter for senior students, non-senior students, or all students.
  * @returns A list of student segments.
  */
-function getStudentList(chara: MainChara<'Wizard'>, senior?: boolean): WheelSegment[]
+function getStudentList(chara: MainChara<'Wizard'>, sameHouse: boolean = false, senior?: boolean): WheelSegment[]
 {
     let students = chara.characterList.filter(
         c => c.role === 'Student'
         && c.connectionlvl !== 'lover'
     ) as Character<'Student'>[];
+
+    if (sameHouse) students = students.filter(s => s.house === chara.house);    
 
     students = senior === false
         ? students.filter(c => c.senior === false)

@@ -1,11 +1,11 @@
 
 import { Wheel } from "../wheel_magic/Wheel";
 import * as wheels from "../wheel_magic/wheel_helpers";
-import { MainChara } from "../characters/maincharacter";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
 import { newSegment } from "../wheel_magic/wheel_helpers";
 import * as chitchat from "../dialogues/year-one-dialogues";
+import { getSkill, MainChara } from "../characters/maincharacter";
 import { hogwartsHouse, quidditchRole } from "../utilities/basetypes";
 
 const myWheel = (window as any).myWheel as Wheel;
@@ -60,7 +60,7 @@ export async function QuidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     {
         io.showText("Quidditch tryouts are now open! Interested in applying?");
         await io.nextEvent();
-        let quid = newSegment("Interested", Math.min(0.95, 0.1 + chara.grades.find(g => g.subject === 'Flying')!.score / 10));
+        let quid = newSegment("Interested", Math.min(0.95, 0.1 + getSkill(chara, 'Flying') / 10));
         let notquid = newSegment("Not Interested", 1 - quid.fraction);
         myWheel.setSegments([quid, notquid]);
         wheels.seeWheel(true);
@@ -78,7 +78,7 @@ export async function QuidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
 
     await chitchat.QuidditchSelection(captain.longname, chara.house);
 
-    let pass = newSegment("Pass", Math.min(0.95, 0.1 + chara.grades.find(g => g.subject === 'Flying')!.score/10));
+    let pass = newSegment("Pass", Math.min(0.95, 0.1 + getSkill(chara, 'Flying') / 10));
     let bad = newSegment("Fail", 1 - pass.fraction);
     myWheel.setSegments([pass, bad]);
     wheels.seeWheel(true);
@@ -115,4 +115,6 @@ export async function QuidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     io.showText(`Congratulations! You have been selected as ${wheelStop.text} for the ${chara.house} Quidditch team!`);
     await io.nextEvent();
     io.showText(`${captain.name} welcomes you to the team.`);
+    await io.nextEvent();    
+    npc.handleFriendshipOutcome(chara, captain);
 }
