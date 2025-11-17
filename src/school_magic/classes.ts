@@ -9,7 +9,7 @@ import * as npc from "../characters/character-functions";
 import { remembrall } from '../story/sidequest/remembrall';
 import { WheelSegment } from "../wheel_magic/wheel_helpers";
 import * as chitchat from "../dialogues/year-one-dialogues";
-import { spinEqual, randomClassEvent } from "../utilities/Random";
+import { spinEqual, randomClassEvent } from "../utilities/random";
 
 // #region class wheel
 

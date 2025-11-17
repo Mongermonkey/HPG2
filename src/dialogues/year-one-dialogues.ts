@@ -1,6 +1,7 @@
 
 import { hogwartsHouse } from "../utilities/basetypes";
 import * as io from "../utilities/input_output_helpers";
+import * as random from "../utilities/random";
 
 async function write(msg: string)
 {
@@ -202,4 +203,56 @@ export async function troll_spell(rescue: boolean, house: hogwartsHouse): Promis
         await write(`They also award 10 points to ${house}, for the impressive feat you accomplished.`);
     }
     await write("After tonight, you become quite popular among your peers.");
+}
+
+/**
+ * Simulates a Quidditch game between two houses.
+ * @param houseA The winner house.
+ * @param houseB The loser house.
+ */
+export async function quidditchMatch(houseA: hogwartsHouse, houseB: hogwartsHouse): Promise<void>
+{
+    await write(random.spinEqual([
+        `${houseA} wins after a fierce and rainy match against ${houseB}.`,
+        `${houseA} dominates the field while ${houseB} struggles to keep up.`,
+        `It’s a close game, but ${houseA} snatches victory by catching the Snitch first.`,
+        `${houseA} takes an early lead, and ${houseB} never recovers.`,
+        `A chaotic match — ${houseB}’s Beaters cause mayhem, but ${houseA} still wins.`,
+        `The game is intense and fast-paced, with ${houseA} winning by a narrow margin.`,
+        `${houseA}’s Seeker spots the Snitch early and ends the match in record time.`,
+        `The crowd goes wild as ${houseA} pulls off a stunning last-minute win.`,
+        `A rough match — several fouls, one broken broom, and ${houseA} victorious.`,
+        `Heavy wind makes the game unpredictable, but ${houseA} adapts better and wins.`,
+        `${houseA} dominates the match from start to finish.`,
+        `${houseA}’s Keeper performs incredibly, blocking nearly every goal and assuring victory.`,
+        `The Snitch is elusive — the match drags on for hours before ${houseA} finally wins.`,
+        `${houseB} scores quickly, but ${houseA} turns the tide with brilliant teamwork.`,
+        `A balanced game until ${houseA}’s Seeker dives and ends it with a clean catch.`,
+        `Both teams play hard, but ${houseA}’s Chasers are unstoppable today. ${houseA} wins.`,
+        `It’s a brutal game, full of bludgers and near collisions — ${houseA} still triumphs.`,
+        `Rain and fog make visibility awful; ${houseA} takes advantage and wins.`,
+        `A spectacular dive from ${houseA}’s Seeker seals the victory.`,
+        `A slow, tactical match that ends with ${houseA} barely ahead.`,
+        `${houseA} wins after ${houseB}’s Seeker misses the Snitch by inches.`,
+        `${houseA} pulls a shocking upset over ${houseB}.`,
+        `The stands erupt as ${houseA} defeats ${houseB} in one of the season’s best matches.`,
+        `${houseA}’s Beaters keep ${houseB}’s Chasers constantly off balance.`,
+        `${houseA} takes revenge for last year’s loss, crushing ${houseB}.`,
+        `A messy game full of penalties, but ${houseA} keeps their composure and wins.`,
+        `After hours of play, the Snitch finally ends up in ${houseA}’s hand.`,
+        `After both Seekers crash mid-air, ${houseA} manages to claim the Snitch first.`,
+        `${houseA} wins after ${houseB}’s Seeker is distracted by a rogue Bludger.`,
+        `${houseA} celebrates wildly as their Seeker catches the Snitch inches before ${houseB}’s.`,
+        `${houseA}’s Chasers outclass ${houseB}, scoring again and again.`,
+        `${houseB} holds the lead for most of the match, but ${houseA} turns it around in the final minutes.`,
+        `The Snitch appears only once — ${houseA} spots it first and ends the game instantly.`,
+        `${houseA}’s Keeper saves the day with impossible reflexes.`,
+        `After multiple weather delays, ${houseA} finally secures victory under the stars.`
+    ]));
+
+}
+
+export async function postQuidditch(winner: hogwartsHouse, loser: hogwartsHouse): Promise<void>
+{
+
 }

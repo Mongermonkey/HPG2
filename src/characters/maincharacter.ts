@@ -1,6 +1,9 @@
 
 import { characterList } from "./characters";
 import { Gifts, Grade, Pet, QuidditchGame } from "../utilities/compositetypes";
+
+export type { Gifts };
+export type { Pet };
 import { alignement as alignment, bloodStatus, gameclass, gender, hogwartsHouse, quidditchRole, sevenBool, sevenNums, subject } from "../utilities/basetypes";
 
 export type Baseclass<T extends gameclass> =

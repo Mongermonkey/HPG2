@@ -28,9 +28,10 @@ export type QuidditchGame =
 {
     houseA: hogwartsHouse;
     houseB: hogwartsHouse;
-    scoreA: number;
-    scoreB: number;
     winner: hogwartsHouse;
+    loser: hogwartsHouse;
+    winnerScore: number;
+    loserScore: number;
 };
 
 /**

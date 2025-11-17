@@ -8,8 +8,6 @@ export async function startStory()
   const wheels = await import("../wheel_magic/wheel_helpers");
   const init = await import("../characters/character-creation");
   const yearOne = await import("./school-years/year1");
-
-  // await chooseamovie();
   
   wheels.seeWheel(false);
 

@@ -1,5 +1,5 @@
 
-import * as random from '../utilities/Random';
+import * as random from '../utilities/random';
 import { characterList } from "../characters/characters";
 import { sevenNums } from "../utilities/basetypes";
 import { Grade } from '../utilities/compositetypes';

@@ -8,7 +8,7 @@ import { WheelSegment } from '../wheel_magic/wheel_helpers';
 import { hogwartsHouse, hogwartsRole } from "../utilities/basetypes";
 
 /**
- * Handles interactions between mc and npcs.
+ * Handles friendship interactions between mc and npcs.
  * @param chara The mc.
  */
 export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, senior?: boolean): Promise<void>
@@ -49,6 +49,12 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
     // await handleFriendshipOutcome(chara, newFriend);
 }
 
+/**
+ * Handles the process of befriending a character.
+ * @param chara The main character.
+ * @param sameHouse Whether to consider only characters from the same house.
+ * @param senior True to consider only senior students, false for non-senior, undefined for all.
+ */
 export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, senior?: boolean): Promise<void>
 {
     const myWheel = (window as any).myWheel as Wheel;
