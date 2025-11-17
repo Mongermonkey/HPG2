@@ -312,7 +312,24 @@ async function postQuidditch(chara: MainChara<'Wizard'>, game: QuidditchGame): P
     io.showText("You strengthen your bonds with your housemates!");
     await io.nextEvent();
     wheels.seeWheel(true);
-    await npc.befriend(chara, true);
+    let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
+    let chance = wheels.newSegment('Make friends', friendshipChance),
+        notchance = wheels.newSegment('Mind your business', 1 - friendshipChance);
+    
+    io.showText("Friendship Wheel! What do you do?");
+    myWheel.setSegments([chance, notchance]);
+    let wheelStop = await wheels.spinWheel(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
+    if (wheelStop.text === 'Mind your business')
+    {
+        io.showText("You decided to mind your own business.");
+        await io.nextEvent();
+        return;
+    }
+    io.showText("You made friends!");
+    await io.nextEvent();
+    io.showText("Who did you befriend?");
+    await npc.befriend(chara, true);
+    await io.nextEvent();
 }
