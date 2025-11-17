@@ -1,6 +1,7 @@
 
 import { Wheel } from "../wheel_magic/Wheel";
 import * as random from '../utilities/random';
+import { Character } from "../characters/characters";
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
@@ -10,8 +11,6 @@ import * as chitchat from "../dialogues/year-one-dialogues";
 import { QuidditchGame } from "../utilities/compositetypes";
 import { getSkill, MainChara } from "../characters/maincharacter";
 import { hogwartsHouse, quidditchRole } from "../utilities/basetypes";
-import { get } from "http";
-import { Character } from "../characters/characters";
 
 const myWheel = (window as any).myWheel as Wheel;
 const nextBtn = (window as any).nextBtn as HTMLButtonElement;
@@ -84,7 +83,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
 
     await chitchat.QuidditchSelection(captain.longname, chara.house);
 
-    let pass = newSegment("Pass", Math.min(0.95, 0.1 + getSkill(chara, 'Flying') / 10));
+    let pass = newSegment("Pass", Math.min(0.95, getSkill(chara, 'Flying') / 10));
     let bad = newSegment("Fail", 1 - pass.fraction);
     myWheel.setSegments([pass, bad]);
     wheels.seeWheel(true);
@@ -104,7 +103,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     io.showText("What role will you play?");
     await io.nextEvent();
 
-    await setQuidditchRole(chara, captain);
+    await spinQuidditchRole(chara, captain);
 }
 
 /**
@@ -112,12 +111,12 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
  * @param chara The mc.
  * @param captain The quidditch captain of the mc's house.
  */
-async function setQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<'Student'>): Promise<void>
+async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<'Student'>): Promise<void>
 {
     let r1 = newSegment("Seeker", 0.15), r2 = newSegment("Chaser", 0.40), r3 = newSegment("Beater", 0.30), r4 = newSegment("Keeper", 0.15);
     let segments: WheelSegment[] = [];
 
-    // Modifiche in base alla casa
+    // Modifiche in base al ruolo del capitano della casa - Ravenclaw, Slytherin: chaser; Gryffindor: keeper; Hufflepuff: seeker
     switch (chara.house)
     {
         case 'Ravenclaw':
@@ -213,8 +212,6 @@ export async function quidditchGame(chara: MainChara<'Wizard'>, gameIndex: numbe
         setRandomScores(game);
     }
     
-    console.log(`Debug: Calling postQuidditch with game:\n match: ${game.houseA} vs ${game.houseB}
-winner: ${game.winner} - loser: ${game.loser}\nscores: ${game.winnerScore} - ${game.loserScore}`);
     await postQuidditch(chara, game);
 }
 
@@ -247,6 +244,10 @@ async function playMatch(chara: MainChara<'Wizard'>, game: QuidditchGame): Promi
     await io.nextEvent();
 }
 
+/**
+ * Randomly scores a Quidditch game.
+ * @param game The Quidditch game to score.
+ */
 function setRandomScores(game: QuidditchGame)
 {
     // Calcolo punteggi random 50 <= score <= 300 (soli multipli di 5)
@@ -264,7 +265,7 @@ function setRandomScores(game: QuidditchGame)
 }
 
 /**
- * Swaps the winner and loser scores and teams in a Quidditch game.
+ * Swaps winner and loser in a Quidditch game.
  * @param game The Quidditch game to swap.
  */
 function swapScores(game: QuidditchGame): void
@@ -277,7 +278,7 @@ function swapScores(game: QuidditchGame): void
 }
 
 /**
- * Handles the post-match events of a Quidditch game.
+ * Handles the aftermath of a Quidditch game.
  * @param chara The mc.
  * @param game The Quidditch game that has been played.
  */
@@ -285,11 +286,12 @@ async function postQuidditch(chara: MainChara<'Wizard'>, game: QuidditchGame): P
 {
     let houseWin = game.winner == chara.house;
     let player = chara.quidditchRole != 'none' && chara.quidditchRole != 'candidate';
+    let watcher = game.houseA != chara.house && game.houseB != chara.house;
     io.showText(
         houseWin && player ? `You beat ${game.loser} with a score of ${game.winnerScore} to ${game.loserScore}!`        
         : houseWin && !player ? `${game.winner} wins against ${game.loser} with a score of ${game.winnerScore} to ${game.loserScore}!`        
-        : player ? `You lose against ${game.winner} with a score of ${game.loserScore} to ${game.winnerScore}.`
-        : `${game.loser} loses against ${game.winner} with a score of ${game.loserScore} to ${game.winnerScore}.`
+        : watcher ? `${game.loser} loses against ${game.winner} with a score of ${game.loserScore} to ${game.winnerScore}.`
+        : `You lose against ${game.winner} with a score of ${game.loserScore} to ${game.winnerScore}.`
     );
     await io.nextEvent();
 
