@@ -27,18 +27,18 @@ export async function classWheel(chara: MainChara<'Wizard'>, subjects: subject[]
     io.showText(`You have a${'AEIOU'.includes(sub[0].toUpperCase()) ? 'n' : ''} ${sub} class.`);
     await io.nextEvent();
 
-    io.showText("Class Wheel! What do you do?");
+    const result = await wheels.spinWheel("Class Wheel! What do you do?", getClassWheelSegments(chara, sub));
 
-    myWheel.setSegments(getClassWheelSegments(chara, sub));
-    wheels.seeWheel(true);
+    // io.showText("Class Wheel! What do you do?");
+    // myWheel.setSegments(getClassWheelSegments(chara, sub));
+    // wheels.seeWheel(true);
+    // let result = (await wheels.spin(myWheel)).text;
+    // await io.nextEvent();
+    // wheels.seeWheel(false);
 
-    let wheelStop = await wheels.spinWheel(myWheel);
     let prof = npc.getProfessorFromSubject(chara.characterList, sub);
-
-    await classWheelOutcome(chara, sub, prof, wheelStop.text);
-    
+    await classWheelOutcome(chara, sub, prof, result);    
     await io.nextEvent();
-    wheels.seeWheel(false);
 }
 
 /**
@@ -82,7 +82,6 @@ export async function classWheelOutcome(chara: MainChara<'Wizard'>, sub: subject
     if (!grade) throw new Error(`Subject ${sub} not found in character grades.`);
 
     let classOutcome = "", heshe = prof.male ? "He" : "She";
-    await io.nextEvent();
     switch(wheelOutput)
     {
         case 'Skip class':
@@ -151,9 +150,8 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     io.showText("It's your first flying lesson! Time to get on your broomstick and learn to fly.");
     const neville = chara.house === 'Gryffindor' || chara.house === 'Slytherin';
 
-    if (neville)
-    {
-        // Remembrall quest
+    if (neville)    // Remembrall quest
+    {       
         await io.nextEvent();
         await remembrall(chara);
         return;
@@ -165,7 +163,7 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     io.showText("How many hoops can you get through?");
     myWheel.setSegments(wheels.sevenSegments);
     wheels.seeWheel(true);
-    let wheelStop = await wheels.spinWheel(myWheel);
+    let wheelStop = await wheels.depr(myWheel);
     await flightWheelOutcome(chara, wheelStop.text);
 
     wheels.seeWheel(false);
@@ -174,7 +172,7 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     io.showText("Second try! How many hoops can you get through?");
     myWheel.setSegments(wheels.sevenSegments);
     wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
+    wheelStop = await wheels.depr(myWheel);
     await flightWheelOutcome(chara, wheelStop.text);
 
     wheels.seeWheel(false);

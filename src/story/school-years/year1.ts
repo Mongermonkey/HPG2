@@ -23,38 +23,68 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
  */
 export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wizard'>>
 {    
-    // await chooseamovie();
-    // await io.nextEvent();
+    await chooseamovie();
+    await io.nextEvent();
 
     // first clue
     // await schoolIntro(chara);
 
+    for (let i = 0; i < 30; i++)
+    await npc.friendshipWheel(chara);
+    
+
     // semester #1 *******************************************
+
 
     // await firstFlyingLesson(chara);
 
-    await quidditchSelection(chara);
+    await classWheel(chara, chara.grades.map(g => g.subject));
 
-    // await classWheel(chara, chara.grades.map(g => g.subject));
+    // await quidditchSelection(chara);
 
     // gringott's theft
     // chocolate frog
-    // library
+    // library (2nd clue)
+    
+    // await quidditchGame(chara, 0);
+    
+    // await classWheel(chara, chara.grades.map(g => g.subject));
 
     // await troll(chara);
-    sortGames(chara);
-    await quidditchGame(chara, 0);
     
-    await classWheel(chara, chara.grades.map(g => g.subject));
+    // await classWheel(chara, chara.grades.map(g => g.subject));
+    
+    // await quidditchGame(chara, 1);
+    
+    // await classWheel(chara, chara.grades.map(g => g.subject));
 
-    // troll in the dungeon
-    // quidditch match 1
+
+
+
+    
+    // await quidditchGame(chara, 2);
+
+
     // staircases (philosopher's stone + secret passages)
     // dark forest (?)
 
     // semester #2 *******************************************
 
     // add norbert (?)
+
+
+        
+    // await quidditchGame(chara, 3);
+
+    
+    // await quidditchGame(chara, 4);
+    
+    
+    // await quidditchGame(chara, 5);
+
+
+
+
     // quidditch game 2
     // tuttecose del secondo semestre
     // quidditch game 3
@@ -84,12 +114,12 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
     io.showText("Which house is your house?");
 
     myWheel.setSegments([gry, huf, rav, sly, choice]);
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
 
     if (wheelStop.text === "choice")
     {
         io.showText("The Sorting Hat is baffled by your mind.\nSince he cannot decide, the choice is yours.");
-        
+        await io.nextEvent();        
         io.showText("Choose wisely which house to join: (g/h/r/s)");
         do
         {
@@ -102,6 +132,7 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
 
     chara.house = hoghouse;
     wheels.showWheelResult(`Your house is: ${hoghouse} !`);
+    await io.nextEvent();
 }
 
 /**
@@ -125,14 +156,9 @@ async function schoolIntro(chara:MainChara<'Wizard'>): Promise<void>
 
     // friendship wheels
     io.showText("You are brought to your house's common room,\nwhere you can spend some time with your new housemates.");
-    wheels.seeWheel(true);
     await npc.friendshipWheel(chara);
-    await io.nextEvent();
     await npc.friendshipWheel(chara);
-    await io.nextEvent();
     await npc.friendshipWheel(chara);
-    await io.nextEvent();
-    wheels.seeWheel(false);
 
     // sort quidditch games
     sortGames(chara);

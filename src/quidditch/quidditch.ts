@@ -54,7 +54,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
 {
     let head = npc.getHeadOfHouse(chara.characterList, chara.house);
     let captain = npc.getQuidditchCaptain(chara.characterList, chara.house);
-    let wheelStop = null;
+    let result = null;
 
     if (chara.quidditchRole === 'candidate')
     {
@@ -63,17 +63,11 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     }
     else
     {
-        io.showText("Quidditch tryouts are now open! Interested in applying?");
-        await io.nextEvent();
         let quid = newSegment("Interested", Math.min(0.95, 0.1 + getSkill(chara, 'Flying') / 10));
         let notquid = newSegment("Not Interested", 1 - quid.fraction);
-        myWheel.setSegments([quid, notquid]);
-        wheels.seeWheel(true);
-        wheelStop = await wheels.spinWheel(myWheel);
-        await io.nextEvent();
-        wheels.seeWheel(false);
 
-        if (wheelStop.text === "Not Interested")
+        result = await wheels.spinWheel("Quidditch tryouts are now open! Interested in applying?", [quid, notquid]);
+        if (result === "Not Interested")
         {
             io.showText("You decided not to try out for the Quidditch team this year.");
             await io.nextEvent();
@@ -82,16 +76,11 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     }
 
     await chitchat.QuidditchSelection(captain.longname, chara.house);
-
     let pass = newSegment("Pass", Math.min(0.95, getSkill(chara, 'Flying') / 10));
     let bad = newSegment("Fail", 1 - pass.fraction);
-    myWheel.setSegments([pass, bad]);
-    wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
-    await io.nextEvent();
-    wheels.seeWheel(false);
 
-    if (wheelStop.text === "Fail")
+    result = await wheels.spinWheel("Do you pass the Quidditch selection?", [pass, bad]);
+    if (result === "Fail")
     {
         io.showText("Alas, you failed the Quidditch selection. Maybe you can try again next year.");
         await io.nextEvent();
@@ -100,9 +89,6 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
 
     io.showText("You passed the Quidditch selection!");
     await io.nextEvent();
-    io.showText("What role will you play?");
-    await io.nextEvent();
-
     await spinQuidditchRole(chara, captain);
 }
 
@@ -157,15 +143,10 @@ async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<
     segments.push(r2, r3);
     if (chara.house !== 'Gryffindor') segments.push(r4);
 
-    myWheel.setSegments(segments);
-
-    wheels.seeWheel(true);
-    let wheelStop = await wheels.spinWheel(myWheel);
-    await io.nextEvent();
-    wheels.seeWheel(false);
-
-    chara.quidditchRole = wheelStop.text.toLowerCase() as quidditchRole;
-    io.showText(`Congratulations! You have been selected as ${wheelStop.text} for the ${chara.house} Quidditch team!`);
+    let result = await wheels.spinWheel("What role will you play?", segments);
+    chara.quidditchRole = result.toLowerCase() as quidditchRole;
+    
+    io.showText(`Congratulations! You have been selected as ${result} for the ${chara.house} Quidditch team!`);
     await io.nextEvent();
     io.showText(`${captain.name} welcomes you to the team.`);
     await io.nextEvent();
@@ -311,14 +292,14 @@ async function postQuidditch(chara: MainChara<'Wizard'>, game: QuidditchGame): P
     await io.nextEvent();
     io.showText("You strengthen your bonds with your housemates!");
     await io.nextEvent();
-    wheels.seeWheel(true);
     let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
     let chance = wheels.newSegment('Make friends', friendshipChance),
         notchance = wheels.newSegment('Mind your business', 1 - friendshipChance);
     
+    wheels.seeWheel(true);
     io.showText("Friendship Wheel! What do you do?");
     myWheel.setSegments([chance, notchance]);
-    let wheelStop = await wheels.spinWheel(myWheel);
+    let wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
     if (wheelStop.text === 'Mind your business')

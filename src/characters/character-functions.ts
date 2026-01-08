@@ -13,11 +13,8 @@ import { hogwartsHouse, hogwartsRole } from "../utilities/basetypes";
  */
 export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, senior?: boolean): Promise<void>
 {
-    const myWheel = (window as any).myWheel as Wheel;
     const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-
     nextBtn.disabled = true;
-    let wheelStop: WheelSegment;
 
     if (!sureFriend)
     {
@@ -25,13 +22,11 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
         let chance = wheels.newSegment('Make friends', friendshipChance),
             notchance = wheels.newSegment('Mind your business', 1 - friendshipChance);
         
-        io.showText("Friendship Wheel! What do you do?");
-        myWheel.setSegments([chance, notchance]);
-        wheelStop = await wheels.spinWheel(myWheel);
-
-        if (wheelStop.text === 'Mind your business')
+        const result = await wheels.spinWheel("Friendship Wheel! What do you do?", [chance, notchance]);
+        if (result === 'Mind your business')
         {
             io.showText("You decided to mind your own business.");
+            await io.nextEvent();
             return;
         }
     }
@@ -41,12 +36,6 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
     io.showText("Who did you befriend?");
 
     await befriend(chara, false, senior);
-    // let list = getStudentList(chara, senior);
-    // myWheel.setSegments(list);
-    // wheelStop = await wheels.spinWheel(myWheel);
-    // let newFriend = getCharacterByLongname(characterList, wheelStop.text) as Character<'Student'>;
-
-    // await handleFriendshipOutcome(chara, newFriend);
 }
 
 /**
@@ -60,18 +49,13 @@ export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, s
     const myWheel = (window as any).myWheel as Wheel;
     const nextBtn = (window as any).nextBtn as HTMLButtonElement;
 
-    nextBtn.disabled = true;
-    let wheelStop: WheelSegment;
-
-    let list = getStudentList(chara, sameHouse, senior);
-
-    myWheel.setSegments(list);
-    wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
-    let newFriend = getCharacterByLongname(characterList, wheelStop.text) as Character<'Student'>;
-
+    // nextBtn.disabled = true;
+    let result = await wheels.spinWheel("Who did you befriend?", getStudentList(chara, sameHouse, senior));
+    let newFriend = getCharacterByLongname(characterList, result) as Character<'Student'>;
+    
     await handleFriendshipOutcome(chara, newFriend);
-    wheels.seeWheel(false);    
+    await io.nextEvent();
+    wheels.seeWheel(false);
 }
 
 /**
@@ -105,29 +89,31 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
     // Mappa del golden trio (bidirezionale)
     const goldenTrio: Record<number, {first: number, second: number}> =
         {55: {first: 56, second: 57}, 56: {first: 55, second: 57}, 57: {first: 55, second: 56}};
+
     if (goldenTrio[newFriend.id])
-    {        
+    {
+        await io.nextEvent();
         let harry = getById(chara.characterList, 55), ron = getById(chara.characterList, 56), hermione = getById(chara.characterList, 57);
         let firstEnc = !isFriend(harry) && !isFriend(ron) && !isFriend(hermione);
 
         // Presenta ogni membro del trio che NON è ancora amico
         if (!isFriend(harry) && newFriend.id !== 55)
         {
-            await io.nextEvent();
             io.showText(`${newFriend.name} introduced you to his friend ${harry!.longname} (Gryffindor).`);
             harry!.connectionlvl = 'friend';
+            await io.nextEvent();
         }
         if (!isFriend(ron) && newFriend.id !== 56)
         {
-            await io.nextEvent();
             io.showText(`${newFriend.name} introduced you to his friend ${ron!.longname} (Gryffindor).`);
             ron!.connectionlvl = 'friend';
+            await io.nextEvent();
         }
         if (!isFriend(hermione) && newFriend.id !== 57)
         {
-            await io.nextEvent();
             io.showText(`${newFriend.name} introduced you to his friend ${hermione!.longname} (Gryffindor).`);
             hermione!.connectionlvl = 'friend';
+            await io.nextEvent();
         }
 
         chara.alignment = 'phoenix_order';
@@ -138,19 +124,20 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
 
     if (newFriend.id === 76)    // Draco Malfoy
     {
+        await io.nextEvent();
         let firstEnc = !isFriend(getById(chara.characterList, 76));
         let crabbe = getById(chara.characterList, 77), goyle = getById(chara.characterList, 78);
         if (!isFriend(crabbe))
         {
-            await io.nextEvent();
             io.showText(`Draco introduced you to his friend ${crabbe!.longname} (Slytherin).`);
             crabbe!.connectionlvl = 'friend';
+            await io.nextEvent();
         }
         if (!isFriend(goyle))
         {
-            await io.nextEvent();
             io.showText(`Draco introduced you to his friend ${goyle!.longname} (Slytherin).`);
             goyle!.connectionlvl = 'friend';
+            await io.nextEvent();
         }
         chara.alignment = 'death_eater';
         if (firstEnc) io.showText(`Your alignement has shifted.`);
@@ -162,13 +149,12 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
     const twinPairs: Record<number, number> = {45: 46, 46: 45, 62: 68, 68: 62};
     if (twinPairs[newFriend.id])
     {
+        await io.nextEvent();
         const otherId = twinPairs[newFriend.id];
         const other = getById(chara.characterList, otherId);
         if (!isFriend(other))
         {
             other!.connectionlvl = 'friend';
-            const relationWord = newFriend.id < 60 ? 'his twin brother' : 'her twin sister';
-            await io.nextEvent();
             io.showText(`You got to know ${newFriend.name}'s ${newFriend.id == 45 || newFriend.id == 46 ? 'twin brother' : 'twin sister'} ${other!.name} as well!`);
             await io.nextEvent();
         }

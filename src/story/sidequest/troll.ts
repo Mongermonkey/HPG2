@@ -37,7 +37,7 @@ export async function troll(chara: MainChara<'Wizard'>): Promise<void>
 
     myWheel.setSegments([flee, fight]);
     wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
+    wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 
@@ -72,7 +72,7 @@ export async function troll(chara: MainChara<'Wizard'>): Promise<void>
     myWheel.setSegments([spell, broom, freeze]);
 
     wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
+    wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 

@@ -1,4 +1,5 @@
 import { Character } from "../characters/characters";
+import { sevenNums } from "./basetypes";
 
 /**
  * Estrae un elemento casuale da un array (probabilità uniforme).

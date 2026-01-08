@@ -35,7 +35,7 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
     ]);
     
     wheels.seeWheel(true);    
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
     await remembrallOutcome(chara, wheelStop.text);
 }
 
@@ -119,7 +119,7 @@ async function ninja(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
         wheels.newSegment("Fail", 0.5)
     ]);
     wheels.seeWheel(true);
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 
@@ -162,7 +162,7 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
         wheels.newSegment("Miss", 1 - catchChance)
     ]);
     wheels.seeWheel(true);
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
 
     if (wheelStop.text === "Miss")
     {

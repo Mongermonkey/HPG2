@@ -1,5 +1,6 @@
 
 import { Wheel } from './Wheel';
+import * as io from "../utilities/input_output_helpers";
 
 export type WheelSegment =
 {
@@ -35,7 +36,7 @@ export function showWheelResult(result: string)
   }
 }
 
-export function spinWheel(myWheel: Wheel): Promise<WheelSegment>
+export function depr(myWheel: Wheel): Promise<WheelSegment>
 {
   return new Promise((resolve) => {
     const spinBtn = (window as any).spinBtn as HTMLButtonElement;
@@ -76,4 +77,17 @@ export function uniformSegments(strings: string[], fillStyle?: string): WheelSeg
   if (!strings.length) return [];
   const fraction = 1 / strings.length;
   return strings.map(s => newSegment(s, fraction, fillStyle));
+}
+
+export async function spinWheel(message: string, segments: WheelSegment[]): Promise<string>
+{  
+    const myWheel = (window as any).myWheel as Wheel;
+    myWheel.setSegments(segments);
+    seeWheel(true);
+    io.showText(message);
+    const wheelStop = await depr(myWheel);
+    await io.nextEvent();
+    seeWheel(false);
+
+    return wheelStop.text;
 }
