@@ -1,6 +1,8 @@
 
 import { newSegment } from "./wheel_helpers";
 import { WheelSegment } from "./wheel_helpers";
+import { percentToRatio } from "./wheel_helpers";
+import { pct } from "./wheel_helpers";
 
 export type Wheela =
 {
@@ -32,7 +34,7 @@ export function newWheela(canvasId: string): Wheela
   if (spinBtn) spinBtn.disabled = true;
 
   let rotation = 0;
-  let segments = [ newSegment('You win!', 0.1), newSegment('You lose!', 0.9) ];
+  let segments = [ newSegment('You win!', 10), newSegment('You lose!', 90) ];
   let palette = ['#a1c4ff', '#fab8ff', '#ffca9f', '#fff692', '#baffc3'];
 
   function draw() {
@@ -45,7 +47,7 @@ export function newWheela(canvasId: string): Wheela
     {
       const seg = segments[i];
       const start = currentAngle;
-      const arc = seg.fraction * 2 * Math.PI;
+      const arc = percentToRatio(seg.fraction) * 2 * Math.PI;
       const end = start + arc;
       ctx!.beginPath();
       ctx!.moveTo(centerX, centerY);
@@ -95,8 +97,8 @@ export class Wheel
     // Inizializza con due segmenti di default
     this.wheel = {
       segments: [
-        newSegment('You win!', 0.1),
-        newSegment('You lose!', 0.9),
+        newSegment('You win!', 10),
+        newSegment('You lose!', 90),
       ],
       draw: () => this.draw()
     };
@@ -118,8 +120,64 @@ export class Wheel
       console.log("Segments array vuoto o non valido. Nessuna modifica.");
       return;
     }
-    this.wheel.segments = segments;
+
+    const normalized = this.normalizeSegments(segments);
+    if (!normalized)
+    {
+      this.reportInvalidSegments(segments);
+      return;
+    }
+
+    this.wheel.segments = normalized;
     this.draw(); // Qui sì, disegna la ruota solo quando cambi i segmenti
+  }
+
+  private normalizeSegments(segments: WheelSegment[]): WheelSegment[] | null
+  {
+    if (segments.length > 100) return null;
+    if (segments.some(s => !Number.isFinite(s.fraction) || s.fraction < 1 || s.fraction > 100)) return null;
+
+    const total = segments.reduce((sum, segment) => sum + segment.fraction, 0);
+    if (!Number.isFinite(total) || total <= 0) return null;
+
+    const ideal = segments.map(s => (s.fraction / total) * 100);
+    const parts = ideal.map(Math.floor);
+    let remainder = 100 - parts.reduce((a, b) => a + b, 0);
+
+    const remainders = ideal
+      .map((v, i) => ({ i, rem: v - parts[i] }))
+      .sort((a, b) => b.rem - a.rem || a.i - b.i);
+
+    for (let i = 0; i < remainder; i++) parts[remainders[i].i] += 1;
+
+    for (let i = 0; i < parts.length; i++)
+    {
+      if (parts[i] >= 1) continue;
+      const donor = parts.findIndex((v, idx) => idx !== i && v > 1);
+      if (donor === -1) return null;
+      parts[i] = 1;
+      parts[donor] -= 1;
+    }
+
+    const normalized = segments.map((s, i) => ({ ...s, fraction: pct(parts[i]) }));
+    const alreadyNormalized = total === 100 && segments.every((segment, i) => segment.fraction === normalized[i].fraction);
+    if (!alreadyNormalized)
+    {
+      console.info("Wheel: auto-normalizzazione segmenti applicata.", {
+        originalTotal: total,
+        normalizedTotal: 100,
+        originalFractions: segments.map(s => s.fraction),
+        normalizedFractions: normalized.map(s => s.fraction)
+      });
+    }
+
+    return normalized;
+  }
+
+  private reportInvalidSegments(segments: WheelSegment[]): void
+  {
+    console.error("Segmenti ruota non validi: ogni fraction deve essere un numero finito tra 1 e 100 e la somma deve essere normalizzabile a 100.", segments);
+    throw new Error("Segmenti ruota non validi");
   }
 
   /**
@@ -140,7 +198,7 @@ export class Wheel
     {
       const seg = this.wheel.segments[i];
       const start = currentAngle;
-      const end = start + seg.fraction * Math.PI * 2;
+      const end = start + percentToRatio(seg.fraction) * Math.PI * 2;
 
       // fill
       ctx.beginPath();
@@ -249,7 +307,7 @@ export class Wheel
           let acc = angle;
           for (const seg of this.wheel.segments) {
             const segStart = acc;
-            const segEnd = acc + seg.fraction * Math.PI * 2;
+            const segEnd = acc + percentToRatio(seg.fraction) * Math.PI * 2;
             // Se il pointer (0) è tra segStart e segEnd
             if (
               (segStart <= pointerAngle && pointerAngle < segEnd) ||

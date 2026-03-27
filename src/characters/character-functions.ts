@@ -1,15 +1,25 @@
 
+/**
+ * Funzioni di supporto per la gestione dei personaggi e delle relazioni:
+ * - Gestione amicizie e ruote (friendshipWheel, befriend, handleFriendshipOutcome)
+ * - Ricerca e utilità personaggi (getStudentList, getCharacterByLongname, getById, isFriend, getRandomStudent)
+ * - Gestione ruoli e docenti (getProfessorFromSubject, getRandomClassStudent, getHeadOfHouse, getQuidditchCaptain)
+ */
+
 import { MainChara } from "./maincharacter";
 import { Wheel } from '../wheel_magic/Wheel';
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
 import { Character, characterList } from './characters';
+import { spinEqual } from '../utilities/random';
 import { WheelSegment } from '../wheel_magic/wheel_helpers';
 import { hogwartsHouse, hogwartsRole } from "../utilities/basetypes";
 
 /**
  * Handles friendship interactions between mc and npcs.
  * @param chara The mc.
+ * @param sureFriend If true, the wheel will not include the "mind your business" option, and the player will always befriend someone.
+ * @param senior True to consider only senior students, false for non-senior, undefined for all.
  */
 export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, senior?: boolean): Promise<void>
 {
@@ -19,21 +29,21 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
     if (!sureFriend)
     {
         let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
-        let chance = wheels.newSegment('Make friends', friendshipChance),
-            notchance = wheels.newSegment('Mind your business', 1 - friendshipChance);
+        let chance = wheels.newSegment('Make friends', friendshipChance * 100),
+            notchance = wheels.newSegment('Mind your business', 100 - friendshipChance * 100);
         
         const result = await wheels.spinWheel("Friendship Wheel! What do you do?", [chance, notchance]);
         if (result === 'Mind your business')
         {
-            io.showText("You decided to mind your own business.");
+            io.showText("You decide to mind your own business.");
             await io.nextEvent();
             return;
         }
     }
 
-    io.showText("You made friends!");
+    io.showText("You make friends!");
     await io.nextEvent();
-    io.showText("Who did you befriend?");
+    io.showText("Who do you befriend?");
 
     await befriend(chara, false, senior);
 }
@@ -46,43 +56,59 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
  */
 export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, senior?: boolean): Promise<void>
 {
-    const myWheel = (window as any).myWheel as Wheel;
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-
-    // nextBtn.disabled = true;
-    let result = await wheels.spinWheel("Who did you befriend?", getStudentList(chara, sameHouse, senior));
+    let result = await wheels.spinWheel("Who do you befriend?", getStudentList(chara, sameHouse, senior));
     let newFriend = getCharacterByLongname(characterList, result) as Character<'Student'>;
     
-    await handleFriendshipOutcome(chara, newFriend);
+    await improveConnection(chara, newFriend);
     await io.nextEvent();
     wheels.seeWheel(false);
 }
 
 /**
- * Handles the outcome of befriending a new character, including friendship level upgrades and special cases.
+ * Handles the improving connection with a character: including friendship level upgrades + special cases.
  * @param chara The main character.
- * @param newFriend The character that was befriended.
+ * @param friend The character whose connection is being improved: works with both the Character object and Character.longname.
  */
-export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFriend: Character<'Student'>)
+export async function improveConnection(chara: MainChara<'Wizard'>, friend: Character<hogwartsRole> | string): Promise<void>
 {
-    switch (newFriend?.connectionlvl)
+    if (typeof friend === 'string')
+    {
+        friend = getCharacterByLongname(characterList, friend) as Character<hogwartsRole>;
+        if (!friend) throw new Error(`Character with longname ${friend} not found.`);
+    }
+
+    if (friend.role != 'Student')
+    {
+        io.showText('Your relation with ' + friend.longname + ' has improved.');
+        await io.nextEvent();
+        switch (friend.connectionlvl)
+        {
+            case 'foe': friend.connectionlvl = 'neutral'; break;
+            case 'none':
+            case 'neutral': friend.connectionlvl = 'friend'; break;
+            case 'friend': friend.connectionlvl = 'bff'; break;
+        }
+        return;
+    }
+    let studentFriend = friend as Character<'Student'>;
+    switch (studentFriend?.connectionlvl)
     {
         case 'foe':
-            newFriend.connectionlvl = 'neutral';
-            io.showText(`You and ${newFriend.longname}, who used to despise you, unexpectedly became friends. Cheers!`);
+            studentFriend.connectionlvl = 'neutral';
+            io.showText(`You and ${studentFriend.longname}, who used to despise you, unexpectedly became friends. Cheers!`);
             break;
         case 'none':
         case 'neutral':
-            newFriend.connectionlvl = 'friend';
-            io.showText(`You befriended ${newFriend.longname} (${newFriend.house})!`);
+            studentFriend.connectionlvl = 'friend';
+            io.showText(`You befriended ${studentFriend.longname} (${studentFriend.house})!`);
             break;
         case 'friend':
-            newFriend.connectionlvl = 'bff';
-            io.showText(`You and ${newFriend.longname} are now BFFs! Cheers!`);
+            studentFriend.connectionlvl = 'bff';
+            io.showText(`You and ${studentFriend.longname} are now BFFs! Cheers!`);
             break;
         case 'bff':
-            newFriend.connectionlvl = 'lover';
-            io.showText(`Something changed between you and ${newFriend.longname}.\nAfter what you've been through, you and ${newFriend.name} became lovers!`);
+            studentFriend.connectionlvl = 'lover';
+            io.showText(`Something changed between you and ${studentFriend.longname}.\nAfter what you've been through, you and ${studentFriend.name} became lovers!`);
             break;
     }
 
@@ -90,28 +116,28 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
     const goldenTrio: Record<number, {first: number, second: number}> =
         {55: {first: 56, second: 57}, 56: {first: 55, second: 57}, 57: {first: 55, second: 56}};
 
-    if (goldenTrio[newFriend.id])
+    if (goldenTrio[studentFriend.id])
     {
         await io.nextEvent();
         let harry = getById(chara.characterList, 55), ron = getById(chara.characterList, 56), hermione = getById(chara.characterList, 57);
         let firstEnc = !isFriend(harry) && !isFriend(ron) && !isFriend(hermione);
 
         // Presenta ogni membro del trio che NON è ancora amico
-        if (!isFriend(harry) && newFriend.id !== 55)
+        if (!isFriend(harry) && studentFriend.id !== 55)
         {
-            io.showText(`${newFriend.name} introduced you to his friend ${harry!.longname} (Gryffindor).`);
+            io.showText(`${studentFriend.name} introduced you to his friend ${harry!.longname} (Gryffindor).`);
             harry!.connectionlvl = 'friend';
             await io.nextEvent();
         }
-        if (!isFriend(ron) && newFriend.id !== 56)
+        if (!isFriend(ron) && studentFriend.id !== 56)
         {
-            io.showText(`${newFriend.name} introduced you to his friend ${ron!.longname} (Gryffindor).`);
+            io.showText(`${studentFriend.name} introduced you to his friend ${ron!.longname} (Gryffindor).`);
             ron!.connectionlvl = 'friend';
             await io.nextEvent();
         }
-        if (!isFriend(hermione) && newFriend.id !== 57)
+        if (!isFriend(hermione) && studentFriend.id !== 57)
         {
-            io.showText(`${newFriend.name} introduced you to his friend ${hermione!.longname} (Gryffindor).`);
+            io.showText(`${studentFriend.name} introduced you to his friend ${hermione!.longname} (Gryffindor).`);
             hermione!.connectionlvl = 'friend';
             await io.nextEvent();
         }
@@ -122,7 +148,7 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
         return;
     }
 
-    if (newFriend.id === 76)    // Draco Malfoy
+    if (studentFriend.id === 76)    // Draco Malfoy
     {
         await io.nextEvent();
         let firstEnc = !isFriend(getById(chara.characterList, 76));
@@ -147,27 +173,76 @@ export async function handleFriendshipOutcome(chara: MainChara<'Wizard'>, newFri
 
     // Mappa delle coppie di gemelli (bidirezionale)
     const twinPairs: Record<number, number> = {45: 46, 46: 45, 62: 68, 68: 62};
-    if (twinPairs[newFriend.id])
+    if (twinPairs[studentFriend.id])
     {
         await io.nextEvent();
-        const otherId = twinPairs[newFriend.id];
+        const otherId = twinPairs[studentFriend.id];
         const other = getById(chara.characterList, otherId);
         if (!isFriend(other))
         {
             other!.connectionlvl = 'friend';
-            io.showText(`You got to know ${newFriend.name}'s ${newFriend.id == 45 || newFriend.id == 46 ? 'twin brother' : 'twin sister'} ${other!.name} as well!`);
+            io.showText(`You got to know ${studentFriend.name}'s ${studentFriend.id == 45 || studentFriend.id == 46 ? 'twin brother' : 'twin sister'} ${other!.name} as well!`);
             await io.nextEvent();
         }
     }
 }
 
 /**
+ * Handles the worsening connection with a character: including friendship level downgrades + special cases.
+ * @param chara The main character.
+ * @param foe The character whose connection is being worsened.
+ */
+export async function worsenConnection(chara: MainChara<'Wizard'>, foe: Character<hogwartsRole>): Promise<void>
+{
+    io.showText('Your relation with ' + foe.longname + ' has worsened.');
+    await io.nextEvent();
+    switch (foe.connectionlvl)
+    {
+        case 'lover': foe.connectionlvl = 'friend'; break;
+        case 'bff': foe.connectionlvl = 'friend'; break;
+        case 'friend': foe.connectionlvl = 'neutral'; break;
+        case 'none':
+        case 'neutral': foe.connectionlvl = 'foe'; break;
+    }
+
+    if (foe.longname === 'Draco Malfoy' && foe.connectionlvl === 'foe')
+    {
+        let crabbe = getCharacterByLongname(chara.characterList, 'Vincent Crabbe'), goyle = getCharacterByLongname(chara.characterList, 'Gregory Goyle');
+        crabbe!.connectionlvl = 'foe';
+        goyle!.connectionlvl = 'foe';
+        io.showText('Vincent Crabbe and Gregory Goyle, Draco\'s closest friends, are also upset with you for what happened with Draco.\nYour relation with them has worsened as well.');
+        await io.nextEvent();
+    }
+
+    if ((foe.longname === 'Fred Weasley' || foe.longname === 'George Weasley') && foe.connectionlvl === 'foe')
+    {
+        let otherName = foe.longname === 'Fred Weasley' ? 'George Weasley' : 'Fred Weasley';
+        let other = getCharacterByLongname(chara.characterList, otherName);
+        other!.connectionlvl = 'foe';
+        io.showText(`Your relation with ${otherName} has worsened as well.`);
+        await io.nextEvent();
+    }
+
+    if ((foe.longname === 'Padma Patil' || foe.longname === 'Parvati Patil') && foe.connectionlvl === 'foe')
+    {
+        let otherName = foe.longname === 'Padma Patil' ? 'Parvati Patil' : 'Padma Patil';
+        let other = getCharacterByLongname(chara.characterList, otherName);
+        other!.connectionlvl = 'foe';
+        io.showText(`Your relation with ${otherName} has worsened as well.`);
+        await io.nextEvent();
+    }
+    
+    return;
+}
+
+/**
  * Gets a list of student segments.
  * @param chara The main character.
+ * @param sameHouse Whether to filter for students from the same house as the mc.
  * @param senior Whether to filter for senior students, non-senior students, or all students.
  * @returns A list of student segments.
  */
-function getStudentList(chara: MainChara<'Wizard'>, sameHouse: boolean = false, senior?: boolean): WheelSegment[]
+export function getStudentList(chara: MainChara<'Wizard'>, sameHouse: boolean = false, senior?: boolean): WheelSegment[]
 {
     let students = chara.characterList.filter(
         c => c.role === 'Student'
@@ -182,7 +257,7 @@ function getStudentList(chara: MainChara<'Wizard'>, sameHouse: boolean = false, 
         ? students.filter(c => c.senior === true)
         : students;
 
-    const fraction = students.length > 0 ? 1 / students.length : 0;
+    const fraction = students.length > 0 ? 100 / students.length : 0;
 
     return students.map(s => wheels.newSegment(s.longname, fraction));
 }
@@ -221,17 +296,36 @@ export function isFriend(character: Character<hogwartsRole> | undefined): boolea
 }
 
 /**
+ * Checks if a character is a friend by their long name.
+ * @param characterlist The list of characters to search.
+ * @param longname The long name of the character to check.
+ * @returns True if the character is a friend, false otherwise.
+ */
+export function isFriendByLongname(characterlist: Character<hogwartsRole>[], longname: string): boolean
+{
+    const connlvl = getCharacterByLongname(characterlist, longname)?.connectionlvl;
+    return connlvl === 'friend' || connlvl === 'bff' || connlvl === 'lover';
+}
+
+/**
  * Gets a random student from the character list.
  * @param characterlist The list of characters to search.
- * @param houses The list of houses to filter by.
+ * @param sameyear If true, only consider students from the same year as the main character;
+ *                  if false, only consider students from different years;
+ *                  if undefined, consider all students.
+ * @param houses If provided, only consider students from the specified houses.
  * @returns A random student character, or undefined if none found.
  */
-function getRandomStudent(characterlist: Character<hogwartsRole>[], houses?: hogwartsHouse[] | undefined): Character<'Student'> | undefined
+export function getRandomStudent(characterlist: Character<hogwartsRole>[], sameyear?: boolean, houses?: hogwartsHouse[] | undefined): Character<'Student'> | undefined
 {
     let students = characterlist.filter(c => c.role === 'Student') as Character<'Student'>[];
     if (houses && houses.length > 0)
     {
         students = students.filter(s => houses.includes(s.house));
+    }
+    if (sameyear !== undefined)
+    {
+        students = students.filter(s => s.senior === !sameyear);
     }
     if (students.length === 0) return undefined;
 
@@ -245,18 +339,6 @@ function getRandomStudent(characterlist: Character<hogwartsRole>[], houses?: hog
 export function getProfessorFromSubject(characterList: any[], subject: string): any
 {
     return characterList.find(c => c.role === 'Teacher' && c.subject === subject);
-}
-
-/**
- * Estrae uno studente casuale dalla lista dei personaggi.
- */
-export function getRandomClassStudent(characterList: any[]): any
-{
-    const students = characterList.filter(c => c.role === 'Student');
-    if (!students.length) return undefined;
-    
-    const idx = Math.floor(Math.random() * students.length);
-    return students[idx];
 }
 
 /**
@@ -276,4 +358,25 @@ export function getHeadOfHouse(characterList: any[], house: hogwartsHouse): Char
 export function getQuidditchCaptain(characterList: any[], house: hogwartsHouse): Character<'Student'>
 {
     return characterList.find(c => c.role === 'Student' && c.captain && c.house === house);
+}
+
+/**
+ * Restituisce il numero di amici (friend, bff, lover) nella lista personaggi.
+ * @param characterList Lista dei personaggi da esaminare.
+ * @returns Numero di amici.
+ */
+export function countFriends(characterList: Character<hogwartsRole>[]): number {
+    return characterList.filter(c => c.connectionlvl === 'friend' || c.connectionlvl === 'bff' || c.connectionlvl === 'lover').length;
+}
+
+/**
+ * Restituisce un elemento random dalla lista che sia un amico (friend, bff, lover).
+ * @param characterList Lista dei personaggi da cui estrarre.
+ * @returns Un Character che è amico, oppure undefined se nessuno trovato.
+ */
+export function getRandomFriend(characterList: Character<hogwartsRole>[]): Character<hogwartsRole> | undefined
+{
+    const friends = characterList.filter(isFriend);
+    if (friends.length === 0) return undefined;
+    return spinEqual(friends);
 }

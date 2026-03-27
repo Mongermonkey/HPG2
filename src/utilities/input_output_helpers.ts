@@ -1,3 +1,10 @@
+/**
+ * Funzioni di supporto per input e output testuale:
+ * - Visualizzazione testo (showText)
+ * - Gestione input utente (handleInput)
+ * - Gestione avanzamento eventi (nextEvent)
+ */
+
 import { animateText } from "../visual_magic/dust_animation";
 
 let current_msg = 0;

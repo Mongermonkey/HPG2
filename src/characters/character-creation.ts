@@ -1,21 +1,26 @@
+/**
+ * Funzioni di supporto per la creazione e l'inizializzazione del personaggio principale:
+ * - Creazione del personaggio (createCharacter, chooseGender, writeName)
+ * - Sorteggio delle caratteristiche (sortBlood, sortGifts)
+ * - Inizializzazione del mago e delle sue proprietà (urawizard, sortPet, sortSkills)
+ */
 
 import { Wheel } from '../wheel_magic/Wheel';
 import * as random from '../utilities/random';
 import { sevenNums } from "../utilities/basetypes";
-import { Grade } from '../utilities/compositetypes';
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
 import { characterList } from "../characters/characters";
 import { animal, subject } from '../utilities/basetypes';
 import { newSegment } from '../wheel_magic/wheel_helpers';
 import { Baseclass, MainChara, Gifts, Pet } from './maincharacter';
+import { BasicSecrets, FirstYearClues, freshPassages, Grade } from '../utilities/compositetypes';
 
 const myWheel = (window as any).myWheel as Wheel;
 const nextBtn = (window as any).nextBtn as HTMLButtonElement;
 const spinBtn = (window as any).spinBtn as HTMLButtonElement;
 
 // #region Character Creation
-
 /**
  * Crea il personaggio principale.
  * @returns Il personaggio creato.
@@ -89,9 +94,9 @@ export async function sortBlood(): Promise<"pure" | "half" | "mud">
 {
     // spinBtn.disabled = true;
     let bloodOptions = [
-        newSegment('pureblood', 0.12),
-        newSegment('halfblood', 0.7),
-        newSegment('mudblood', 0.18)
+        newSegment('pureblood', 12),
+        newSegment('halfblood', 70),
+        newSegment('mudblood', 18)
     ];    
     const result = await wheels.spinWheel("Which blood is your blood?", bloodOptions);
 
@@ -113,7 +118,7 @@ export async function sortBlood(): Promise<"pure" | "half" | "mud">
 export async function sortGifts(name: string): Promise<Gifts>
 {
     // spinBtn.disabled = true;
-    let giftOptions = [ newSegment('none', 0.9), newSegment('gift', 0.1) ];
+    let giftOptions = [ newSegment('none', 90), newSegment('gift', 10) ];
     let result = await wheels.spinWheel("Were you marked by any gift or curse?", giftOptions);
 
     if (result === "none")
@@ -124,10 +129,10 @@ export async function sortGifts(name: string): Promise<Gifts>
 
     // spinBtn.disabled = true;
     giftOptions = [
-        newSegment('metamorphmagus', 0.40),
-        newSegment('parselmouth', 0.25),
-        newSegment('sight', 0.15),
-        newSegment('lycanthropy', 0.20),
+        newSegment('metamorphmagus', 40),
+        newSegment('parselmouth', 25),
+        newSegment('sight', 15),
+        newSegment('lycanthropy', 20),
     ];
     result = await wheels.spinWheel(`Some mystical mark has been bestowed upon you, ${name}.\n Let's see what it is...`, giftOptions);
 
@@ -160,7 +165,7 @@ export async function sortGifts(name: string): Promise<Gifts>
 
 // #endregion
 
-// #region URAWIZARD
+// #region URAWIZARD (human player)
 /**
  * Create a new wizard character.
  * @param chara The base character information.
@@ -188,11 +193,14 @@ export async function urawizard(chara: Baseclass<'Default'>): Promise<MainChara<
         quidditchCaptain: false,
         stress: 0.0,
         fame: 0.0,
-        clues: [false, false, false, false, false, false, false],
+        clues: FirstYearClues,
+        secrets: BasicSecrets,
         characterList: [...characterList],
         quidditchGames: [],
         year: 1,
         grades: grades,
+        secretPassages: freshPassages,
+        mainQuestProgress: 0
     };
 }
 
@@ -204,8 +212,8 @@ async function sortPet(): Promise<Pet>
 {
     // nextBtn.disabled = true;
     let petType: animal = "none";
-    let cat = newSegment('cat', 0.15), owl = newSegment('owl', 0.15),
-    toad = newSegment('toad', 0.15), none = newSegment('none', 0.55);
+    let cat = newSegment('cat', 15), owl = newSegment('owl', 15),
+    toad = newSegment('toad', 15), none = newSegment('none', 55);
 
     let result = await wheels.spinWheel("Did you bring a pet to Hogwarts?", [cat, owl, toad, none]) as animal;
 
@@ -247,6 +255,10 @@ export async function sortSkills(): Promise<Grade[]>
         grades.push({subject, score: Number(result)});
         wheels.showWheelResult(`Your skill in ${subject}: '${result}'.`);
         await io.nextEvent();
+    }
+    for (let subject of ['Ancient Runes', 'Arithmancy', 'Divination', 'Care of Magical Creatures', 'Muggle Studies'] as subject[])
+    {
+        grades.push({subject, score: 0});
     }
 
     return grades;

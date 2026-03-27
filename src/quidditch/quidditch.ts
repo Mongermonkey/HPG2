@@ -63,8 +63,8 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     }
     else
     {
-        let quid = newSegment("Interested", Math.min(0.95, 0.1 + getSkill(chara, 'Flying') / 10));
-        let notquid = newSegment("Not Interested", 1 - quid.fraction);
+        let quid = newSegment("Interested", Math.min(95, 10 + getSkill(chara, 'Flying') * 10));
+        let notquid = newSegment("Not Interested", 100 - quid.fraction);
 
         result = await wheels.spinWheel("Quidditch tryouts are now open! Interested in applying?", [quid, notquid]);
         if (result === "Not Interested")
@@ -76,8 +76,8 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     }
 
     await chitchat.QuidditchSelection(captain.longname, chara.house);
-    let pass = newSegment("Pass", Math.min(0.95, getSkill(chara, 'Flying') / 10));
-    let bad = newSegment("Fail", 1 - pass.fraction);
+    let pass = newSegment("Pass", Math.min(95, getSkill(chara, 'Flying') * 10));
+    let bad = newSegment("Fail", 100 - pass.fraction);
 
     result = await wheels.spinWheel("Do you pass the Quidditch selection?", [pass, bad]);
     if (result === "Fail")
@@ -99,7 +99,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
  */
 async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<'Student'>): Promise<void>
 {
-    let r1 = newSegment("Seeker", 0.15), r2 = newSegment("Chaser", 0.40), r3 = newSegment("Beater", 0.30), r4 = newSegment("Keeper", 0.15);
+    let r1 = newSegment("Seeker", 15), r2 = newSegment("Chaser", 40), r3 = newSegment("Beater", 30), r4 = newSegment("Keeper", 15);
     let segments: WheelSegment[] = [];
 
     // Modifiche in base al ruolo del capitano della casa - Ravenclaw, Slytherin: chaser; Gryffindor: keeper; Hufflepuff: seeker
@@ -107,24 +107,24 @@ async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<
     {
         case 'Ravenclaw':
         case 'Slytherin': {
-            r2.fraction -= 0.15;
-            r1.fraction += 0.05;
-            r3.fraction += 0.05;
-            r4.fraction += 0.05;
+            r2.fraction = wheels.pct(r2.fraction - 15);
+            r1.fraction = wheels.pct(r1.fraction + 5);
+            r3.fraction = wheels.pct(r3.fraction + 5);
+            r4.fraction = wheels.pct(r4.fraction + 5);
             break;
         }
         case 'Gryffindor': {
             // Rimuovi r4 (Keeper) e redistribuisci 0.15 agli altri
-            r1.fraction += 0.05;
-            r2.fraction += 0.05;
-            r3.fraction += 0.05;
+            r1.fraction = wheels.pct(r1.fraction + 5);
+            r2.fraction = wheels.pct(r2.fraction + 5);
+            r3.fraction = wheels.pct(r3.fraction + 5);
             break;
         }
         case 'Hufflepuff': {
             // Rimuovi r1 (Seeker) e redistribuisci 0.15 agli altri
-            r2.fraction += 0.05;
-            r3.fraction += 0.05;
-            r4.fraction += 0.05;
+            r2.fraction = wheels.pct(r2.fraction + 5);
+            r3.fraction = wheels.pct(r3.fraction + 5);
+            r4.fraction = wheels.pct(r4.fraction + 5);
             break;
         }
     }
@@ -132,10 +132,10 @@ async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<
     // Se candidato, probabilità di Seeker aumentata (no Hufflepuff -> Cedric)
     if (chara.quidditchRole === 'candidate')
     {
-        if (chara.house !== 'Hufflepuff') r1.fraction += 0.36;
-        r2.fraction -= 0.12;
-        r3.fraction -= 0.12;
-        if (chara.house !== 'Gryffindor') r4.fraction -= 0.12;
+        if (chara.house !== 'Hufflepuff') r1.fraction = wheels.pct(r1.fraction + 36);
+        r2.fraction = wheels.pct(r2.fraction - 12);
+        r3.fraction = wheels.pct(r3.fraction - 12);
+        if (chara.house !== 'Gryffindor') r4.fraction = wheels.pct(r4.fraction - 12);
     }
 
     // Costruisci l'array dei segmenti validi
@@ -150,7 +150,7 @@ async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<
     await io.nextEvent();
     io.showText(`${captain.name} welcomes you to the team.`);
     await io.nextEvent();
-    npc.handleFriendshipOutcome(chara, captain);
+    npc.improveConnection(chara, captain);
     await io.nextEvent();
 }
 
@@ -287,30 +287,51 @@ async function postQuidditch(chara: MainChara<'Wizard'>, game: QuidditchGame): P
         return;
     }
 
-    // celebration
     io.showText(`All ${chara.house}s celebrates the victory together in the common room!`);
     await io.nextEvent();
-    io.showText("You strengthen your bonds with your housemates!");
-    await io.nextEvent();
+    await quidditchTeamBond(chara);
+}
+
+/**
+ * Handles the bonding event with the Quidditch team.
+ * @param chara The main character.
+ */
+async function quidditchTeamBond(chara: MainChara<'Wizard'>): Promise<void>
+{
     let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
-    let chance = wheels.newSegment('Make friends', friendshipChance),
-        notchance = wheels.newSegment('Mind your business', 1 - friendshipChance);
-    
+    let chance = wheels.newSegment('Make friends', friendshipChance * 100),
+        notchance = wheels.newSegment('Mind your business', 100 - friendshipChance * 100);
+
     wheels.seeWheel(true);
     io.showText("Friendship Wheel! What do you do?");
     myWheel.setSegments([chance, notchance]);
     let wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
+
     if (wheelStop.text === 'Mind your business')
     {
-        io.showText("You decided to mind your own business.");
+        io.showText("You decide to mind your own business.");
         await io.nextEvent();
         return;
     }
-    io.showText("You made friends!");
+
+    io.showText("You make friends!");
     await io.nextEvent();
-    io.showText("Who did you befriend?");
+    io.showText("Who do you befriend?");
     await npc.befriend(chara, true);
     await io.nextEvent();
+}
+
+/**
+ * Handles the Quidditch practice event.
+ * @param chara The main character.
+ */
+export async function quidditchPractice(chara: MainChara<'Wizard'>): Promise<void>
+{
+    chitchat.quidditchPractice();
+    await io.nextEvent();
+    chara.grades.find(g => g.subject === 'Flying')!.score++;
+    wheels.showWheelResult('Flying++');
+    await quidditchTeamBond(chara);
 }
