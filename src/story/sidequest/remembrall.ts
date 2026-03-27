@@ -16,16 +16,16 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
 {
     await chitchat.remembrallIntro();
 
-    let laughChance = 0.15, askChance = 0.15, actChance = 0.010;
+    let laughChance = 15, askChance = 15, actChance = 1;
 
     let draco = npc.getCharacterByLongname(chara.characterList, 'Draco Malfoy'),
         neville = npc.getCharacterByLongname(chara.characterList, 'Neville Longbottom');
-    if (npc.isFriend(draco)) { laughChance += 0.25; }
-    if (npc.isFriend(neville)) { askChance += 0.10; actChance += 0.05; }
-    if (chara.house === 'Gryffindor') { askChance += 0.05; actChance += 0.10; }
-    if (chara.house === 'Slytherin') { laughChance += 0.10; }
+    if (npc.isFriend(draco)) { laughChance += 25; }
+    if (npc.isFriend(neville)) { askChance += 10; actChance += 5; }
+    if (chara.house === 'Gryffindor') { askChance += 5; actChance += 10; }
+    if (chara.house === 'Slytherin') { laughChance += 10; }
 
-    let nothingChance = 1 - (laughChance + askChance + actChance);
+    let nothingChance = 100 - (laughChance + askChance + actChance);
 
     myWheel.setSegments([
         wheels.newSegment("Laugh", laughChance),
@@ -35,7 +35,7 @@ export async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
     ]);
     
     wheels.seeWheel(true);    
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
     await remembrallOutcome(chara, wheelStop.text);
 }
 
@@ -49,7 +49,6 @@ async function remembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string
     let draco = npc.getCharacterByLongname(chara.characterList, 'Draco Malfoy') as Character<'Student'>,
         neville = npc.getCharacterByLongname(chara.characterList, 'Neville Longbottom') as Character<'Student'>;
 
-    wheelOutput = 'Act'; // DEBUG
     switch (wheelOutput)
     {
         case "Laugh":
@@ -67,7 +66,7 @@ async function remembrallOutcome(chara: MainChara<'Wizard'>, wheelOutput: string
                 io.showText("Neville is now angry at you. He expected more from a friend.");
                 neville.connectionlvl = "foe";
             }
-            if (chara.house === "Slytherin") npc.handleFriendshipOutcome(chara, draco);            
+            if (chara.house === "Slytherin") npc.improveConnection(chara, draco);            
             break;
         case "Ask it back":
             await io.nextEvent();
@@ -115,15 +114,14 @@ async function ninja(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
 {
     io.showText("Do you succeed?");
     myWheel.setSegments([
-        wheels.newSegment("Success", 0.5),
-        wheels.newSegment("Fail", 0.5)
+        wheels.newSegment("Success", 50),
+        wheels.newSegment("Fail", 50)
     ]);
     wheels.seeWheel(true);
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 
-    wheelStop.text = "Success"; // DEBUG
     if (wheelStop.text === "Success")
     {
         io.showText("You swiftly grab the Remembrall from Draco's hand! This swift move will make you popular.");
@@ -137,7 +135,7 @@ async function ninja(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
         draco.connectionlvl = "foe";
         await io.nextEvent();
         io.showText("In the afternoon, you give it back to Neville in the infirmatory. He is very grateful to you.");
-        npc.handleFriendshipOutcome(chara, neville);
+        npc.improveConnection(chara, neville);
         return;
     }
     
@@ -155,14 +153,14 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
 {
     wheels.seeWheel(false);
     await chitchat.remembrallTrial();
-    let catchChance = 0.1 + Math.min(0.85, getSkill(chara, 'Flying') / 10);
+    let catchChance = 10 + Math.min(85, getSkill(chara, 'Flying') * 10);
 
     myWheel.setSegments([
         wheels.newSegment("Catch", catchChance),
-        wheels.newSegment("Miss", 1 - catchChance)
+        wheels.newSegment("Miss", 100 - catchChance)
     ]);
     wheels.seeWheel(true);
-    const wheelStop = await wheels.spinWheel(myWheel);
+    const wheelStop = await wheels.depr(myWheel);
 
     if (wheelStop.text === "Miss")
     {
@@ -178,16 +176,16 @@ async function trial(chara: MainChara<'Wizard'>, draco: Character<'Student'>, ne
     await io.nextEvent();
     wheels.seeWheel(false);
     io.showText("You leap into the air and, in a move worthy of a Quidditch player, catch the Remembrall!\nWell done! This brave move will make you more popular.");
-    chara.fame += 5;
     await io.nextEvent();
+    chara.fame += 5;
     wheels.showWheelResult("fame++");
     await io.nextEvent();
     io.showText("Draco looks furious as you retrieve the Remembrall.");
-    draco.connectionlvl = "foe";
+    npc.worsenConnection(chara, draco);
     await io.nextEvent();
     io.showText("In the afternoon, you give it back to Neville in the infirmatory. He is very grateful to you.");
     await io.nextEvent();
-    npc.handleFriendshipOutcome(chara, neville);
+    npc.improveConnection(chara, neville);
 
     // add chance to quidditch
     let head = npc.getHeadOfHouse(chara.characterList, chara.house);

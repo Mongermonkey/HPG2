@@ -4,9 +4,9 @@ import * as random from '../../utilities/random';
 import { Character } from '../../characters/characters';
 import * as wheels from "../../wheel_magic/wheel_helpers";
 import * as io from "../../utilities/input_output_helpers";
+import { MainChara } from '../../characters/maincharacter';
 import * as npc from '../../characters/character-functions';
 import * as chitchat from "../../dialogues/year-one-dialogues";
-import { getMaxSkill, MainChara } from '../../characters/maincharacter';
 
 const myWheel = (window as any).myWheel as Wheel;
 const nextBtn = (window as any).nextBtn as HTMLButtonElement;
@@ -30,14 +30,14 @@ export async function troll(chara: MainChara<'Wizard'>): Promise<void>
         return;
     }
 
-    let flee = wheels.newSegment("Flee", 0.50), fight = wheels.newSegment("Fight", 0.50);
-    if (chara.house === 'Gryffindor') { fight.fraction += 0.10; flee.fraction -= 0.10; }
-    if (hermfriend && chara.alignment === 'death_eater') { fight.fraction -= 0.40; flee.fraction += 0.40; }
-    if (hermfriend && chara.alignment === 'phoenix_order') { fight.fraction += 0.40; flee.fraction -= 0.40; }
+    let flee = wheels.newSegment("Flee", 50), fight = wheels.newSegment("Fight", 50);
+    if (chara.house === 'Gryffindor') { fight.fraction = wheels.pct(fight.fraction + 10); flee.fraction = wheels.pct(flee.fraction - 10); }
+    if (hermfriend && chara.alignment === 'death_eater') { fight.fraction = wheels.pct(fight.fraction - 40); flee.fraction = wheels.pct(flee.fraction + 40); }
+    if (hermfriend && chara.alignment === 'phoenix_order') { fight.fraction = wheels.pct(fight.fraction + 40); flee.fraction = wheels.pct(flee.fraction - 40); }
 
     myWheel.setSegments([flee, fight]);
     wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
+    wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 
@@ -66,13 +66,15 @@ export async function troll(chara: MainChara<'Wizard'>): Promise<void>
     await io.nextEvent();
     io.showText("What do you do?");
 
-    let spellskill = getMaxSkill(chara, ['Charms', 'Defense Against the Dark Arts']) / 10;
+    let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
+    let darkArtSkill = chara.grades.find(g => g.subject === 'Defense Against the Dark Arts')!.score;
+    let spellskill = Math.max(charmSkill, darkArtSkill) * 10;
     let spell = wheels.newSegment("spell", spellskill);
-    let broom = wheels.newSegment("broom", (1 - spellskill) / 2), freeze = wheels.newSegment("freeze", (1 - spellskill) / 2);
+    let broom = wheels.newSegment("broom", (100 - spellskill) / 2), freeze = wheels.newSegment("freeze", (100 - spellskill) / 2);
     myWheel.setSegments([spell, broom, freeze]);
 
     wheels.seeWheel(true);
-    wheelStop = await wheels.spinWheel(myWheel);
+    wheelStop = await wheels.depr(myWheel);
     await io.nextEvent();
     wheels.seeWheel(false);
 
@@ -95,23 +97,25 @@ export async function troll(chara: MainChara<'Wizard'>): Promise<void>
             break;
         case "broom":
             await chitchat.troll_broom(hermfriend, chara.house);
-            chara.clues[1] = true;      // second clue (Snape's wound)
+            chara.clues.find(c => c.name === 'snape_halloween')!.discovered = true;      // second clue (Snape's wound)
             chara.fame += 5;
+            chara.housePoints-=5;
             wheels.showWheelResult('-5 house points\nfame++');
             await io.nextEvent();
             io.showText(hermfriend ? "After this scary night, you and Hermione become closer." : "This scary night brings you closer to Hermione.");
             await io.nextEvent();
-            await npc.handleFriendshipOutcome(chara, hermione);
+            await npc.improveConnection(chara, hermione);
             break;
         case "spell":
             await chitchat.troll_spell(hermfriend, chara.house);
-            chara.clues[1] = true;      // second clue (Snape's wound)
+            chara.clues.find(c => c.name === 'snape_halloween')!.discovered = true;      // second clue (Snape's wound)
             chara.fame += hermfriend ? 10 : 5;
+            chara.housePoints += hermfriend ? 10 : 5 ;
             wheels.showWheelResult(hermfriend ? '+10 house points\nfame++' : '+5 house points\nfame++');
             await io.nextEvent();
             io.showText(hermfriend ? "After this scary night, you and Hermione become closer." : "This scary night brings you closer to Hermione.");
             await io.nextEvent();
-            await npc.handleFriendshipOutcome(chara, hermione);
+            await npc.improveConnection(chara, hermione);
             break;
     }
 }

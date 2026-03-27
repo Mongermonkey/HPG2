@@ -1,5 +1,5 @@
 
-import { alignement, connectionlvl, hogwartsHouse, hogwartsRole, quidditchRole, subject } from "../utilities/basetypes";
+import { alignment, connectionlvl, hogwartsHouse, hogwartsRole, quidditchRole, subject } from "../utilities/basetypes";
 
 // #region types
 /**
@@ -14,7 +14,7 @@ export type BaseCharacter<T extends hogwartsRole> =
     surname: string;
     longname: string;
     male: boolean;
-    alignement: alignement;
+    alignement: alignment;
     connectionlvl: connectionlvl;
 }
 
@@ -42,6 +42,15 @@ export type Teacher =
 }
 
 /**
+ * Creature
+ * Extends BaseCharacter for creatures, adding house info when applicable.
+ */
+export type Creature =
+{
+    house: hogwartsHouse;
+}
+
+/**
  * HogwartsCharacter
  * Maps each hogwartsRole to its specific extension type.
  */
@@ -49,9 +58,9 @@ export type HogwartsCharacter =
 {
     [key in hogwartsRole]: key extends 'Student' ? Student
                         : key extends 'Teacher' ? Teacher
+                        : key extends 'Creature' ? Creature
                         : key extends 'Staff' ? {}
                         : key extends 'External' ? {}
-                        : key extends 'Creature' ? {}
                         : never;
 }
 
@@ -74,10 +83,17 @@ export const characterList: Character<hogwartsRole>[] =
     { role: 'Staff', id: 3, name: 'Argus', surname: 'Filch', longname: 'Filch', male: true, alignement: 'neutral', connectionlvl: 'foe' },
     { role: 'Staff', id: 4, name: 'Irma', surname: 'Prince', longname: 'Madam Prince', male: false, alignement: 'neutral', connectionlvl: 'neutral' },
     
-    // Hogwarts Creatures (5-9)
-    { role: 'Creature', id: 5, name: '', surname: 'Peeves', longname: 'Filch', male: true, alignement: 'neutral', connectionlvl: 'foe' },
-
-    // Externals (10-13)
+    // Hogwarts Creatures (5-10)
+    { role: 'Creature', id: 5, name: '', surname: 'Peeves', longname: 'Peeves', male: true, alignement: 'neutral', connectionlvl: 'foe', house: 'none' },
+    { role: 'Creature', id: 6, name: 'Myrtle', surname: '', longname: 'Moaning Myrtle', male: false, alignement: 'neutral', connectionlvl: 'neutral', house: 'none' },
+    { role: 'Creature', id: 7, name: 'Sir Nicholas', surname: 'de Mimsy-Porpington', longname: 'Nearly Headless Nick', male: true, alignement: 'neutral', connectionlvl: 'neutral', house: 'Gryffindor' },
+    { role: 'Creature', id: 8, name: 'The Fat Friar', surname: '', longname: 'The Fat Friar', male: true, alignement: 'neutral', connectionlvl: 'neutral', house: 'Hufflepuff' },
+    { role: 'Creature', id: 9, name: 'Helena', surname: 'Ravenclaw', longname: 'The Grey Lady', male: false, alignement: 'neutral', connectionlvl: 'neutral', house: 'Ravenclaw' },
+    { role: 'Creature', id: 10, name: 'The Bloody Baron', surname: '', longname: 'The Bloody Baron', male: true, alignement: 'neutral', connectionlvl: 'neutral', house: 'Slytherin' },
+    // n°11: Dobby
+    // n°12: Buckbeak
+    // n°13: Sirius Black
+    // n°14: Grawp
 
     // Hogwarts Teachers (20-36)
     { role: 'Teacher', id: 20, name: 'Minerva', surname: 'McGonagall', longname: 'Professor McGonagall', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', subject: 'Transfiguration', isHeadofHouse: true, house: 'Gryffindor' },
@@ -88,6 +104,15 @@ export const characterList: Character<hogwartsRole>[] =
     { role: 'Teacher', id: 25, name: 'Cuthbert', surname: 'Binns', longname: 'Professor Binns', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'History of Magic', isHeadofHouse: false, house: 'none' },
     { role: 'Teacher', id: 26, name: 'Rolanda', surname: 'Hooch', longname: 'Madam Hooch', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Flying', isHeadofHouse: false, house: 'none' },
     { role: 'Teacher', id: 27, name: 'Quirinus', surname: 'Quirrell', longname: 'Professor Quirrell', male: true, alignement: 'death_eater', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' },
+    // n°28: Gilderoy Lockhart
+    // n°29: Remus Lupin
+    // n°30: Sybill Trelawney
+    // n°31: Septima Vector
+    // n°32: Charity Burbage
+    // n°33: Bathesda Bagshot
+    // n°34: Alastor Moody
+    // n°35: Dolores Umbridge
+    // n°36: Horace Slughorn
 
     // Hogwarts Students (senior) (40-54)
     { role: 'Student', id: 40, name: 'Oliver', surname: 'Wood', longname: 'Oliver Wood', male: true, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'keeper', senior: true, captain: true, house: 'Gryffindor' },
@@ -137,6 +162,16 @@ export const characterList: Character<hogwartsRole>[] =
     { role: 'Student', id: 81, name: 'Pansy', surname: 'Parkinson', longname: 'Pansy Parkinson', male: false, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Slytherin' },
     { role: 'Student', id: 82, name: 'Astoria', surname: 'Greengrass', longname: 'Astoria Greengrass', male: false, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Slytherin' },
     { role: 'Student', id: 83, name: 'Millicent', surname: 'Bulstrode', longname: 'Millicent Bulstrode', male: false, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Slytherin' },
+    // n°84: Ginny Weasley
+    // n°85: Colin Creevey
+    // n°86: Dennis Creevey
+    // n°87: Zacharias Smith
+    // n°88: Luna Lovegood
+
+    // Externals (100-102)
+    // n°100: Viktor Krum
+    // n°101: Fleur Delacour
+    // n°102: Gabrielle Delacour
 ];
 
 // #region characterList update functions
@@ -161,7 +196,6 @@ function replaceCharacter(role: hogwartsRole, id: number, newCharacter: Characte
 export function characterListUpd_Y2()
 {
     characterList.push(
-        { role: 'Creature', id: 6, name: 'Norbert', surname: '', longname: 'Norbert', male: true, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'none' },
         { role: 'Student', id: 84, name: 'Ginny', surname: 'Weasley', longname: 'Ginny Weasley', male: false, alignement: 'phoenix_order', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Gryffindor' },
         { role: 'Student', id: 85, name: 'Colin', surname: 'Creevey', longname: 'Colin Creevey', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Gryffindor' },
         { role: 'Student', id: 86, name: 'Dennis', surname: 'Creevey', longname: 'Dennis Creevey', male: true, alignement: 'neutral', connectionlvl: 'neutral', quidditchRole: 'none', senior: false, captain: false, house: 'Gryffindor' },
@@ -178,9 +212,9 @@ export function characterListUpd_Y2()
 export function characterListUpd_Y3()
 {
     characterList.push(
-        { role: 'Creature', id: 7, name: 'Dobby', surname: '', longname: 'Dobby', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral' },
-        { role: 'Creature', id: 8, name: 'Buckbeak', surname: '', longname: 'Buckbeak', male: true, alignement: 'neutral', connectionlvl: 'neutral' },
-        { role: 'External', id: 10, name: 'Sirius', surname: 'Black', longname: 'Sirius Black', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral' },
+        { role: 'Creature', id: 11, name: 'Dobby', surname: '', longname: 'Dobby', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral', house: 'none' },
+        { role: 'Creature', id: 12, name: 'Buckbeak', surname: '', longname: 'Buckbeak', male: true, alignement: 'neutral', connectionlvl: 'neutral', house: 'none' },
+        { role: 'External', id: 13, name: 'Sirius', surname: 'Black', longname: 'Sirius Black', male: true, alignement: 'phoenix_order', connectionlvl: 'neutral' },
         { role: 'Teacher', id: 30, name: 'Sybill', surname: 'Trelawney', longname: 'Professor Trelawney', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Divination' },
         { role: 'Teacher', id: 31, name: 'Septima', surname: 'Vector', longname: 'Professor Vector', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Arithmancy' },
         { role: 'Teacher', id: 32, name: 'Charity', surname: 'Burbage', longname: 'Professor Burbage', male: false, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Muggle Studies' },
@@ -203,11 +237,11 @@ export function characterListUpd_Y3()
 export function characterListUpd_Y4()
 {
     characterList.push(
-        { role: 'External', id: 11, name: 'Viktor', surname: 'Krum', longname: 'Viktor Krum', male: true, alignement: 'neutral', connectionlvl: 'neutral' },
-        { role: 'External', id: 12, name: 'Fleur', surname: 'Delacour', longname: 'Fleur Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' },
-        { role: 'External', id: 13, name: 'Gabrielle', surname: 'Delacour', longname: 'Gabrielle Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' }
+        { role: 'External', id: 100, name: 'Viktor', surname: 'Krum', longname: 'Viktor Krum', male: true, alignement: 'neutral', connectionlvl: 'neutral' },
+        { role: 'External', id: 101, name: 'Fleur', surname: 'Delacour', longname: 'Fleur Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' },
+        { role: 'External', id: 102, name: 'Gabrielle', surname: 'Delacour', longname: 'Gabrielle Delacour', male: false, alignement: 'neutral', connectionlvl: 'neutral' }
     );
-    replaceCharacter('Teacher', 29, { role: 'Teacher', id: 34, name: 'Alastor', surname: 'Mood', longname: 'Professor Mood', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
+    replaceCharacter('Teacher', 29, { role: 'Teacher', id: 34, name: 'Alastor', surname: 'Moody', longname: 'Professor Moody', male: true, alignement: 'neutral', connectionlvl: 'neutral', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
 }
 
 /**
@@ -216,7 +250,7 @@ export function characterListUpd_Y4()
  */
 export function characterListUpd_Y5()
 {
-    characterList.push({ role: 'Creature', id: 9, name: 'Grawp', surname: '', longname: 'Grawp', male: true, alignement: 'neutral', connectionlvl: 'neutral' });
+    characterList.push({ role: 'Creature', id: 14, name: 'Grawp', surname: '', longname: 'Grawp', male: true, alignement: 'neutral', connectionlvl: 'neutral', house: 'none' });
     replaceCharacter('Teacher', 34, { role: 'Teacher', id: 35, name: 'Dolores', surname: 'Umbridge', longname: 'Dolores Umbridge', male: false, alignement: 'death_eater', connectionlvl: 'foe', subject: 'Defense Against the Dark Arts', isHeadofHouse: false, house: 'none' });
 }
 

@@ -1,9 +1,18 @@
+/**
+ * Funzioni di supporto per operazioni casuali e sorteggi:
+ * - Estrazione casuale da array (spinEqual)
+ * - Generazione di eventi casuali (randomClassEvent)
+ * - Sorteggio numerico e booleano (spin, spinbool)
+ */
+
 import { Character } from "../characters/characters";
+import { sevenNums } from "./basetypes";
 
 /**
  * Estrae un elemento casuale da un array (probabilità uniforme).
  */
-export function spinEqual<T>(arr: T[]): T {
+export function spinEqual<T>(arr: T[]): T
+{
   if (!arr.length) throw new Error("Array vuoto in spinEqual");
   const idx = Math.floor(Math.random() * arr.length);
   return arr[idx];
@@ -128,7 +137,6 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
 
   return spinEqual(events);
 }
-
 
 /**
  * Sorteggia un numero in base alle percentuali fornite.
