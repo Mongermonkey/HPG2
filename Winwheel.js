@@ -218,8 +218,8 @@ function Winwheel(options, drawWheel)
 
         // Add event listeners for onload and onresize and call a function defined at the bottom
         // of this script which will handle that and work out the scale factor.
-        window.addEventListener("load", winwheelResize);
-        window.addEventListener("resize", winwheelResize);
+        window.addEventListener('load', winwheelResize);
+        window.addEventListener('resize', winwheelResize);
     }
 
     // Finally if drawWheel is true then call function to render the wheel, segment text, overlay etc.

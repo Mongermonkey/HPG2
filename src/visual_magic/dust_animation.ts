@@ -8,7 +8,7 @@ export function animateText(text: string, container: HTMLElement) {
   const followerReleaseRatio = 0.16;
 
   const canvas = setupCanvas();
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const inputData = new InputData(text, container, ctx);
 
   const EXIT_POINTS = calculateExitPoints(inputData);
@@ -35,14 +35,14 @@ export function animateText(text: string, container: HTMLElement) {
 }
 
 function setupCanvas(): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  canvas.style.position = "fixed";
-  canvas.style.left = "0";
-  canvas.style.top = "0";
-  canvas.style.pointerEvents = "none";
-  canvas.style.zIndex = "9999";
+  canvas.style.position = 'fixed';
+  canvas.style.left = '0';
+  canvas.style.top = '0';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '9999';
   document.body.appendChild(canvas);
   return canvas;
 }
@@ -53,7 +53,7 @@ function calculateExitPoints(inputData: InputData): Point[] {
   const paddingLeft = inputData.paddingLeft;
   const charWidth = inputData.charWidth;
 
-  const nonBlankIndices = chars.map((c, i) => c !== " " ? i : -1).filter(i => i !== -1);
+  const nonBlankIndices = chars.map((c, i) => c !== ' ' ? i : -1).filter(i => i !== -1);
   let notblank = nonBlankIndices.length;
   let numExits = notblank + (notblank <= 3 ? 2 : notblank <= 10 ? 3 : notblank <= 20 ? 4 : 5);
 
@@ -71,18 +71,18 @@ function calculateExitPoints(inputData: InputData): Point[] {
 function getTextPixels(inputData: InputData): Pixel[] {
   const textPixels: Pixel[] = [];
   for (let i = 0; i < inputData.chars.length; i++) {
-    if (inputData.chars[i] === " ") continue;
+    if (inputData.chars[i] === ' ') continue;
 
     const charX = inputData.inputRect.left + inputData.paddingLeft + i * inputData.charWidth;
-    const charCanvas = document.createElement("canvas");
+    const charCanvas = document.createElement('canvas');
     charCanvas.width = Math.ceil(inputData.charWidth);
     charCanvas.height = Math.ceil(parseFloat(inputData.inputStyle.fontSize) || 16);
 
-    const charCtx = charCanvas.getContext("2d")!;
+    const charCtx = charCanvas.getContext('2d')!;
     charCtx.font = inputData.font;
-    charCtx.fillStyle = "#fff";
-    charCtx.textBaseline = "top";
-    charCtx.textAlign = "left";
+    charCtx.fillStyle = '#fff';
+    charCtx.textBaseline = 'top';
+    charCtx.textAlign = 'left';
     charCtx.clearRect(0, 0, charCanvas.width, charCanvas.height);
     charCtx.fillText(inputData.chars[i], 0, 0);
 
@@ -182,7 +182,7 @@ function updateParticle(p: Particle, elapsed: number, leaders: LeaderParticle[],
 
   if (p instanceof FollowerParticle && elapsed >= releaseTime) {
     const trail = p.leader.trail;
-    const trailIdx = Math.max(0, trail.length - 1 - 2 * (exitGroups.get(`${p.exit!.x},${p.exit!.y}`)!.indexOf(p)));
+    const trailIdx = Math.max(0, trail.length - 1 - 2 * (exitGroups.get(p.exit!.x + ',' + p.exit!.y)!.indexOf(p)));
     const target = trail[trailIdx];
     if (target) {
       p.x = target.x;
@@ -271,7 +271,7 @@ function drawParticle(p: Particle, ctx: CanvasRenderingContext2D, progress: numb
 {
   p.alpha = p instanceof LeaderParticle ? 0 : 1 - progress;
   ctx.save();
-  ctx.fillStyle = p.color.replace(/[\d\.]+\)$/g, `${p.alpha})`);
+  ctx.fillStyle = p.color.replace(/[\d\.]+\)$/g, p.alpha + ')');
   ctx.beginPath();
   ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
   ctx.fill();
@@ -281,7 +281,7 @@ function drawParticle(p: Particle, ctx: CanvasRenderingContext2D, progress: numb
 function drawTrails(ctx: CanvasRenderingContext2D, leaders: LeaderParticle[])
 {
   ctx.save();
-  ctx.strokeStyle = "rgba(0,200,0,0.7)";
+  ctx.strokeStyle = 'rgba(0,200,0,0.7)';
   ctx.lineWidth = 1.5;
   for (const p of leaders) {
     if (p.trail.length > 1) {
@@ -298,7 +298,7 @@ function drawLeaderCircles(ctx: CanvasRenderingContext2D, leaders: LeaderParticl
   for (const leader of leaders)
   {
     ctx.save();
-    ctx.strokeStyle = "rgba(100,100,255,0.15)";
+    ctx.strokeStyle = 'rgba(100,100,255,0.15)';
     ctx.beginPath();
     ctx.arc(leader.circleCenter!.x, leader.circleCenter!.y, leader.circleRadius!, 0, Math.PI * 2);
     ctx.stroke();
@@ -372,11 +372,11 @@ function savePathsToFile(particles: Particle[]) {
     content += "\n";
   });
 
-  const blob = new Blob([content], { type: "text/plain" });
+  const blob = new Blob([content], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.download = "paths.txt";
+  a.download = 'paths.txt';
   a.click();
   URL.revokeObjectURL(url);
 }

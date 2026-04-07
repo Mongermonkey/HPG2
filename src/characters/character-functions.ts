@@ -6,14 +6,14 @@
  * - Gestione ruoli e docenti (getProfessorFromSubject, getRandomClassStudent, getHeadOfHouse, getQuidditchCaptain)
  */
 
-import { MainChara } from "./maincharacter";
+import { shiftAlignment, MainChara } from './maincharacter';
 import { Wheel } from '../wheel_magic/Wheel';
-import * as wheels from "../wheel_magic/wheel_helpers";
-import * as io from "../utilities/input_output_helpers";
+import * as wheels from '../wheel_magic/wheel_helpers';
+import * as io from '../utilities/input_output_helpers';
 import { Character, characterList } from './characters';
 import { spinEqual } from '../utilities/random';
 import { WheelSegment } from '../wheel_magic/wheel_helpers';
-import { hogwartsHouse, hogwartsRole } from "../utilities/basetypes";
+import { hogwartsHouseName, hogwartsRole } from '../utilities/basetypes';
 
 /**
  * Handles friendship interactions between mc and npcs.
@@ -32,19 +32,17 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
         let chance = wheels.newSegment('Make friends', friendshipChance * 100),
             notchance = wheels.newSegment('Mind your business', 100 - friendshipChance * 100);
         
-        const result = await wheels.spinWheel("Friendship Wheel! What do you do?", [chance, notchance]);
+        const result = await wheels.spinWheel('Friendship Wheel! What do you do?', [chance, notchance]);
         if (result === 'Mind your business')
         {
-            io.showText("You decide to mind your own business.");
-            await io.nextEvent();
+            await io.showText('You decide to mind your own business.');
             return;
         }
     }
 
-    io.showText("You make friends!");
-    await io.nextEvent();
-    io.showText("Who do you befriend?");
+    await io.showText('You make friends!');
 
+    await io.showText('Who do you befriend?');
     await befriend(chara, false, senior);
 }
 
@@ -56,11 +54,10 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
  */
 export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, senior?: boolean): Promise<void>
 {
-    let result = await wheels.spinWheel("Who do you befriend?", getStudentList(chara, sameHouse, senior));
+    let result = await wheels.spinWheel('Who do you befriend?', getStudentList(chara, sameHouse, senior));
     let newFriend = getCharacterByLongname(characterList, result) as Character<'Student'>;
     
     await improveConnection(chara, newFriend);
-    await io.nextEvent();
     wheels.seeWheel(false);
 }
 
@@ -74,13 +71,12 @@ export async function improveConnection(chara: MainChara<'Wizard'>, friend: Char
     if (typeof friend === 'string')
     {
         friend = getCharacterByLongname(characterList, friend) as Character<hogwartsRole>;
-        if (!friend) throw new Error(`Character with longname ${friend} not found.`);
+        if (!friend) throw new Error('Character with longname ' + friend + ' not found.');
     }
 
     if (friend.role != 'Student')
     {
-        io.showText('Your relation with ' + friend.longname + ' has improved.');
-        await io.nextEvent();
+        await io.showText('Your relation with ' + friend.longname + ' has improved.');
         switch (friend.connectionlvl)
         {
             case 'foe': friend.connectionlvl = 'neutral'; break;
@@ -95,95 +91,81 @@ export async function improveConnection(chara: MainChara<'Wizard'>, friend: Char
     {
         case 'foe':
             studentFriend.connectionlvl = 'neutral';
-            io.showText(`You and ${studentFriend.longname}, who used to despise you, unexpectedly became friends. Cheers!`);
+            await io.showText('You and ' + studentFriend.longname + ', who used to despise you, unexpectedly became friends. Cheers!');
             break;
         case 'none':
         case 'neutral':
             studentFriend.connectionlvl = 'friend';
-            io.showText(`You befriended ${studentFriend.longname} (${studentFriend.house})!`);
+            await io.showText('You befriended ' + studentFriend.longname + ' (' + studentFriend.house + ')!');
             break;
         case 'friend':
             studentFriend.connectionlvl = 'bff';
-            io.showText(`You and ${studentFriend.longname} are now BFFs! Cheers!`);
+            await io.showText('You and ' + studentFriend.longname + ' are now BFFs! Cheers!');
             break;
         case 'bff':
             studentFriend.connectionlvl = 'lover';
-            io.showText(`Something changed between you and ${studentFriend.longname}.\nAfter what you've been through, you and ${studentFriend.name} became lovers!`);
+            await io.showText('Something changed between you and ' + studentFriend.longname + '.\nAfter what you\'ve been through, you and ' + studentFriend.name + ' became lovers!');
             break;
     }
 
-    // Mappa del golden trio (bidirezionale)
-    const goldenTrio: Record<number, {first: number, second: number}> =
-        {55: {first: 56, second: 57}, 56: {first: 55, second: 57}, 57: {first: 55, second: 56}};
-
-    if (goldenTrio[studentFriend.id])
+    if (['Harry', 'Ron', 'Hermione'].includes(studentFriend.name))
     {
-        await io.nextEvent();
-        let harry = getById(chara.characterList, 55), ron = getById(chara.characterList, 56), hermione = getById(chara.characterList, 57);
-        let firstEnc = !isFriend(harry) && !isFriend(ron) && !isFriend(hermione);
+        let harry = getCharacterByLongname(chara.characterList, 'Harry Potter'),
+        ron = getCharacterByLongname(chara.characterList, 'Ron Weasley'),
+        hermione = getCharacterByLongname(chara.characterList, 'Hermione Granger');        
 
-        // Presenta ogni membro del trio che NON è ancora amico
-        if (!isFriend(harry) && studentFriend.id !== 55)
+        // Presenta gli altri membri del golden trio
+        if (studentFriend.longname !== 'Harry Potter')
         {
-            io.showText(`${studentFriend.name} introduced you to his friend ${harry!.longname} (Gryffindor).`);
+            await io.showText(studentFriend.name + ' introduced you to his friend ' + harry!.longname + ' (Gryffindor).');
             harry!.connectionlvl = 'friend';
-            await io.nextEvent();
         }
-        if (!isFriend(ron) && studentFriend.id !== 56)
+        if (studentFriend.longname !== 'Ron Weasley')
         {
-            io.showText(`${studentFriend.name} introduced you to his friend ${ron!.longname} (Gryffindor).`);
+            await io.showText(studentFriend.name + ' introduced you to his friend ' + ron!.longname + ' (Gryffindor).');
             ron!.connectionlvl = 'friend';
-            await io.nextEvent();
         }
-        if (!isFriend(hermione) && studentFriend.id !== 57)
+        if (studentFriend.longname !== 'Hermione Granger')
         {
-            io.showText(`${studentFriend.name} introduced you to his friend ${hermione!.longname} (Gryffindor).`);
+            await io.showText(studentFriend.name + ' introduced you to his friend ' + hermione!.longname + ' (Gryffindor).');
             hermione!.connectionlvl = 'friend';
-            await io.nextEvent();
         }
 
-        chara.alignment = 'phoenix_order';
-        if (firstEnc) io.showText(`Your alignement has shifted.`);
-        await io.nextEvent();
-        return;
+        await shiftAlignment(chara, 'phoenix_order', 3);
     }
-
-    if (studentFriend.id === 76)    // Draco Malfoy
+    else if (studentFriend.longname === 'Draco Malfoy')
     {
-        await io.nextEvent();
-        let firstEnc = !isFriend(getById(chara.characterList, 76));
-        let crabbe = getById(chara.characterList, 77), goyle = getById(chara.characterList, 78);
+        let crabbe = getCharacterByLongname(chara.characterList, 'Vincent Crabbe'),
+        goyle = getCharacterByLongname(chara.characterList, 'Gregory Goyle');
+
+        // Presenta i due scagnozzi di Draco se non sono già amici
         if (!isFriend(crabbe))
         {
-            io.showText(`Draco introduced you to his friend ${crabbe!.longname} (Slytherin).`);
+            await io.showText('Draco introduced you to his friend ' + crabbe!.longname + ' (Slytherin).');
             crabbe!.connectionlvl = 'friend';
-            await io.nextEvent();
         }
         if (!isFriend(goyle))
         {
-            io.showText(`Draco introduced you to his friend ${goyle!.longname} (Slytherin).`);
+            await io.showText('Draco introduced you to his friend ' + goyle!.longname + ' (Slytherin).');
             goyle!.connectionlvl = 'friend';
-            await io.nextEvent();
         }
-        chara.alignment = 'death_eater';
-        if (firstEnc) io.showText(`Your alignement has shifted.`);
-        await io.nextEvent();
-        return;
+        
+        await shiftAlignment(chara, 'death_eater', 3);
     }
 
-    // Mappa delle coppie di gemelli (bidirezionale)
-    const twinPairs: Record<number, number> = {45: 46, 46: 45, 62: 68, 68: 62};
-    if (twinPairs[studentFriend.id])
+    // Mappa bidirezionale dei longname dei gemelli
+    const twinPairs: Record<string, string> = {
+        'Fred Weasley': 'George Weasley',
+        'George Weasley': 'Fred Weasley',
+        'Padma Patil': 'Parvati Patil',
+        'Parvati Patil': 'Padma Patil'
+    };
+
+    if (['Fred Weasley', 'George Weasley', 'Padma Patil', 'Parvati Patil'].includes(studentFriend.longname))
     {
-        await io.nextEvent();
-        const otherId = twinPairs[studentFriend.id];
-        const other = getById(chara.characterList, otherId);
-        if (!isFriend(other))
-        {
-            other!.connectionlvl = 'friend';
-            io.showText(`You got to know ${studentFriend.name}'s ${studentFriend.id == 45 || studentFriend.id == 46 ? 'twin brother' : 'twin sister'} ${other!.name} as well!`);
-            await io.nextEvent();
-        }
+        const other = getCharacterByLongname(chara.characterList, twinPairs[studentFriend.longname]!)!;
+        other.connectionlvl = 'friend';
+        await io.showText('You got to know ' + studentFriend.name + '\'s ' + (studentFriend.name === 'Fred' || studentFriend.name === 'George Weasley' ? 'twin brother' : 'twin sister') + ' ' + other.name + ' as well!');
     }
 }
 
@@ -194,8 +176,7 @@ export async function improveConnection(chara: MainChara<'Wizard'>, friend: Char
  */
 export async function worsenConnection(chara: MainChara<'Wizard'>, foe: Character<hogwartsRole>): Promise<void>
 {
-    io.showText('Your relation with ' + foe.longname + ' has worsened.');
-    await io.nextEvent();
+    await io.showText('Your relation with ' + foe.longname + ' has worsened.');
     switch (foe.connectionlvl)
     {
         case 'lover': foe.connectionlvl = 'friend'; break;
@@ -210,8 +191,7 @@ export async function worsenConnection(chara: MainChara<'Wizard'>, foe: Characte
         let crabbe = getCharacterByLongname(chara.characterList, 'Vincent Crabbe'), goyle = getCharacterByLongname(chara.characterList, 'Gregory Goyle');
         crabbe!.connectionlvl = 'foe';
         goyle!.connectionlvl = 'foe';
-        io.showText('Vincent Crabbe and Gregory Goyle, Draco\'s closest friends, are also upset with you for what happened with Draco.\nYour relation with them has worsened as well.');
-        await io.nextEvent();
+        await io.showText('Vincent Crabbe and Gregory Goyle, Draco\'s closest friends, are also upset with you for what happened with Draco.\nYour relation with them has worsened as well.');
     }
 
     if ((foe.longname === 'Fred Weasley' || foe.longname === 'George Weasley') && foe.connectionlvl === 'foe')
@@ -219,8 +199,7 @@ export async function worsenConnection(chara: MainChara<'Wizard'>, foe: Characte
         let otherName = foe.longname === 'Fred Weasley' ? 'George Weasley' : 'Fred Weasley';
         let other = getCharacterByLongname(chara.characterList, otherName);
         other!.connectionlvl = 'foe';
-        io.showText(`Your relation with ${otherName} has worsened as well.`);
-        await io.nextEvent();
+        await io.showText('Your relation with ' + otherName + ' has worsened as well.');
     }
 
     if ((foe.longname === 'Padma Patil' || foe.longname === 'Parvati Patil') && foe.connectionlvl === 'foe')
@@ -228,8 +207,7 @@ export async function worsenConnection(chara: MainChara<'Wizard'>, foe: Characte
         let otherName = foe.longname === 'Padma Patil' ? 'Parvati Patil' : 'Padma Patil';
         let other = getCharacterByLongname(chara.characterList, otherName);
         other!.connectionlvl = 'foe';
-        io.showText(`Your relation with ${otherName} has worsened as well.`);
-        await io.nextEvent();
+        await io.showText('Your relation with ' + otherName + ' has worsened as well.');
     }
     
     return;
@@ -316,7 +294,7 @@ export function isFriendByLongname(characterlist: Character<hogwartsRole>[], lon
  * @param houses If provided, only consider students from the specified houses.
  * @returns A random student character, or undefined if none found.
  */
-export function getRandomStudent(characterlist: Character<hogwartsRole>[], sameyear?: boolean, houses?: hogwartsHouse[] | undefined): Character<'Student'> | undefined
+export function getRandomStudent(characterlist: Character<hogwartsRole>[], sameyear?: boolean, houses?: hogwartsHouseName[] | undefined): Character<'Student'> | undefined
 {
     let students = characterlist.filter(c => c.role === 'Student') as Character<'Student'>[];
     if (houses && houses.length > 0)
@@ -347,7 +325,7 @@ export function getProfessorFromSubject(characterList: any[], subject: string): 
  * @param house The house to find the head for.
  * @returns The head of house character, or undefined if not found.
  */
-export function getHeadOfHouse(characterList: any[], house: hogwartsHouse): Character<'Teacher'>
+export function getHeadOfHouse(characterList: any[], house: hogwartsHouseName): Character<'Teacher'>
 {
     return characterList.find(c => c.role === 'Teacher' && c.isHeadofHouse && c.house === house);
 }
@@ -355,7 +333,7 @@ export function getHeadOfHouse(characterList: any[], house: hogwartsHouse): Char
 /**
  * Gets the Quidditch captain for a specific house.
  */
-export function getQuidditchCaptain(characterList: any[], house: hogwartsHouse): Character<'Student'>
+export function getQuidditchCaptain(characterList: any[], house: hogwartsHouseName): Character<'Student'>
 {
     return characterList.find(c => c.role === 'Student' && c.captain && c.house === house);
 }

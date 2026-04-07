@@ -1,13 +1,13 @@
-import { InputData, Point, Pixel, Circle, Path } from "./dust_helpers.ts";
+import { InputData, Point, Pixel, Circle, Path } from './dust_helpers.ts';
 
 const PIXEL_SPEED = 130;
 export let VISIBLE_PATH = true;
 
 export function animateText(text: string, container: HTMLElement) {
   const canvas = setupCanvas();
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const pixels = getTextPixels(inputDataFromText(text, container, ctx));
-  console.log("Punti creati: ", pixels.length);
+  console.log('Punti creati: ', pixels.length);
 
   // disegna subito i pixel
   drawPixels(ctx, pixels);
@@ -31,14 +31,14 @@ export function animateText(text: string, container: HTMLElement) {
 }
 
 function setupCanvas(): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  canvas.style.position = "fixed";
-  canvas.style.left = "0";
-  canvas.style.top = "0";
-  canvas.style.pointerEvents = "none";
-  canvas.style.zIndex = "9999";
+  canvas.style.position = 'fixed';
+  canvas.style.left = '0';
+  canvas.style.top = '0';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '9999';
   document.body.appendChild(canvas);
   return canvas;
 }
@@ -55,19 +55,19 @@ function getTextPixels(inputData: InputData): Pixel[] {
   const pixels: Pixel[] = [];
 
   for (let i = 0; i < inputData.chars.length; i++) {
-    if (inputData.chars[i] === " ") continue;
+    if (inputData.chars[i] === ' ') continue;
 
     const charX = inputData.inputRect.left + inputData.paddingLeft + i * inputData.charWidth;
 
-    const charCanvas = document.createElement("canvas");
+    const charCanvas = document.createElement('canvas');
     charCanvas.width = Math.ceil(inputData.charWidth);
     charCanvas.height = Math.ceil(parseFloat(inputData.inputStyle.fontSize) * 1.2);
 
-    const charCtx = charCanvas.getContext("2d")!;
+    const charCtx = charCanvas.getContext('2d')!;
     charCtx.font = inputData.font;
-    charCtx.fillStyle = "#fff";
-    charCtx.textBaseline = "top";
-    charCtx.textAlign = "left";
+    charCtx.fillStyle = '#fff';
+    charCtx.textBaseline = 'top';
+    charCtx.textAlign = 'left';
     charCtx.clearRect(0, 0, charCanvas.width, charCanvas.height);
     charCtx.fillText(inputData.chars[i], 0, 0);
 

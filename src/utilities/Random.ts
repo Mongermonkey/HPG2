@@ -13,7 +13,7 @@ import { sevenNums } from "./basetypes";
  */
 export function spinEqual<T>(arr: T[]): T
 {
-  if (!arr.length) throw new Error("Array vuoto in spinEqual");
+  if (!arr.length) throw new Error('Array vuoto in spinEqual');
   const idx = Math.floor(Math.random() * arr.length);
   return arr[idx];
 }
@@ -28,20 +28,20 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
   if (professor.subject === 'Flying')
   {
     events.push(
-      `Today is a sunny day, perfect for flying practice.`,
-      `Today is a windy day, you don't feel very stable on your broom.`,
-      `Today is a foggy day, making it hard to see while flying.`,
-      `Today is a rainy day, you struggle to keep your grip on the broom.`,
-      `A flock of owls flies alongside you for a moment.`,
-      `You spot a Hippogriff in the distance, majestically soaring through the sky.`,
-      `You perform a perfect landing, but no one sees it.`,
+      'Today is a sunny day, perfect for flying practice.',
+      'Today is a windy day, you don\'t feel very stable on your broom.',
+      'Today is a foggy day, making it hard to see while flying.',
+      'Today is a rainy day, you struggle to keep your grip on the broom.',
+      'A flock of owls flies alongside you for a moment.',
+      'You spot a Hippogriff in the distance, majestically soaring through the sky.',
+      'You perform a perfect landing, but no one sees it.',
       `${buddy.longname} spots a centaur-looking cloud.`,
       `${buddy.longname} accidentally falls off their broom at takeoff.`,
     );
     return spinEqual(events);
   }
 
-  let heshe = buddy.male ? "he" : "she", himher = buddy.male ? "him" : "her", hisher = buddy.male ? "his" : "her", HisHer = buddy.male ? "His" : "Her";
+  let heshe = buddy.male ? 'he' : 'she', himher = buddy.male ? 'him' : 'her', hisher = buddy.male ? 'his' : 'her', HisHer = buddy.male ? 'His' : 'Her';
   let prof = professor.longname, bud = buddy.longname;
 
   events.push(
@@ -49,13 +49,13 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
     `${bud}'s hair today are a vibrant shade of pink.`,
     `${bud}'s hair today are a deep shade of blue.`,
     `${bud}'s hair today are yellow and green.`,
-    `From the corridor, Peeves can be heard humming a raunchy song.`,
+    'From the corridor, Peeves can be heard humming a raunchy song.',
     `You notice ${bud}'s quill is taking notes by itself.`,
-    `One of the paintings in the back of the classroom bursts out laughing for no apparent reason.`,
-    `Suddenly, a strange smell fills the classroom, distracting everyone.\nThe smell goes away as quickly as it came.`,
+    'One of the paintings in the back of the classroom bursts out laughing for no apparent reason.',
+    'Suddenly, a strange smell fills the classroom, distracting everyone.\nThe smell goes away as quickly as it came.',
     `Halfway through the lesson, the classroom fills with a sudden chill.\n${prof} lights a magical fire to warm everyone up.`,
-    `You notice a scarf creeping in from under the class's door.\nIt then curls up on a desk at the back of the room, and doesn't move for the rest of the lesson.`,
-    `You hear distant thunder, even though the sky outside is clear.`,
+    'You notice a scarf creeping in from under the class\'s door.\nIt then curls up on a desk at the back of the room, and doesn\'t move for the rest of the lesson.',
+    'You hear distant thunder, even though the sky outside is clear.',
     `Two feathers fall on ${bud}'s desk, but no one understands where they came from.`,
     `${bud}'s inkwell tips over, but the ink recomposes itself in the bottle.`,
     `${bud} asks you to borrow a quill.`,
@@ -66,12 +66,12 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
     `An owl flies past the window, making a mess and distracting everyone.\n${prof} makes it go away.`,
     `You notice ${bud}'s parchment folding itself neatly in half.`,
     `${bud} drops ${hisher} quill, but it hovers midair before landing softly back on the desk.`,
-    `A whisper echoes through the room, though no one seems to have spoken.`,
+    'A whisper echoes through the room, though no one seems to have spoken.',
     `${bud}'s parchment suddenly rolls itself up and refuses to open again.`,
     `${bud} seems to be staring into space, blinking very slowly, as if under a spell.`,
     `A book falls off a shelf on its own, making ${bud} jump on ${hisher} seat.`,
-    `The windows rattle briefly, though there's no wind outside.`,
-    `A faint scent of pumpkin juice fills the classroom out of nowhere.`,
+    'The windows rattle briefly, though there\'s no wind outside.',
+    'A faint scent of pumpkin juice fills the classroom out of nowhere.',
     `You catch a glimpse of something shimmering behind ${prof}, but it's gone before you can focus.`,
     `A parchment frog hops across ${bud}'s desk before flattening back into paper.`,    
   );
@@ -146,7 +146,7 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
  */
 export function spin(...percentages: number[]): number
 {
-  console.log(`Percentuali: [${percentages.join(", ")}]. Spin...`);
+  console.log('Percentuali: [' + percentages.join(', ') + ']. Spin...');
 
   const total = percentages.reduce((a, b) => a + b, 0);
   if (percentages.length < 2) return 0;

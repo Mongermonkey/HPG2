@@ -11,10 +11,8 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
 
 export async function chooseamovie(genre: string): Promise<void>
 {
-    // await io.nextEvent();
-    io.showText("What movie to watch?");
-
-    if (genre === "horror")
+    await io.showText('What movie to watch?');
+    if (genre === 'horror')
     {
         myWheel.setSegments(wheels.getUniformSegments([
             // "Mortal (2020)",
@@ -45,6 +43,7 @@ export async function chooseamovie(genre: string): Promise<void>
             // "La abuela / The grandmother (2021)",
             // "Dark Water (2002)",
             // "Synchronic (2019)",
+            // "The Ugly Stepsister (2025)",
             "Son (2021)",
 
             "Southbound (2015)",
@@ -70,27 +69,38 @@ export async function chooseamovie(genre: string): Promise<void>
             "I Spit on Your Grave (1978)",
         ]));
     }
+    else if (genre.toLowerCase() === 'ash')
+    {
+        myWheel.setSegments(wheels.getUniformSegments([
+            "The Monkey (2025)",
+            "The Lord of the Rings: The Fellowship of the Ring (2001)",
+            "The Lord of the Rings: The Two Towers (2002)",
+            "The Lord of the Rings: The Return of the King (2003)",
+            "The Twilight Saga: Eclipse (2010)",
+            "The Twilight Saga: Breaking Dawn - Part 1 (2011)",
+            "The Twilight Saga: Breaking Dawn - Part 2 (2012)",
+            "Brüno (2009)",
+            "The Matrix: Reloaded (2003)",
+            "The Matrix Revolutions (2003)",
+            "Gangubai Kathiawadi (2022)",
+            "Basic Instinct (1992)",
+            "Exit 8 (2025)",
+            "Dhurandar The Revenge (2026)",
+        ]));
+    }
     else    
     {
         myWheel.setSegments(wheels.getUniformSegments([            
-            // "Elisa y Marcela (2019)",
-            // "My First Summer (2020)",
-            // "The World to Come (2020)",
-            // "Elena Undone (2010)",
-            // "Below Her Mouth (2016)",
-            // "Blue Is the Warmest Color (2013)",
-
-            // alepapa
-            // "They Live",
-            "Scott Pilgrim vs. the World",
-            "Donnie Darko",
-            "Her",
-            "The Prestige",
-            "Pulp Fiction"
+            "Elisa y Marcela (2019)",
+            "My First Summer (2020)",
+            "The World to Come (2020)",
+            "Elena Undone (2010)",
+            "Below Her Mouth (2016)",
+            "Blue Is the Warmest Color (2013)",
         ]));
     }
     wheels.seeWheel(true);
 
-    const wheelStop = await wheels.depr(myWheel);
+    await wheels.depr(myWheel);
     await io.nextEvent();
 }

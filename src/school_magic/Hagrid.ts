@@ -1,6 +1,6 @@
 
 import * as wheels from "../wheel_magic/wheel_helpers";
-import { MainChara } from "../characters/maincharacter";
+import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
 import { meetNorbert } from "../story/sidequest/Norbert";
@@ -28,7 +28,6 @@ export async function befriendHagrid(chara: MainChara<'Wizard'>, lost: boolean =
             await meetNorbert(chara, lost);
             break;
     }
-    wheels.showWheelResult('Care of Magical Creatures++');
-    await io.nextEvent();
-    npc.improveConnection(chara, hagrid!);
+    await subjectIncrement(chara, 'Care of Magical Creatures');
+    await npc.improveConnection(chara, hagrid!);
 }

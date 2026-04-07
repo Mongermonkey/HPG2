@@ -10,10 +10,10 @@ import { Clue } from "../../utilities/compositetypes";
 import * as wheels from "../../wheel_magic/wheel_helpers";
 import * as io from "../../utilities/input_output_helpers";
 import * as npc from '../../characters/character-functions';
-import * as chitchat from "../../dialogues/year-one-dialogues";
 import { secretPassages } from "../../school_magic/secrets";
-import { getMaxGrades, MainChara } from "../../characters/maincharacter";
+import * as chitchat from "../../dialogues/year-one-dialogues";
 import { newSegment, removeSegment } from "../../wheel_magic/wheel_helpers";
+import { shiftAlignment, getMaxGrades, MainChara, subjectIncrement } from "../../characters/maincharacter";
 
 // #region QUEST CLUES
 
@@ -60,9 +60,9 @@ export async function gringottsTheft(chara: MainChara<'Wizard'>)
     if (npc.countFriends(chara.characterList) >= 2)
     {
         var friend = npc.getRandomFriend(chara.characterList);
-        io.showText(`You hear ${friend!.name} talking about something strange that happened.`);
+        await io.showText('You hear ' + friend!.name + ' talking about something strange that happened.');
     }
-    else io.showText('You hear a passing conversation.');
+    else await io.showText('You hear a passing conversation.');
 
     await chitchat.GringottsTheft();
     chara.clues.find(c => c.name === 'gringotts_theft')!.discovered = true;
@@ -77,7 +77,7 @@ export async function chocolateFrog(chara: MainChara<'Wizard'>)
     if (npc.countFriends(chara.characterList) < 1) return;
 
     var friend = npc.getRandomFriend(chara.characterList);
-    io.showText(`${friend!.name} gifts a chocolate frog to you.`);
+    await io.showText(friend!.name + ' gifts a chocolate frog to you.');
     await chitchat.chocolateFrog(friend!.name);
     chara.clues.find(c => c.name === 'chocolate_frog')!.discovered = true;
 }
@@ -88,8 +88,7 @@ export async function library(chara: MainChara<'Wizard'>)
     const nextBtn = (window as any).nextBtn as HTMLButtonElement;
     nextBtn.disabled = true;
 
-    io.showText('While you\'re studying in the library, you find a suspicious large tome.\nSomeone must have left it there.');
-    await io.nextEvent();
+    await io.showText('While you\'re studying in the library, you find a suspicious large tome.\nSomeone must have left it there.');
 
     let chance = 30;
     let maxSkill = getMaxGrades(chara, 1)[0].score;
@@ -98,15 +97,14 @@ export async function library(chara: MainChara<'Wizard'>)
     else if (maxSkill > 6) chance += 10;
     if (chara.house === 'Ravenclaw') chance += 5;
 
-    const result = await wheels.spinWheel("Class Wheel! What do you do?", [
-        newSegment("Examine the book", chance),
-        newSegment("Ignore the book", 100 - chance)
+    const result = await wheels.spinWheel('Class Wheel! What do you do?', [
+        newSegment('Examine the book', chance),
+        newSegment('Ignore the book', 100 - chance)
     ]);
 
-    if (result === "Ignore the book")
+    if (result === 'Ignore the book')
     {
-        io.showText('You have already studied enough for today.');
-        await io.nextEvent();
+        await io.showText('You have already studied enough for today.');
         return;
     }
     
@@ -131,12 +129,15 @@ export async function SnapeQuirrellTalk(chara: MainChara<'Wizard'>)
 
 // #region QUEST TASKS
 
+let sightBonus = 0;
+
 // Quest intro
 export async function philosophersStoneQuest(chara: MainChara<'Wizard'>, endofyear: boolean = false)
 {
     chara.mainQuestProgress++;
     await chitchat.mainQuest_Intro(chara.clues);
 
+    sightBonus = chara.gifts.sight;
     if (!await doorTask(chara)) return;
     if (!await FluffyTask(chara, endofyear)) return;
     if (!await DevilsSnareTask(chara)) return;
@@ -161,17 +162,15 @@ async function doorTask(chara: MainChara<'Wizard'>): Promise<boolean>
     let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
     let chance = Math.min(95, (50 + charmSkill * 5));
 
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
-    let result = await wheels.spinWheel("You try to unlock the door. Do you succeed?", segments);
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
+    let result = await wheels.spinWheel('You try to unlock the door. Do you succeed?', segments);
 
-    if (result === "Failure")
+    if (result === 'Failure')
     {
-        io.showText('Alas, it seems that you cannot get past the locked door.\nYou know, there are spells for these things...');
-        await io.nextEvent();
+        await io.showText('Alas, it seems that you cannot get past the locked door.\nYou know, there are spells for these things...');
         return false;
     }
     await io.showText('Using a simple \'Alohomora\' spell, you successfully unlock the door and enter the forbidden corridor.');
-    await io.nextEvent();
     return true;
 }
 
@@ -192,15 +191,21 @@ async function FluffyTask(chara: MainChara<'Wizard'>, endofyear: boolean): Promi
 
     let chance = Math.min(95, (20 + charmSkill + (magicalCreatureSkill != 0 ? 20 : 0) + (FluffyClue ? 40 : 0)));
     
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
     let result = await wheels.spinWheel('You try to get over ' + (FluffyClue ? 'Fluffy' : 'the beast') + '. Do you succeed?', segments);
 
+    if (result != 'Success' && sightBonus > 0)
+    {
+        sightBonus--;
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
     
-    await chitchat.Fluffy_ending(result === "Success", FluffyClue);
-    if (result === "Success") return true;
+    await chitchat.Fluffy_ending(result === 'Success', FluffyClue);
+    if (result === 'Success') return true;
     
     await chitchat.mainQuest_HospitalFailure(chara.house);
-    npc.improveConnection(chara, 'Professor Dumbledore');
+    await npc.improveConnection(chara, 'Professor Dumbledore');
     return false;
 }
 
@@ -217,14 +222,21 @@ async function DevilsSnareTask(chara: MainChara<'Wizard'>): Promise<boolean>
     let nevilleFriend = npc.isFriendByLongname(chara.characterList, 'Neville Longbottom');
     let chance = Math.min(95, (40 + herbologySkill * 5 + (nevilleFriend ? 15 : 0)));
     
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
     let result = await wheels.spinWheel('You try to get out of the Devil\'s Snare. Do you succeed?', segments);
 
-    await chitchat.DevilsSnare_ending(result === "Success");
-    if (result === "Success") return true;
+    if (result != 'Success' && sightBonus > 0)
+    {
+        sightBonus--;
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
+
+    await chitchat.DevilsSnare_ending(result === 'Success');
+    if (result === 'Success') return true;
     
     await chitchat.mainQuest_HospitalFailure(chara.house);
-    npc.improveConnection(chara, 'Professor Dumbledore');
+    await npc.improveConnection(chara, 'Professor Dumbledore');
     return false;
 }
 
@@ -241,14 +253,21 @@ async function wingedKeysTask(chara: MainChara<'Wizard'>): Promise<boolean>
     let flyingSkill = chara.grades.find(g => g.subject === 'Flying')!.score;
     
     let chance = Math.min(95, (30 + charmSkill * 4 + flyingSkill * 4));
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
     let result = await wheels.spinWheel('You try to use a broomstick to catch the winged keys and try unlocking the door.\nDo you succeed?', segments);
 
-    await chitchat.WingedKeys_ending(result === "Success");
-    if(result === "Success") return true;
+    if (result != 'Success' && sightBonus > 0)
+    {
+        sightBonus--;
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
+
+    await chitchat.WingedKeys_ending(result === 'Success');
+    if(result === 'Success') return true;
     
     await chitchat.mainQuest_HospitalFailure(chara.house);
-    npc.improveConnection(chara, 'Professor Dumbledore');
+    await npc.improveConnection(chara, 'Professor Dumbledore');
     return false;
 }
 
@@ -265,14 +284,21 @@ async function WizardsChessTask(chara: MainChara<'Wizard'>): Promise<boolean>
     let trasfigurationSkill = chara.grades.find(g => g.subject === 'Transfiguration')!.score;
     let chance = Math.min(95, (20 + charmSkill * 4 + trasfigurationSkill * 4 + chara.mainQuestProgress > 1 ? 10 : 0));
     
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
     let result = await wheels.spinWheel('You try to play the chess game and win. Do you succeed?', segments);
 
+    if (result != 'Success' && sightBonus > 0)
+    {
+        sightBonus--;
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
+
     await chitchat.WizardsChess_ending(result === 'Success');
-    if (result === "Success") return true;
+    if (result === 'Success') return true;
     
     await chitchat.mainQuest_HospitalFailure(chara.house);
-    npc.improveConnection(chara, 'Professor Dumbledore');
+    await npc.improveConnection(chara, 'Professor Dumbledore');
     return false;
 }
 
@@ -290,14 +316,21 @@ async function mountainTrollTask(chara: MainChara<'Wizard'>, endofyear: boolean)
     let halloweenTroll = chara.clues.find(c => c.name === 'snape_halloween')!.discovered;
     let chance = Math.min(95, (20 + darkArtSkill * 5 + (halloweenTroll ? 30 : 0)));
 
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
     let result = await wheels.spinWheel('You try to fight the mountain troll. Do you succeed?', segments);
 
-    await chitchat.mountainTroll_ending(result === "Success");
-    if (result === "Success") return true;
+    if (result != 'Success' && sightBonus > 0)
+    {
+        sightBonus--;
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
+
+    await chitchat.mountainTroll_ending(result === 'Success');
+    if (result === 'Success') return true;
 
     await chitchat.mainQuest_HospitalFailure(chara.house);
-    npc.improveConnection(chara, 'Professor Dumbledore');
+    await npc.improveConnection(chara, 'Professor Dumbledore');
     return false;
 }
 
@@ -316,19 +349,19 @@ async function potionRiddleTask(chara: MainChara<'Wizard'>): Promise<boolean>
     if (potionSkill >= 5) { p1 = 15; p2 = 40; p3 = 15; p4 = 15; p5 = 15; }
     if (potionSkill >= 7) { p1 = 5; p2 = 50; p3 = 15; p4 = 15; p5 = 15; }
 
-    let segments = [ newSegment("Bottle 1", p1), newSegment("Bottle 2", p2), newSegment("Bottle 3", p3), newSegment("Bottle 4", p4), newSegment("Bottle 5", p5) ];
+    let segments = [ newSegment('Bottle 1', p1), newSegment('Bottle 2', p2), newSegment('Bottle 3', p3), newSegment('Bottle 4', p4), newSegment('Bottle 5', p5) ];
     let showedText = 'You try to choose the right potion to drink. Do you succeed?';
     while (true)
     {
         let result = await wheels.spinWheel(showedText, segments);
         switch (result)
         {
-            case "Bottle 1": await chitchat.potionRiddle_ending(false); return false;
-            case "Bottle 2": await chitchat.potionRiddle_ending(true); return true;
-            case "Bottle 3":
-            case "Bottle 4":
-            case "Bottle 5":
-                await chitchat.potionRiddle_useless(result != "Bottle 3");
+            case 'Bottle 1': await chitchat.potionRiddle_ending(false); return false;
+            case 'Bottle 2': await chitchat.potionRiddle_ending(true); return true;
+            case 'Bottle 3':
+            case 'Bottle 4':
+            case 'Bottle 5':
+                await chitchat.potionRiddle_useless(result != 'Bottle 3');
                 segments = removeSegment(segments, segments.find(s => s.text === result)!);
                 showedText = 'You try another one... Do you succeed?';
                 break;
@@ -343,9 +376,9 @@ async function potionRiddleTask(chara: MainChara<'Wizard'>): Promise<boolean>
  */
 async function mirrorOfErisedTask(chara: MainChara<'Wizard'>, endofyear: boolean): Promise<boolean>
 {
-    if (endofyear) return true;    
+    if (endofyear) return true;
 
-    await chitchat.mirror_intro(endofyear, chara.secrets.find(s => s.name === 'mirror_of_erised')!.discovered);
+    await chitchat.mirror_intro(endofyear, chara.secrets.mirrorOfErised);
 
     let discoveredClues = chara.clues.filter(c => c.discovered).length;
     let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
@@ -355,10 +388,16 @@ async function mirrorOfErisedTask(chara: MainChara<'Wizard'>, endofyear: boolean
     let darkArtSkill = chara.grades.find(g => g.subject === 'Defense Against the Dark Arts')!.score;
     let chance = Math.min(55, (charmSkill + potionSkill + herbologySkill + transfigurationSkill + darkArtSkill) + (discoveredClues));
 
-    let segments = [ newSegment("Success", chance), newSegment("Failure", 100 - chance) ];
-    let result = await wheels.spinWheel('You try to defeat Quirrell. Do you succeed?', segments);
+    let segments = [ newSegment('Success', chance), newSegment('Failure', 100 - chance) ];
+    let result = await wheels.spinWheel('You try to fight professor Quirrell. Do you succeed?', segments);
+
+    if (result != 'Success' && sightBonus > 0)
+    {
+        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
+        result = await wheels.spinWheel('Do you succeed?', segments);
+    }
     
-    return result === "Success";
+    return result === 'Success';
 }
 
 // #endregion
@@ -377,8 +416,7 @@ async function goodEnding(chara: MainChara<'Wizard'>, endofyear: boolean)
     chara.housePoints += 50;
     wheels.showWheelResult('house points++');
     await npc.improveConnection(chara, 'Professor Dumbledore');
-    chara.alignment = 'phoenix_order';
-    wheels.showWheelResult('your alignment has shifted.');
+    await shiftAlignment(chara, 'phoenix_order', 7);
 }
 
 /**
@@ -392,8 +430,7 @@ async function badEnding(chara: MainChara<'Wizard'>)
     let maxGrades = getMaxGrades(chara, 3);
     for (let g of maxGrades)
     {
-        g.score--;
-        wheels.showWheelResult(`${g.subject}--`);
+        await subjectIncrement(chara, g.subject, -1);
     }
 }
 

@@ -1,4 +1,5 @@
 
+import { mirrorOfErised } from "../dialogues/year-one-dialogues";
 import { animal, sevenNums, subject, firstYearClue, hogwartsHouseName } from "./basetypes";
 
 /**
@@ -35,10 +36,10 @@ export type hogwartsHouse =
  */
 export type QuidditchGame =
 {
-    houseA: hogwartsHouse;
-    houseB: hogwartsHouse;
-    winner: hogwartsHouse;
-    loser: hogwartsHouse;
+    houseA: hogwartsHouseName;
+    houseB: hogwartsHouseName;
+    winner: hogwartsHouseName;
+    loser: hogwartsHouseName;
     winnerScore: number;
     loserScore: number;
 };
@@ -51,20 +52,60 @@ export type Grade =
     subject: subject;
     score: number;
 }
+export const Grades: Grade[] =
+[
+    {subject: 'Astronomy', score: 5}, {subject: 'Charms', score: 4},
+    {subject: 'Defense Against the Dark Arts', score: 4}, {subject: 'Herbology', score: 2},
+    {subject: 'History of Magic', score: 3}, {subject: 'Potions', score: 4},
+    {subject: 'Transfiguration', score: 4}, {subject: 'Flying', score: 4},
+    {subject: 'Ancient Runes', score: 0}, {subject: 'Arithmancy', score: 0},
+    {subject: 'Divination', score: 0}, {subject: 'Care of Magical Creatures', score: 0},
+    {subject: 'Muggle Studies', score: 0}
+]
 
 /**
- * Type representing a Hogwarts' secret.
+ * Type representing the alignment of a character, with its points towards each axis.
  */
-export type Secret =
+export type alignment =
 {
-    name: string;
-    discovered: boolean;
+    neutral: number;
+    phoenix_order: number;
+    chaos: number;
+    death_eater: number;
 }
-export const BasicSecrets: Secret[] =
-[
-    { name: 'mirror_of_erised', discovered: false },
-    { name: 'room_of_requirement', discovered: false },
-];
+export const PhoenixOrderAlignment: alignment = { neutral: 0, phoenix_order: 100, chaos: 0, death_eater: 0 };
+export const ChaosAlignment: alignment = { neutral: 0, phoenix_order: 0, chaos: 100, death_eater: 0 };
+export const DeathEaterAlignment: alignment = { neutral: 0, phoenix_order: 0, chaos: 0, death_eater: 100 };
+export const NeutralAlignment: alignment = { neutral: 100, phoenix_order: 0, chaos: 0, death_eater: 0 };
+export const alignmentPhoenix = (align: alignment): boolean => align.phoenix_order > align.chaos && align.phoenix_order > align.death_eater;
+export const alignmentChaos = (align: alignment): boolean => align.chaos > align.phoenix_order && align.chaos > align.death_eater;
+export const alignmentDeath = (align: alignment): boolean => align.death_eater > align.phoenix_order && align.death_eater > align.chaos;
+
+/**
+ * Type representing the secrets a character can discover during the story.
+ */
+export type Secrets =
+{
+    // basic secrets
+    mirrorOfErised: boolean,
+    roomOfRequirement: boolean,
+    darkForestPunishment: boolean,
+    aragogMet: boolean,
+
+    // first year uniques
+    darkForestVoldemort: boolean,
+};
+export const HogwartsSecrets: Secrets =
+{
+    // basic secrets
+    mirrorOfErised: false,
+    roomOfRequirement: false,
+    darkForestPunishment: false,
+    aragogMet: false,
+
+    // first year uniques
+    darkForestVoldemort: false,
+};
 
 /**
  * Type representing a secret passage in Hogwarts.
@@ -104,7 +145,7 @@ export type Clue =
     name: firstYearClue;
     discovered: boolean;
 }
-export const FirstYearClues: Clue[] =
+export const firstYearClues: Clue[] =
 [
     { name: 'dumbledores_speech', discovered: false },
     { name: 'snape_halloween', discovered: false },

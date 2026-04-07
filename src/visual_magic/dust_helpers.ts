@@ -16,7 +16,7 @@ export class InputData
   {
     const input = container as HTMLInputElement;
     const value = input.value || text;
-    this.chars = value.split("");
+    this.chars = value.split('');
 
     this.inputRect = input.getBoundingClientRect();
     this.inputStyle = window.getComputedStyle(input);
@@ -28,7 +28,7 @@ export class InputData
     this.font = this.inputStyle.font || `${this.fontSize}px monospace`;
     ctx.font = this.font;
 
-    this.charWidth = ctx.measureText("M").width;
+    this.charWidth = ctx.measureText('M').width;
     this.yTop = this.inputRect.top + this.paddingTop;
 
     this.inputCenter = new Point(

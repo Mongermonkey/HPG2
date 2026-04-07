@@ -1,7 +1,7 @@
 
 import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
-import { MainChara } from "../characters/maincharacter";
+import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import * as npc from '../characters/character-functions';
 import * as chitchat from "../dialogues/year-one-dialogues";
 import { getUniformSegments } from "../wheel_magic/wheel_helpers";
@@ -16,8 +16,7 @@ export async function secretPassages(chara: MainChara<'Wizard'>)
 {
     const nextBtn = (window as any).nextBtn as HTMLButtonElement;
     nextBtn.disabled = true;
-    io.showText('While wandering the castle, you find a secret passage.');
-
+    await io.showText('While wandering the castle, you find a secret passage.');
     // io.showText('Do you want to enter it? (y/n)');
     // let answer = "";
     // do { answer = (await io.handleInput())?.toLowerCase(); }
@@ -25,24 +24,23 @@ export async function secretPassages(chara: MainChara<'Wizard'>)
     // wheels.showWheelResult(answer === "y" ? "You enter the passage." : "You ignore the passage.");
     // if (answer === "n")
     // {
-    //     wheels.showWheelResult("You choose to walk away.");
+    //     wheels.showWheelResult('You choose to walk away.');
     //     return;
     // }
 
     let secrets = chara.secretPassages.filter(p => !p.discovered);
     let segments = getUniformSegments(secrets.map(p => p.name));
 
-    const result = await wheels.spinWheel("Which secret passage did you discover?", segments);
+    const result = await wheels.spinWheel('Which secret passage did you discover?', segments);
     let newPassage = secrets.find(s => s.name === result);
-    if (!newPassage) throw new Error("Secret passage not found.");
+    if (!newPassage) throw new Error('Secret passage not found.');
 
-    io.showText(newPassage!.description || "No description available.");
+    await io.showText(newPassage!.description || 'No description available.');
 
-    if (newPassage.name === "Whomping Will")
+    if (newPassage.name === 'Whomping Will')
     {
-        io.showText("It's not very clear how you discovered this, but one thing is for sure: you just demonstrated a talent for Herbology.");
-        chara.grades.find(g => g.subject === "Herbology")!.score += 1;
-        wheels.showWheelResult("Herbology++");
+        await io.showText('It\'s not very clear how you discovered this, but one thing is for sure: you just demonstrated a talent for Herbology.');
+        await subjectIncrement(chara, 'Herbology');
     }
 
     chara.secretPassages.find(p => p.name === newPassage!.name)!.discovered = true;
@@ -56,11 +54,10 @@ export async function secretPassages(chara: MainChara<'Wizard'>)
 export async function mirrorOfErised(chara: MainChara<'Wizard'>)
 {
     await chitchat.mirrorOfErised();
-    await io.nextEvent();
-    chara.secrets.find(s => s.name === 'mirror_of_erised')!.discovered = true;
+    chara.secrets.mirrorOfErised = true;
     wheels.showWheelResult('You discovered a secret!');
-    let dumbledore = chara.characterList.find(s => s.surname === "Dumbledore");
-    npc.improveConnection(chara, dumbledore!);
+    let dumbledore = chara.characterList.find(s => s.surname === 'Dumbledore');
+    await npc.improveConnection(chara, dumbledore!);
 }
 
 /**
@@ -69,8 +66,7 @@ export async function mirrorOfErised(chara: MainChara<'Wizard'>)
  */
 export async function roomOfRequirement(chara: MainChara<'Wizard'>)
 {
-    await roomOfRequirementDiscovery();
-    await io.nextEvent();
-    chara.secrets.find(s => s.name === "room_of_requirement")!.discovered = true;
+    await roomOfRequirementDiscovery(chara.name);
+    chara.secrets.roomOfRequirement = true;
     wheels.showWheelResult('You discovered a secret!');
 }

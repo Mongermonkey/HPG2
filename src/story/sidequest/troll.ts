@@ -1,121 +1,102 @@
 
-import { Wheel } from '../../wheel_magic/Wheel';
 import * as random from '../../utilities/random';
-import { Character } from '../../characters/characters';
-import * as wheels from "../../wheel_magic/wheel_helpers";
-import * as io from "../../utilities/input_output_helpers";
-import { MainChara } from '../../characters/maincharacter';
 import * as npc from '../../characters/character-functions';
 import * as chitchat from "../../dialogues/year-one-dialogues";
+import { showText } from "../../utilities/input_output_helpers";
+import { newSegment, spinWheel } from "../../wheel_magic/wheel_helpers";
+import { alignmentDeath, alignmentPhoenix } from '../../utilities/compositetypes';
+import { shiftAlignment, fame, MainChara, subjectIncrement, getMaxGrades, housePointsIncrement, getSkill } from '../../characters/maincharacter';
 
-const myWheel = (window as any).myWheel as Wheel;
-const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-const spinBtn = (window as any).spinBtn as HTMLButtonElement;
-
-// Remembrall event
-export async function troll(chara: MainChara<'Wizard'>): Promise<void>
+/**
+ * Handles the Troll sidequest.
+ * @param chara The main character.
+ * @return Whether the mc actually confronted the troll.
+ */
+export async function troll(chara: MainChara<'Wizard'>): Promise<boolean>
 {
     await chitchat.trollIntro();
 
-    let wheelStop = null;
-    let hermione = npc.getCharacterByLongname(chara.characterList, 'Hermione Granger') as Character<'Student'>;
+    let hermione = npc.getCharacterByLongname(chara.characterList, 'Hermione Granger');
     let hermfriend = npc.isFriend(hermione);
 
     if (hermfriend) await chitchat.trollRescue();
     else if (random.spinbool(30, 70)) await chitchat.trollBadLuck();
     else
     {
-        io.showText("You decide to follow the teachers to the dormitories.");  
-        await io.nextEvent();      
-        return;
+        await showText('You decide to follow the teachers to the dormitories.');  
+        return false;
     }
 
-    let flee = wheels.newSegment("Flee", 50), fight = wheels.newSegment("Fight", 50);
-    if (chara.house === 'Gryffindor') { fight.fraction = wheels.pct(fight.fraction + 10); flee.fraction = wheels.pct(flee.fraction - 10); }
-    if (hermfriend && chara.alignment === 'death_eater') { fight.fraction = wheels.pct(fight.fraction - 40); flee.fraction = wheels.pct(flee.fraction + 40); }
-    if (hermfriend && chara.alignment === 'phoenix_order') { fight.fraction = wheels.pct(fight.fraction + 40); flee.fraction = wheels.pct(flee.fraction - 40); }
+    let flee = 50, fight = 50;
+    if (chara.house === 'Gryffindor') { fight += 5; flee -= 5; }
+    if (hermfriend && alignmentDeath(chara.alignment)) { fight -= 40; flee += 40; }
+    if (hermfriend && alignmentPhoenix(chara.alignment)) { fight += 40; flee -= 40; }
 
-    myWheel.setSegments([flee, fight]);
-    wheels.seeWheel(true);
-    wheelStop = await wheels.depr(myWheel);
-    await io.nextEvent();
-    wheels.seeWheel(false);
+    let segments = [ newSegment('Flee', flee), newSegment('Fight', fight)];
+    const firstResult = await spinWheel('What do you do?', segments);
 
-    if (wheelStop.text === "Flee")
+    firstResult === "Flee"
+        ? await trollFlee(chara, hermfriend)
+        : await trollFight(chara);
+
+    return true;
+}
+
+async function trollFlee(chara: MainChara<'Wizard'>, hermfriend: boolean): Promise<void>
+{
+    if (hermfriend)
     {
-        if (hermfriend)
-        {
-            await chitchat.trollCoward();
-            if (chara.alignment !== "death_eater")
-            {
-                io.showText("Your alignment has shifted.");
-                chara.alignment = "death_eater";
-                await io.nextEvent();
-                return;
-            }
-        }
+        await chitchat.trollCoward();
+        await shiftAlignment(chara, 'death_eater');
+    }
+    else
+    {
         await chitchat.trollEscape();
-
         let newfriends = random.spinEqual([1, 2, 3]);
         for (let i = 0; i < newfriends; i++) await npc.befriend(chara, true);
-        await io.nextEvent();
     }
+}
 
-    // Fight
-    io.showText("You decide to fight the troll!");
-    await io.nextEvent();
-    io.showText("What do you do?");
-
-    let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
-    let darkArtSkill = chara.grades.find(g => g.subject === 'Defense Against the Dark Arts')!.score;
+async function trollFight(chara: MainChara<'Wizard'>): Promise<void>
+{
+    let charmSkill = getSkill(chara, 'Charms');
+    let darkArtSkill = getSkill(chara, 'Defense Against the Dark Arts');
     let spellskill = Math.max(charmSkill, darkArtSkill) * 10;
-    let spell = wheels.newSegment("spell", spellskill);
-    let broom = wheels.newSegment("broom", (100 - spellskill) / 2), freeze = wheels.newSegment("freeze", (100 - spellskill) / 2);
-    myWheel.setSegments([spell, broom, freeze]);
-
-    wheels.seeWheel(true);
-    wheelStop = await wheels.depr(myWheel);
-    await io.nextEvent();
-    wheels.seeWheel(false);
-
-    switch (wheelStop.text)
+    
+    let segments = [
+        newSegment('spell', spellskill),
+        newSegment('broom', (100 - spellskill) / 2),
+        newSegment('freeze', (100 - spellskill) / 2)
+    ];
+    await showText('You decide to fight the troll!');
+    const result = await spinWheel('What do you do?', segments);
+    
+    switch (result)
     {
-        case "freeze":
-            await chitchat.troll_freeze();
-            let msg = "";
-            let badluck = random.spinEqual([1, 2, 3]);
-            console.log(`badluck = ${badluck}`);
-            for (let i = 0; i < badluck; i++)
-            {
-                let worsensubject = random.spinEqual(chara.grades);
-                if (worsensubject.score <= 1) continue;
-                worsensubject.score -= 1;
-                msg += (i === 0 ? '' : '\n') + `${worsensubject.subject}--`;
-            }
-            wheels.showWheelResult(msg);
-            await io.nextEvent();
-            break;
+        case "freeze": await badEnding(chara); break;
         case "broom":
-            await chitchat.troll_broom(hermfriend, chara.house);
-            chara.clues.find(c => c.name === 'snape_halloween')!.discovered = true;      // second clue (Snape's wound)
-            chara.fame += 5;
-            chara.housePoints-=5;
-            wheels.showWheelResult('-5 house points\nfame++');
-            await io.nextEvent();
-            io.showText(hermfriend ? "After this scary night, you and Hermione become closer." : "This scary night brings you closer to Hermione.");
-            await io.nextEvent();
-            await npc.improveConnection(chara, hermione);
-            break;
-        case "spell":
-            await chitchat.troll_spell(hermfriend, chara.house);
-            chara.clues.find(c => c.name === 'snape_halloween')!.discovered = true;      // second clue (Snape's wound)
-            chara.fame += hermfriend ? 10 : 5;
-            chara.housePoints += hermfriend ? 10 : 5 ;
-            wheels.showWheelResult(hermfriend ? '+10 house points\nfame++' : '+5 house points\nfame++');
-            await io.nextEvent();
-            io.showText(hermfriend ? "After this scary night, you and Hermione become closer." : "This scary night brings you closer to Hermione.");
-            await io.nextEvent();
-            await npc.improveConnection(chara, hermione);
-            break;
+        case "spell": await goodEnding(chara, result === 'spell'); break;
     }
+}
+
+async function badEnding(chara: MainChara<'Wizard'>): Promise<void>
+{
+    await chitchat.troll_badEnding();
+    let grades = getMaxGrades(chara, 3);
+    for (let g of grades) await subjectIncrement(chara, g.subject, -1);  
+}
+
+async function goodEnding(chara: MainChara<'Wizard'>, spell: boolean): Promise<void>
+{
+    let hermione = npc.getCharacterByLongname(chara.characterList, 'Hermione Granger');
+    let hermfriend = npc.isFriend(hermione);
+
+    await chitchat.troll_goodEnding(hermfriend, chara.house, spell);
+    
+    chara.clues.find(c => c.name === 'snape_halloween')!.discovered = true;     // second clue (Snape's wound)
+    await housePointsIncrement(chara, spell ? (hermfriend ? 10 : 5) : -5);
+    await fame(chara, spell ? (hermfriend ? 10 : 5) : 5);
+
+    await showText(hermfriend ? 'After this scary night, you and Hermione become closer.' : 'This scary night brings you closer to Hermione.');
+    await npc.improveConnection(chara, hermione!);
 }

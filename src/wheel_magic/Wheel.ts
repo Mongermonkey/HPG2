@@ -1,8 +1,8 @@
 
-import { newSegment } from "./wheel_helpers";
-import { WheelSegment } from "./wheel_helpers";
-import { percentToRatio } from "./wheel_helpers";
-import { pct } from "./wheel_helpers";
+import { newSegment } from './wheel_helpers';
+import { WheelSegment } from './wheel_helpers';
+import { percentToRatio } from './wheel_helpers';
+import { pct } from './wheel_helpers';
 
 export type Wheela =
 {
@@ -25,7 +25,7 @@ export type Wheela =
 export function newWheela(canvasId: string): Wheela
 {
   const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
-  if (!canvas) throw new Error(`Canvas con id ${canvasId} non trovato`);
+  if (!canvas) throw new Error('Canvas con id ' + canvasId + ' non trovato');
 
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Impossibile ottenere 2D context');
@@ -87,7 +87,7 @@ export class Wheel
   constructor(canvasId: string)
   {
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
-    if (!canvas) throw new Error(`Canvas con id ${canvasId} non trovato`);
+    if (!canvas) throw new Error('Canvas con id ' + canvasId + ' non trovato');
     this.canvas = canvas;
 
     const ctx = canvas.getContext('2d');
@@ -117,7 +117,7 @@ export class Wheel
   {
     if (!segments || segments.length === 0)
     {
-      console.log("Segments array vuoto o non valido. Nessuna modifica.");
+      console.log('Segments array vuoto o non valido. Nessuna modifica.');
       return;
     }
 
@@ -163,7 +163,7 @@ export class Wheel
     const alreadyNormalized = total === 100 && segments.every((segment, i) => segment.fraction === normalized[i].fraction);
     if (!alreadyNormalized)
     {
-      console.info("Wheel: auto-normalizzazione segmenti applicata.", {
+      console.info('Wheel: auto-normalizzazione segmenti applicata.', {
         originalTotal: total,
         normalizedTotal: 100,
         originalFractions: segments.map(s => s.fraction),
@@ -176,8 +176,8 @@ export class Wheel
 
   private reportInvalidSegments(segments: WheelSegment[]): void
   {
-    console.error("Segmenti ruota non validi: ogni fraction deve essere un numero finito tra 1 e 100 e la somma deve essere normalizzabile a 100.", segments);
-    throw new Error("Segmenti ruota non validi");
+    console.error('Segmenti ruota non validi: ogni fraction deve essere un numero finito tra 1 e 100 e la somma deve essere normalizzabile a 100.', segments);
+    throw new Error('Segmenti ruota non validi');
   }
 
   /**
@@ -261,7 +261,7 @@ export class Wheel
    */
   public async spin(): Promise<WheelSegment>
   {
-    console.log("myWheel.spin() CALLED");
+    console.log('myWheel.spin() CALLED');
     (this.wheel as any).animation = { type: 'spinToStop', duration: 8 + Math.random() * 2, spins: 5 };
     const wasColorOn = (window as any).colorInterval != null;
     if (wasColorOn)

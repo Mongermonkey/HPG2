@@ -1,20 +1,21 @@
 
 import { libraryStudy } from "./classes";
 import { befriendHagrid } from "./Hagrid";
+import * as random from '../utilities/random';
 import { Character } from "../characters/characters";
 import * as wheels from "../wheel_magic/wheel_helpers";
-import { MainChara } from "../characters/maincharacter";
+import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
-import { quidditchPractice } from "../quidditch/quidditch";
+import { hogwartsHouseName } from "../utilities/basetypes";
 import * as chitchat from "../dialogues/year-one-dialogues";
-import { PeevesPrank } from '../story/sidequest/PeevesPrank';
+import { hogwartsHouse } from "../utilities/compositetypes";
+import { PeevesPrank } from './PeevesPrank';
+import { eoyFeast } from "../dialogues/multi-year-dialogues";
+import { quidditchPractice, sortGames } from "../quidditch/quidditch";
 import { mirrorOfErised, roomOfRequirement, secretPassages } from "./secrets";
 import { philosophersStoneQuest } from "../story/mainquest/philosophers_stone_quest";
-import { hogwartsHouseName } from "../utilities/basetypes";
-import { hogwartsHouse } from "../utilities/compositetypes";
 import { addSegment, getUniformSegments, newSegment, WheelSegment } from "../wheel_magic/wheel_helpers";
-import { eoyFeast } from "../dialogues/multi-year-dialogues";
 
 // #region SCHOOL_WHEEL
 
@@ -24,7 +25,7 @@ import { eoyFeast } from "../dialogues/multi-year-dialogues";
  */
 export async function schoolWheel(chara: MainChara<'Wizard'>): Promise<void>
 {
-    let result = await wheels.spinWheel("School Wheel! What happens?", getSegments(chara));
+    let result = await wheels.spinWheel('School Wheel! What happens?', getSegments(chara));
     switch (result)
     {
         case 'friendship wheel': await npc.friendshipWheel(chara, true);
@@ -86,11 +87,8 @@ async function ghostEncounter(chara: MainChara<'Wizard'>): Promise<void>
 {
     // incontro con un fantasma (history of magic++, improveconnection)
     let ghost = chara.characterList.filter((c): c is Character<'Creature'> => c.role === 'Creature').find(c => c.house === chara.house);
-    let sub = chara.grades.find(g => g.subject === 'History of Magic')!;
-    sub.score++;
     await chitchat.ghostTalk(ghost!);
-    wheels.showWheelResult(sub.subject + "++");
-    await io.nextEvent();
+    await subjectIncrement(chara, 'History of Magic');
     await npc.improveConnection(chara, ghost!.longname);
 }
 
@@ -102,7 +100,7 @@ async function moaningMyrtle(chara: MainChara<'Wizard'>): Promise<void>
 {
     let myrtle = chara.characterList.find(c => c.longname === 'Moaning Myrtle');
     await chitchat.myrtleEncounter(npc.isFriend(myrtle), chara.gender === 'm');
-    npc.improveConnection(chara, myrtle!);
+    await npc.improveConnection(chara, myrtle!);
 }
 
 /**
@@ -114,7 +112,7 @@ async function stairsChange(chara: MainChara<'Wizard'>): Promise<void>
     await chitchat.stairsChange();
 
     let segments = [newSegment('Hagrid', 89), newSegment('Mirror of Erised', 10), newSegment('Room of Requirement', 1)];
-    let result = await wheels.spinWheel("Where do you end up?", segments);
+    let result = await wheels.spinWheel('Where do you end up?', segments);
     
     switch (result)
     {
@@ -125,6 +123,71 @@ async function stairsChange(chara: MainChara<'Wizard'>): Promise<void>
 }
 
 // #endregion
+
+/**
+ *  Attend the Sorting Ceremony: sort the mc house.
+ * @param chara The mc.
+ */
+async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
+{
+    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
+    nextBtn.disabled = true;
+    let hog = '';
+    let hoghouse: hogwartsHouse = {name: 'none', points: 0};
+    let gry = newSegment('Gryffindor', 26), huf = newSegment('Hufflepuff', 24),
+    rav = newSegment('Ravenclaw', 24), sly = newSegment('Slytherin', 24), choice = newSegment('choice', 2);
+
+    // Changing wheel based on the player's gifts
+    if (chara.gifts.metamorphmagus != 0) { huf.fraction = wheels.pct(huf.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); sly.fraction = wheels.pct(sly.fraction - 5); rav.fraction = wheels.pct(rav.fraction - 5); }
+    if (chara.gifts.parselmouth != 0) { sly.fraction = wheels.pct(sly.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); huf.fraction = wheels.pct(huf.fraction - 5); rav.fraction = wheels.pct(rav.fraction - 5); }
+    if (chara.gifts.sight) { rav.fraction = wheels.pct(rav.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); huf.fraction = wheels.pct(huf.fraction - 5); sly.fraction = wheels.pct(sly.fraction - 5); }
+
+    let result = await wheels.spinWheel('Which house is your house?', [gry, huf, rav, sly, choice]);
+
+    if (result === 'choice')
+    {
+        await io.showText('The Sorting Hat is baffled by your mind.\nSince he cannot decide, the choice is yours.');        
+        await io.showText('Choose wisely which house to join: (g/h/r/s)');
+        do
+        {
+            hog = (await io.handleInput())?.toLowerCase();
+            hoghouse.name = hog === 'g' ? 'Gryffindor' : hog === 'h' ? 'Hufflepuff' : hog === 'r' ? 'Ravenclaw' : 'Slytherin';
+        }
+        while (hog !== 'g' && hog !== 'h' && hog !== 'r' && hog !== 's');
+    }
+    else hoghouse.name = result as hogwartsHouseName;
+
+    chara.house = hoghouse.name;
+    wheels.showWheelResult('Your house is: ' + hoghouse.name + ' !');
+}
+
+/**
+ * Handles Dumbledore's speech at the feast.
+ * sorting ceremony + first clue + friendshipWheel x3
+ * @param chara The mc.
+ */
+export async function schoolIntro(chara:MainChara<'Wizard'>): Promise<void>
+{
+    await chitchat.arrivalAtHogwarts();
+    await chitchat.sort();
+
+    await sortingCeremony(chara);
+    wheels.seeWheel(false);
+
+    // quest clue #0 - Dumbledore's speech
+    const raven = chara.house === 'Ravenclaw';
+    chara.clues.find(c => c.name === 'dumbledores_speech')!.discovered = random.spinbool(raven ? 90 : 80, raven ? 10 : 20);
+    await chitchat.dumbledoresSpeech(chara.clues.find(c => c.name === 'dumbledores_speech')!.discovered);
+
+    // friendship wheels
+    await io.showText('You are brought to your house\'s common room,\nwhere you can spend some time with your new housemates.');
+    await npc.friendshipWheel(chara);
+    await npc.friendshipWheel(chara);
+    await npc.friendshipWheel(chara);
+
+    // sort quidditch games
+    sortGames(chara);
+}
 
 /**
  * Handles the end-of-year feast and the house cup ceremony
@@ -146,15 +209,15 @@ export async function feast(chara: MainChara<'Wizard'>): Promise<void>
  */
 function getHouseScores(chara: MainChara<'Wizard'>): hogwartsHouse[]
 {
-    const validHouses = Array.from(new Set(chara.quidditchGames.flatMap(game => [game.houseA.name, game.houseB.name])))
+    const validHouses = Array.from(new Set(chara.quidditchGames.flatMap(game => [game.houseA, game.houseB])))
         .filter((house): house is Exclude<hogwartsHouseName, 'none'> => house !== 'none');
 
     const pointsByHouse = new Map<hogwartsHouseName, number>();
     validHouses.forEach(house => pointsByHouse.set(house, 0));
     chara.quidditchGames.forEach(game =>
     {
-        pointsByHouse.set(game.winner.name, (pointsByHouse.get(game.winner.name) ?? 0) + game.winnerScore);
-        pointsByHouse.set(game.loser.name, (pointsByHouse.get(game.loser.name) ?? 0) + game.loserScore);
+        pointsByHouse.set(game.winner, (pointsByHouse.get(game.winner) ?? 0) + game.winnerScore);
+        pointsByHouse.set(game.loser, (pointsByHouse.get(game.loser) ?? 0) + game.loserScore);
     });
 
     const getRandomHousePoints = (): number => (Math.floor(Math.random() * 41) + 20) * 5;

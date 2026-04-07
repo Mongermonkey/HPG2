@@ -36,6 +36,8 @@ export async function showText(text: string | null)
 
     await new Promise(res => setTimeout(res, delay));
   }
+
+  await nextEvent();
 }
 
 /**
@@ -48,12 +50,12 @@ export function handleInput(): Promise<string>
     const input = (window as any).input as HTMLInputElement;
     function onInput(e: KeyboardEvent)
     {
-      if (e.key === "Enter")
+      if (e.key === 'Enter')
       {
         const playerText = input.value.trim();
         if (playerText)
         {
-          input.removeEventListener("keydown", onInput);
+          input.removeEventListener('keydown', onInput);
 
           // Svuota l'input e anima il testo inserito dall'utente
           input.value = "";
@@ -63,7 +65,7 @@ export function handleInput(): Promise<string>
         }
       }
     }
-    input.addEventListener("keydown", onInput);
+    input.addEventListener('keydown', onInput);
     input.focus();
   });
 }
@@ -78,15 +80,15 @@ export function nextEvent(): Promise<void>
   return new Promise((resolve) => {
     const nextBtn = (window as any).nextBtn as HTMLButtonElement;
     const onNext = () => {
-      nextBtn.removeEventListener("click", onNext);
+      nextBtn.removeEventListener('click', onNext);
 
       // Cancella il contenuto di wheel-output
-      const wheelOutput = document.getElementById("wheel-output") as HTMLElement;
-      if (wheelOutput) wheelOutput.textContent = "";
+      const wheelOutput = document.getElementById('wheel-output') as HTMLElement;
+      if (wheelOutput) wheelOutput.textContent = '';
 
       resolve();
     };
-    nextBtn.addEventListener("click", onNext);
+    nextBtn.addEventListener('click', onNext);
     nextBtn.disabled = false;
     nextBtn.focus();
   });

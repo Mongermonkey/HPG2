@@ -41,10 +41,10 @@ export const sevenSegments: WheelSegment[] =
  */
 export function showWheelResult(result: string)
 {
-  const wheelOutput = document.getElementById("wheel-output") as HTMLElement;
+  const wheelOutput = document.getElementById('wheel-output') as HTMLElement;
   if (wheelOutput) {
-    wheelOutput.innerHTML = result.replace(/\n/g, "<br>");
-    wheelOutput.style.color = "#ffd700";
+    wheelOutput.innerHTML = result.replace(/\n/g, '<br>');
+    wheelOutput.style.color = '#ffd700';
     // wheelOutput.style.visibility = "visible";
   }
 }
@@ -55,14 +55,14 @@ export function depr(myWheel: Wheel): Promise<WheelSegment>
     const spinBtn = (window as any).spinBtn as HTMLButtonElement;
     spinBtn.disabled = false;
     const onSpin = async () => {
-      spinBtn.removeEventListener("click", onSpin);
+      spinBtn.removeEventListener('click', onSpin);
       spinBtn.disabled = true;
       const result = await spinWheelImpl(myWheel);
       showWheelResult(result.text);
       spinBtn.disabled = false;
       resolve(result);
     };
-    spinBtn.addEventListener("click", onSpin);
+    spinBtn.addEventListener('click', onSpin);
     spinBtn.focus();
   });
 }
@@ -78,8 +78,8 @@ function spinWheelImpl(myWheel: Wheel): Promise<WheelSegment>
  */
 export function seeWheel(visibility: boolean)
 {
-  const wheel_area = document.getElementById("wheel-area") as HTMLElement;
-  if (wheel_area) wheel_area.style.visibility = visibility ? "visible" : "hidden";
+  const wheel_area = document.getElementById('wheel-area') as HTMLElement;
+  if (wheel_area) wheel_area.style.visibility = visibility ? 'visible' : 'hidden';
 }
 
 /**
@@ -103,9 +103,8 @@ export async function spinWheel(message: string, segments: WheelSegment[]): Prom
     const myWheel = (window as any).myWheel as Wheel;
     myWheel.setSegments(segments);
     seeWheel(true);
-    io.showText(message);
+    await io.showText(message);
     const wheelStop = await depr(myWheel);
-    await io.nextEvent();
     seeWheel(false);
 
     return wheelStop.text;
@@ -162,7 +161,7 @@ export function addSegment(segments: WheelSegment[], segmentToAdd: WheelSegment)
   if (segments.length === 0) return [newSegment(segmentToAdd.text, 100, segmentToAdd.fillStyle)];
   
   if (segmentToAdd.fraction < 1 || segmentToAdd.fraction > 100 - segments.length)
-    throw new Error(`fraction richiesta fuori range: range consentito 1..${100 - segments.length}.`);
+    throw new Error('fraction richiesta fuori range: range consentito 1..' + (100 - segments.length) + '.');
   
   const distributable = 100 - segmentToAdd.fraction - segments.length;
 
