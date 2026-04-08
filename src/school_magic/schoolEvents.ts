@@ -147,7 +147,7 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
     if (result === 'choice')
     {
         await io.showText('The Sorting Hat is baffled by your mind.\nSince he cannot decide, the choice is yours.');        
-        await io.showText('Choose wisely which house to join: (g/h/r/s)');
+        await io.showText('Choose wisely which house to join: (g/h/r/s)', false);
         do
         {
             hog = (await io.handleInput())?.toLowerCase();
@@ -159,6 +159,7 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
 
     chara.house = hoghouse.name;
     wheels.showWheelResult('Your house is: ' + hoghouse.name + ' !');
+    await io.nextEvent();
 }
 
 /**
@@ -169,10 +170,7 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
 export async function schoolIntro(chara:MainChara<'Wizard'>): Promise<void>
 {
     await chitchat.arrivalAtHogwarts();
-    await chitchat.sort();
-
     await sortingCeremony(chara);
-    wheels.seeWheel(false);
 
     // quest clue #0 - Dumbledore's speech
     const raven = chara.house === 'Ravenclaw';

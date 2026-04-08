@@ -25,23 +25,15 @@ export async function sortBlood(blood: bloodStatus)
 }
 
 /**
- * Handles the arrival at Hogwarts.
+ * Handles the arrival at Hogwarts and the sorting ceremony.
  */
 export async function arrivalAtHogwarts(): Promise<void>
 {
     await showText('On the first of September, you board the Hogwarts Express from platform nine and three-quarters at King\'s Cross Station.');
     await showText('By the same evening, you arrive at the magnificent and mysterious Hogwarts Castle.');
-}
-
-/**
- * Handles the sorting ceremony dialogues.
- */
-export async function sort(): Promise<void>
-{
     await showText('In the Great Hall, under a velvety black ceiling dotted with stars, the Sorting Ceremony is about to begin...');
     await showText('Everyone seems very excited about it.');
-    await showText('The Sorting Hat is brought in, looking old and worn.');
-    await showText('He presents the four houses: Gryffindor, Hufflepuff, Ravenclaw and Slytherin.');
+    await showText('The Sorting Hat is brought in, looking old and worn.\nHe presents the four houses: Gryffindor, Hufflepuff, Ravenclaw and Slytherin.');
     await showText('After a while, the Sorting Hat is placed on your head. It feels a bit heavy and itchy.');
     await showText('"...Hmmmm... Interesting... Very interesting...", the hat recites.');
 }
@@ -242,7 +234,6 @@ export async function remembrallIntro(): Promise<void>
     await showText('While leaving, she makes VERY CLEAR that no one is to fly until she comes back.');
     await showText('As Neville is taken away, you notice Draco Malfoy smirking and holding a small, round object.');
     await showText('It\'s Neville\'s Remembrall! He must have lost it during the fall.\nDraco is making fun of Neville with his friends.');
-    await showText('What do you do?');
 }
 
 /**

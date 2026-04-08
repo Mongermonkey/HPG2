@@ -39,3 +39,148 @@ html, body {
   border-radius: 10px;
 }
 
+#show-character-control {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 1100;
+}
+
+#show-character-btn {
+  padding: 8px 12px;
+  background-color: rgb(40, 40, 48);
+  color: rgb(232, 232, 240);
+  border: 2px solid rgb(80, 80, 88);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+#character-extended-toggle {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-color: rgb(40, 40, 48);
+  border: 1px solid rgb(80, 80, 88);
+  border-radius: 2px;
+  display: inline-block;
+}
+
+#character-extended-toggle:checked {
+  background-color: rgb(40, 40, 48);
+}
+
+#character-extended-toggle:checked::after {
+  content: '✓';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -58%);
+  font-size: 5px;
+  line-height: 1;
+  color: rgb(232, 232, 240);
+}
+
+#show-character-btn:hover {
+  border-color: rgb(180, 180, 220);
+  box-shadow: 0 0 5px rgb(180, 180, 220);
+}
+
+#character-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: none;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+#character-popup-overlay.open {
+  display: block;
+}
+
+#character-popup {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 90px);
+  overflow: auto;
+  background-color: rgb(16, 16, 28);
+  border: 2px solid rgb(80, 80, 88);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+#character-popup-output {
+  margin: 0;
+  color: rgb(232, 232, 240);
+  font-size: 13px;
+  line-height: 1.35;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.json-row {
+  padding-left: calc(var(--json-depth, 0) * 14px);
+  margin: 2px 0;
+}
+
+.json-node {
+  margin: 0;
+}
+
+.json-node > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.json-node > summary::-webkit-details-marker {
+  display: none;
+}
+
+.json-node > summary::before {
+  content: '▸';
+  display: inline-block;
+  width: 12px;
+  color: rgb(160, 160, 190);
+}
+
+.json-node[open] > summary::before {
+  content: '▾';
+}
+
+.json-children {
+  margin-top: 2px;
+}
+
+.json-key {
+  color: rgb(162, 208, 255);
+}
+
+.json-sep {
+  color: rgb(210, 210, 220);
+}
+
+.json-value {
+  color: rgb(198, 236, 182);
+}
+
+.json-brace {
+  color: rgb(250, 206, 147);
+}
+
+.json-empty {
+  color: rgb(148, 148, 162);
+  font-style: italic;
+}
+

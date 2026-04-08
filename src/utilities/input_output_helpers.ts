@@ -12,8 +12,9 @@ let current_msg = 0;
 /**
  * Aggiorna l'interfaccia per mostrare un nuovo output testuale.
  * @param text Testo dell'evento da mostrare
+ * @param waitForNext Se true, attende il click su "Avanti" al termine del testo
  */
-export async function showText(text: string | null)
+export async function showText(text: string | null, waitForNext: boolean = true)
 {
   const output = (window as any).output as HTMLElement;
   const input = (window as any).input as HTMLInputElement;
@@ -37,7 +38,7 @@ export async function showText(text: string | null)
     await new Promise(res => setTimeout(res, delay));
   }
 
-  await nextEvent();
+  if (waitForNext) await nextEvent();
 }
 
 /**

@@ -96,16 +96,17 @@ export function getUniformSegments(strings: string[], fillStyle?: string): Wheel
  * Gira la ruota con i segmenti specificati e restituisce il testo del segmento su cui si ferma.
  * @param message Messaggio da mostrare prima dello spin
  * @param segments Segmenti della ruota
+ * @param hideAfterSpin Se true, nasconde la ruota subito dopo lo spin
  * @returns Testo del segmento su cui si ferma la ruota
  */
-export async function spinWheel(message: string, segments: WheelSegment[]): Promise<string>
+export async function spinWheel(message: string, segments: WheelSegment[], hideAfterSpin: boolean = true): Promise<string>
 {  
     const myWheel = (window as any).myWheel as Wheel;
     myWheel.setSegments(segments);
     seeWheel(true);
-    await io.showText(message);
+    await io.showText(message, false);
     const wheelStop = await depr(myWheel);
-    seeWheel(false);
+    if (hideAfterSpin) seeWheel(false);
 
     return wheelStop.text;
 }

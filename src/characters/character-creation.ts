@@ -29,17 +29,16 @@ const spinBtn = (window as any).spinBtn as HTMLButtonElement;
 export async function createCharacter(): Promise<Baseclass<'Default'>>
 {
     let gender = await chooseGender();
-    // await new Promise(resolve => setTimeout(resolve, 0));
-    // await io.nextEvent();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    await io.nextEvent();
 
     let name = await writeName();
-    // await new Promise(resolve => setTimeout(resolve, 0));
-    // await io.nextEvent();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    await io.nextEvent();
     
     let blood = await sortBlood();
 
     let gifts = await sortGifts(name);
-    // await io.nextEvent();
 
     let chara: Baseclass<'Default'> = {gameclass: 'Default', gender, name, blood, gifts}
     return chara;
@@ -54,7 +53,7 @@ async function chooseGender(): Promise<"m" | "f">
     nextBtn.disabled = true;
     let gender: string | undefined = '';
 
-    await io.showText('Choose your gender: (m/f)');
+    await io.showText('Choose your gender: (m/f)', false);
 
     do { gender = (await io.handleInput())?.toLowerCase(); }
     while (gender !== 'm' && gender !== 'f');
@@ -73,7 +72,7 @@ async function writeName(): Promise<string>
     nextBtn.disabled = true;
     let name: string | undefined = '';
     
-    await io.showText('What is your name?');
+    await io.showText('What is your name?', false);
     do { name = await io.handleInput(); }
     while (!name || name.length < 2);
 
@@ -218,7 +217,7 @@ async function sortPet(): Promise<Pet>
     }
 
     let name = '';
-    await io.showText('Wonderful, you brought a ' + result + '!\nWhat is its name?');
+    await io.showText('Wonderful, you brought a ' + result + '!\nWhat is its name?', false);
     do { name = await io.handleInput(); }
     while (!name || name.length < 2);
 
@@ -231,21 +230,21 @@ async function sortPet(): Promise<Pet>
  * Sort the mc skills.
  */
 export async function sortSkills(): Promise<Grade[]>
-{
-    // spinBtn.disabled = true;
-    // wheels.seeWheel(false);
-    
+{    
     await io.showText('Now, let\'s see how good are your natural skills...');
 
-
     myWheel.setSegments(wheels.sevenSegments);
-    let grades: Grade[] = [];   
+    let grades: Grade[] = [];
+    const coreSubjects = ['Astronomy', 'Charms', 'Defense Against the Dark Arts', 'Flying', 'Herbology', 'History of Magic', 'Potions', 'Transfiguration'] as subject[];
 
-    for (let subject of ['Astronomy', 'Charms', 'Defense Against the Dark Arts', 'Flying', 'Herbology', 'History of Magic', 'Potions', 'Transfiguration'] as subject[])
+    for (let i = 0; i < coreSubjects.length; i++)
     {
-        let result = await wheels.spinWheel('Let\'s spin for ' + subject + '...', wheels.sevenSegments);
+        const subject = coreSubjects[i];
+        let result = await wheels.spinWheel('Let\'s spin for ' + subject + '...', wheels.sevenSegments, false);
         grades.push({subject, score: Number(result)});
-        wheels.showWheelResult('Your skill in ' + subject + ': \'' + result + '\'.');
+        wheels.showWheelResult('Your skill in ' + subject + ': ' + result);
+        await io.nextEvent();
+        wheels.seeWheel(false);
     }
     for (let subject of ['Ancient Runes', 'Arithmancy', 'Divination', 'Care of Magical Creatures', 'Muggle Studies'] as subject[])
     {

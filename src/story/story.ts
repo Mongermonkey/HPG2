@@ -44,7 +44,7 @@ export async function startStory()
   // let chara = await init.createCharacter();
   // wiz = await init.urawizard(chara);
 
-  // print(wiz);
+  (window as any).currentCharacter = wiz;
 
   yearOne.attend(wiz);
   
