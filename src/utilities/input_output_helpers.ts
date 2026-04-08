@@ -19,9 +19,10 @@ export async function showText(text: string | null, waitForNext: boolean = true)
   const output = (window as any).output as HTMLElement;
   const input = (window as any).input as HTMLInputElement;
   const nextBtn = (window as any).nextBtn as HTMLButtonElement;
+  const isFastSkipEnabled = Boolean((window as any).fastSkipEnabled);
   output.innerHTML = "";
   input.value = "";
-  nextBtn.disabled = true;
+  nextBtn.disabled = !(waitForNext && isFastSkipEnabled);
   if (waitForNext) nextBtn.focus();
 
   if (!text)
@@ -32,17 +33,49 @@ export async function showText(text: string | null, waitForNext: boolean = true)
 
   // Incremento il token per questa animazione
   const myToken = ++current_msg;
+  let skipSignal: (() => void) | null = null;
+  const skipPromise = new Promise<void>((resolve) => {
+    skipSignal = resolve;
+  });
+
+  const onFastSkip = () => {
+    if (!isFastSkipEnabled || !waitForNext) return;
+    if (myToken !== current_msg) return;
+
+    // Interrompe immediatamente il dialogo corrente e lascia spazio al successivo.
+    current_msg++;
+    output.innerHTML = "";
+    nextBtn.removeEventListener('click', onFastSkip);
+    if (skipSignal) skipSignal();
+  };
+
+  if (isFastSkipEnabled && waitForNext)
+  {
+    nextBtn.addEventListener('click', onFastSkip);
+  }
 
   for (let i = 0; i < text.length; i++)
   {
     // Se è partita una nuova showText, interrompo questa
-    if (myToken !== current_msg) return;
+    if (myToken !== current_msg)
+    {
+      nextBtn.removeEventListener('click', onFastSkip);
+      return;
+    }
 
     output.innerHTML += text[i] === "\n" ? "<br>" : text[i];
     const delay = text[i] === "\n" ? 36 : 18;
 
-    await new Promise(res => setTimeout(res, delay));
+    await Promise.race([
+      new Promise<void>(res => setTimeout(res, delay)),
+      skipPromise
+    ]);
   }
+
+  nextBtn.removeEventListener('click', onFastSkip);
+
+  // Se il messaggio è stato skippato durante la scrittura, esce subito.
+  if (myToken !== current_msg) return;
 
   if (waitForNext) await nextEvent();
 }

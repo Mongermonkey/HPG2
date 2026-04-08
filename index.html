@@ -193,6 +193,19 @@
       position: absolute;
       top: 12px;
       left: 12px;
+      z-index: 1100;
+    }
+
+    #settings-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1090;
+      display: none;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    #settings-overlay.show {
+      display: block;
     }
 
     #settings-btn {
@@ -212,18 +225,72 @@
     }
 
     .settings-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: min(165px, calc(100vw - 24px));
+      max-height: calc(100vh - 90px);
+      overflow: auto;
       visibility: hidden;
       opacity: 0;
-      margin-top: 0px;
-      border: none;
-      border-radius: 0px;
-      padding: 2px;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      background-color: rgb(16, 16, 28);
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
     }
 
     .settings-menu.show {
       visibility: visible;
       opacity: 1;
+    }
+
+    .settings-menu button {
+      width: 100%;
+      text-align: left;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .settings-option {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 2px 0;
+      margin: 0;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .settings-option:hover,
+    .settings-option:focus,
+    .settings-option:focus-visible,
+    .settings-option:active {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .settings-option-label {
+      color: rgb(162, 208, 255);
+    }
+
+    .settings-option-sep {
+      color: rgb(210, 210, 220);
+    }
+
+    .settings-option-state {
+      color: rgb(198, 236, 182);
+    }
+
+    .settings-option-state.is-off {
+      color: rgb(250, 206, 147);
     }
 
     #wheel-output {
@@ -241,10 +308,12 @@
 </head>
 <body>
   <!-- MENU SETTINGS -->
+  <div id="settings-overlay"></div>
   <div class="settings-container">
     <button id="settings-btn">⚙</button>
     <div id="settings-menu" class="settings-menu">
-      <button id="color-btn">Change color: OFF</button>
+      <button id="color-btn" class="settings-option" type="button"><span class="settings-option-label">Change color</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
+      <button id="fast-skip-btn" class="settings-option" type="button"><span class="settings-option-label">Fast skip</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
     </div>
   </div>
 
@@ -285,6 +354,7 @@
     let endColorIndex = 2 % colorPalette.length;
     let progress = 0;
     const step = 0.02;
+    window.fastSkipEnabled = false;
 
     function rainbowWheel() {
       const endColor = hexToRgb(colorPalette[endColorIndex]);
@@ -320,32 +390,60 @@
       }
     }
 
-    function changeColor() {
+    function changeColor(event) {
+      if (event) event.stopPropagation();
       const btn = document.getElementById('color-btn');
       if (!colorInterval)
       {
         colorInterval = setInterval(rainbowWheel, 50);
-        btn.textContent = "Change color: ON";
+        setOptionState(btn, 'Change color', true);
       }
       else
       {
         clearInterval(colorInterval);
         colorInterval = null;
-        btn.textContent = "Change color: OFF";
+        setOptionState(btn, 'Change color', false);
       }
+    }
+
+    function setOptionState(btn, label, isOn) {
+      btn.innerHTML = `<span class="settings-option-label">${label}</span><span class="settings-option-sep">: </span><span class="settings-option-state ${isOn ? 'is-on' : 'is-off'}">${isOn ? 'ON' : 'OFF'}</span>`;
     }
 
     document.getElementById('color-btn').addEventListener('click', changeColor);
 
+    function toggleFastSkip(event) {
+      if (event) event.stopPropagation();
+      const btn = document.getElementById('fast-skip-btn');
+      window.fastSkipEnabled = !window.fastSkipEnabled;
+      setOptionState(btn, 'Fast skip', window.fastSkipEnabled);
+    }
+
+    document.getElementById('fast-skip-btn').addEventListener('click', toggleFastSkip);
+
     const settingsBtn = document.getElementById('settings-btn');
     const settingsMenu = document.getElementById('settings-menu');
-    settingsBtn.addEventListener('click', () => { settingsMenu.classList.toggle('show'); });
+    const settingsOverlay = document.getElementById('settings-overlay');
+
+    function setSettingsMenuOpen(isOpen) {
+      settingsMenu.classList.toggle('show', isOpen);
+      settingsOverlay.classList.toggle('show', isOpen);
+    }
+
+    settingsBtn.addEventListener('click', () => {
+      const shouldOpen = !settingsMenu.classList.contains('show');
+      setSettingsMenuOpen(shouldOpen);
+    });
+
+    settingsOverlay.addEventListener('click', () => {
+      setSettingsMenuOpen(false);
+    });
 
     document.addEventListener(
       'click', (e) => {
       if (settingsMenu.classList.contains('show') && !settingsMenu.contains(e.target) && e.target !== settingsBtn)
       {
-        settingsMenu.classList.remove('show');
+        setSettingsMenuOpen(false);
       }
     });
 

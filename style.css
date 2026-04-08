@@ -108,7 +108,7 @@ html, body {
   position: absolute;
   top: 56px;
   right: 16px;
-  width: min(420px, calc(100vw - 32px));
+  width: min(340px, calc(100vw - 32px));
   max-height: calc(100vh - 90px);
   overflow: auto;
   background-color: rgb(16, 16, 28);
