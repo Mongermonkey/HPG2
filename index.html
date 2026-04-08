@@ -95,7 +95,7 @@
 
     .bottom-bar input {
       width: 220px;
-      margin: 0 8px;
+      margin: 0;
       padding: 5px 16px;
       background-color: rgb(40, 40, 48);
       color: rgb(232, 232, 240);
@@ -120,9 +120,63 @@
       outline: none;
     }
 
-    .bottom-bar button:focus {
+    .bottom-bar button:focus,
+    .bottom-bar button:focus-visible {
+      outline: none;
       border-color: rgb(180, 180, 220);
       box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+
+    .bottom-bar button:disabled,
+    .bottom-bar button:disabled:hover,
+    .bottom-bar button:disabled:focus,
+    .bottom-bar button:disabled:focus-visible {
+      outline: none;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border-color: rgb(98, 98, 110);
+      box-shadow: none;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    #next-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      font-size: 16px;
+      height: 48px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: monospace;
+      box-sizing: border-box;
+      outline: none;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      cursor: pointer;
+      border: 2px solid rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgba(180, 180, 220, 0.28);
+    }
+
+    #next-btn:not(:disabled):hover,
+    #next-btn:not(:disabled):focus,
+    #next-btn:not(:disabled):focus-visible,
+    #next-btn:not(:disabled):active {
+      outline: none;
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgba(180, 180, 220, 0.28);
+    }
+
+    #next-btn:disabled,
+    #next-btn:disabled:hover,
+    #next-btn:disabled:focus,
+    #next-btn:disabled:focus-visible,
+    #next-btn:disabled:active {
+      outline: none;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border-color: rgb(98, 98, 110);
+      box-shadow: none;
+      cursor: not-allowed;
     }
 
     #player-input {
@@ -130,7 +184,7 @@
       height: 48px;
       padding: 12px 20px;
       border-radius: 10px;
-      border: 2px solid #ccc;
+      border: 2px solid rgb(98, 98, 110);
       width: 310px;
       box-sizing: border-box;
     }

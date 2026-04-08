@@ -18,11 +18,17 @@ export async function showText(text: string | null, waitForNext: boolean = true)
 {
   const output = (window as any).output as HTMLElement;
   const input = (window as any).input as HTMLInputElement;
+  const nextBtn = (window as any).nextBtn as HTMLButtonElement;
   output.innerHTML = "";
   input.value = "";
-  input.focus();
+  nextBtn.disabled = true;
+  if (waitForNext) nextBtn.focus();
 
-  if (!text) return;
+  if (!text)
+  {
+    if (waitForNext) nextBtn.disabled = false;
+    return;
+  }
 
   // Incremento il token per questa animazione
   const myToken = ++current_msg;
