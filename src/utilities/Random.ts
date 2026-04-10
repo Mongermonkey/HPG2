@@ -146,8 +146,6 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
  */
 export function spin(...percentages: number[]): number
 {
-  console.log('Percentuali: [' + percentages.join(', ') + ']. Spin...');
-
   const total = percentages.reduce((a, b) => a + b, 0);
   if (percentages.length < 2) return 0;
 

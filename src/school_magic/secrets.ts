@@ -14,6 +14,7 @@ import { getUniformSegments, showWheelResult, spinWheel } from "../wheel_magic/w
 export async function secretPassages(chara: MainChara<'Wizard'>)
 {
     await io.showText('While wandering the castle, you find a secret passage.');
+    
     // io.showText('Do you want to enter it? (y/n)');
     // let answer = "";
     // do { answer = (await io.handleInput())?.toLowerCase(); }

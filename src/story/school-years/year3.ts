@@ -1,17 +1,18 @@
 
-import { Wheel } from '../../wheel_magic/Wheel';
-import * as random from '../../utilities/random';
-import { characterList } from "../../characters/characters";
-import * as wheels from "../../wheel_magic/wheel_helpers";
-import * as io from "../../utilities/input_output_helpers";
-import { WheelSegment } from '../../wheel_magic/wheel_helpers';
-import * as chitchat from "../../dialogues/year-one-dialogues";
-import { Baseclass, CustomClass, Pet } from '../../characters/maincharacter';
+import { troll } from '../sidequest/troll';
+import { saveNorbert } from '../sidequest/Norbert';
+import { chooseamovie } from '../../utilities/movielist';
+import { MainChara } from '../../characters/maincharacter';
+import { takeWolfsBane } from '../../school_magic/wolfsBane';
+import { classWheel, firstFlyingLesson } from '../../school_magic/classes';
+import { quidditchGame, quidditchSelection } from '../../quidditch/quidditch';
+import { feast, schoolIntro, schoolWheel } from '../../school_magic/schoolEvents';
+import { philosophersStoneQuest, questClue } from '../mainquest/philosophers_stone_quest';
 
 /**
  * Attend the third year at Hogwarts.
  */
-export async function attend(chara: CustomClass['Wizard']): Promise<CustomClass['Wizard']>
+export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wizard'>>
 {
     // tuttecose del terzo anno
 

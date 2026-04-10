@@ -1,6 +1,12 @@
 import { Pixel, InputData, AnimationConfig, Particle, LeaderParticle, FollowerParticle, Point, Path, LeaderSettings } from './visual_helpers';
 
-export function animateText(text: string, container: HTMLElement) {
+/**
+ * Animates the given text within the specified container.
+ * @param text The text to animate.
+ * @param container The HTML container element.
+ */
+export function animateText(text: string, container: HTMLElement)
+{
   const showDebugPaths = false;
   const PARTICLES_PER_EXIT = 18;
   const animationDuration = 3000;
@@ -34,7 +40,12 @@ export function animateText(text: string, container: HTMLElement) {
   runAnimationLoop(config);
 }
 
-function setupCanvas(): HTMLCanvasElement {
+/**
+ * Sets up the canvas element for the animation.
+ * @returns The newly created HTMLCanvasElement.
+ */
+function setupCanvas(): HTMLCanvasElement
+{
   const canvas = document.createElement('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -44,10 +55,17 @@ function setupCanvas(): HTMLCanvasElement {
   canvas.style.pointerEvents = 'none';
   canvas.style.zIndex = '9999';
   document.body.appendChild(canvas);
+
   return canvas;
 }
 
-function calculateExitPoints(inputData: InputData): Point[] {
+/**
+ * Calculates the exit points for the particles based on the input data.
+ * @param inputData The input data containing text and layout information.
+ * @returns An array of exit points.
+ */
+function calculateExitPoints(inputData: InputData): Point[]
+{
   const chars = inputData.chars;
   const inputRect = inputData.inputRect;
   const paddingLeft = inputData.paddingLeft;
@@ -58,7 +76,8 @@ function calculateExitPoints(inputData: InputData): Point[] {
   let numExits = notblank + (notblank <= 3 ? 2 : notblank <= 10 ? 3 : notblank <= 20 ? 4 : 5);
 
   const EXIT_POINTS: Point[] = [];
-  for (let i = 0; i < numExits; i++) {
+  for (let i = 0; i < numExits; i++)
+  {
     const charIdx = nonBlankIndices[Math.floor(i * nonBlankIndices.length / numExits)];
     const charX = inputRect.left + paddingLeft + charIdx * charWidth + charWidth / 2;
     EXIT_POINTS.push(new Point(charX, inputRect.top));
@@ -68,9 +87,16 @@ function calculateExitPoints(inputData: InputData): Point[] {
   return EXIT_POINTS;
 }
 
-function getTextPixels(inputData: InputData): Pixel[] {
+/**
+ * Extracts the pixels representing the text from the input data.
+ * @param inputData The input data containing text and layout information.
+ * @returns An array of pixels representing the text.
+ */
+function getTextPixels(inputData: InputData): Pixel[]
+{
   const textPixels: Pixel[] = [];
-  for (let i = 0; i < inputData.chars.length; i++) {
+  for (let i = 0; i < inputData.chars.length; i++)
+  {
     if (inputData.chars[i] === ' ') continue;
 
     const charX = inputData.inputRect.left + inputData.paddingLeft + i * inputData.charWidth;
@@ -87,23 +113,30 @@ function getTextPixels(inputData: InputData): Pixel[] {
     charCtx.fillText(inputData.chars[i], 0, 0);
 
     const imageData = charCtx.getImageData(0, 0, charCanvas.width, charCanvas.height);
-    for (let y = 0; y < charCanvas.height; y++) {
-      for (let x = 0; x < charCanvas.width; x++) {
+    for (let y = 0; y < charCanvas.height; y++)
+    {
+      for (let x = 0; x < charCanvas.width; x++)
+      {
         const idx = (y * charCanvas.width + x) * 4;
-        if (imageData.data[idx + 3] > 128) {
-          textPixels.push(new Pixel(charX + x + 2, inputData.yTop + y + 5, i));
-        }
+        if (imageData.data[idx + 3] > 128) textPixels.push(new Pixel(charX + x + 2, inputData.yTop + y + 5, i));        
       }
     }
   }
-
   return textPixels;
 }
 
-function groupParticlesByExit(particles: Particle[]): Map<string, Particle[]> {
+/**
+ * Groups particles by their exit points.
+ * @param particles The array of particles to group.
+ * @returns A map where the keys are exit point coordinates and the values are arrays of particles.
+ */
+function groupParticlesByExit(particles: Particle[]): Map<string, Particle[]>
+{
   const exitGroups: Map<string, Particle[]> = new Map();
-  for (const p of particles) {
-    if (p.exit) {
+  for (const p of particles)
+  {
+    if (p.exit)
+    {
       const key = `${p.exit.x},${p.exit.y}`;
       if (!exitGroups.has(key)) exitGroups.set(key, []);
       exitGroups.get(key)!.push(p);
@@ -112,22 +145,34 @@ function groupParticlesByExit(particles: Particle[]): Map<string, Particle[]> {
   return exitGroups;
 }
 
-function runAnimationLoop(config: AnimationConfig) {
+/**
+ * Runs the animation loop for the particles.
+ * @param config The animation configuration.
+ */
+function runAnimationLoop(config: AnimationConfig)
+{
   const { ctx, particles } = config;
   const leaders = particles.filter(p => p instanceof LeaderParticle) as LeaderParticle[];
   let startTime: number | null = null;
 
   drawTrails(ctx, leaders);
   drawLeaderCircles(ctx, leaders);
-
-  requestAnimationFrame((timestamp) =>
-    animate(timestamp, leaders, config, startTime, (t) => { startTime = t; })
-  );
+  requestAnimationFrame((timestamp) => animate(timestamp, leaders, config, startTime, (t) => { startTime = t; }));
 }
 
-function animate(timestamp: number, leaders: LeaderParticle[], config: AnimationConfig, startTime: number | null, setStartTime: (t: number) => void) {
+/**
+ * Animates the particles for each frame.
+ * @param timestamp The current timestamp.
+ * @param leaders The array of leader particles.
+ * @param config The animation configuration.
+ * @param startTime The start time of the animation.
+ * @param setStartTime A function to set the start time.
+ */
+function animate(timestamp: number, leaders: LeaderParticle[], config: AnimationConfig, startTime: number | null, setStartTime: (t: number) => void)
+{
   const { ctx, canvas } = config;
-  if (!startTime) {
+  if (!startTime)
+  {
     setStartTime(timestamp);
     startTime = timestamp;
   }
@@ -137,29 +182,39 @@ function animate(timestamp: number, leaders: LeaderParticle[], config: Animation
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (config.showDebugPaths) {
+  if (config.showDebugPaths)
+  {
     drawTrails(ctx, leaders);
     drawLeaderCircles(ctx, leaders);
   }
 
-  for (const p of config.particles) {
+  for (const p of config.particles)
+  {
     updateParticle(p, elapsed, leaders, config.exitGroups, config);
     drawParticle(p, ctx, progress);
   }
 
-  if (elapsed < config.animationDuration)
-    requestAnimationFrame((t) => animate(t, leaders, config, startTime, setStartTime));
-  else
-    document.body.removeChild(canvas);
+  if (elapsed < config.animationDuration) requestAnimationFrame((t) => animate(t, leaders, config, startTime, setStartTime));
+  else document.body.removeChild(canvas);
 }
 
-function updateParticle(p: Particle, elapsed: number, leaders: LeaderParticle[], exitGroups: Map<string, Particle[]>, config: AnimationConfig) {
+/**
+ * Updates the state of a particle based on the elapsed time and other factors.
+ * @param p The particle to update.
+ * @param elapsed The elapsed time since the start of the animation.
+ * @param leaders The array of leader particles.
+ * @param exitGroups The map of exit groups.
+ * @param config The animation configuration.
+ */
+function updateParticle(p: Particle, elapsed: number, leaders: LeaderParticle[], exitGroups: Map<string, Particle[]>, config: AnimationConfig)
+{
   const t = Math.min(elapsed / config.animationDuration, 1);
   const leaderHoldTime = 0;
   const followerReleaseWindow = config.animationDuration * config.followerReleaseRatio;
 
   let releaseTime = leaderHoldTime;
-  if (p instanceof FollowerParticle) {
+  if (p instanceof FollowerParticle)
+  {
     const key = `${p.exit?.x},${p.exit?.y}`;
     const group = exitGroups.get(key)!;
     const idx = group.indexOf(p);
@@ -167,28 +222,27 @@ function updateParticle(p: Particle, elapsed: number, leaders: LeaderParticle[],
   }
 
   const speedFactor = elapsed < releaseTime ? 0.03 : 0.5 + 1.2 * t * t;
-  if (elapsed < releaseTime) {
+  if (elapsed < releaseTime)
+  {
     const anchorX = p.x - p.vx * speedFactor;
     const anchorY = p.y - p.vy * speedFactor;
     p.vx += (anchorX - p.x) * 0.08;
     p.vy += (anchorY - p.y) * 0.08;
   }
 
-  if (p instanceof LeaderParticle && elapsed >= releaseTime)
-    updateLeaderMovement(p, elapsed, releaseTime, leaders, config);
+  if (p instanceof LeaderParticle && elapsed >= releaseTime) updateLeaderMovement(p, elapsed, releaseTime, leaders, config);
 
-  if (p instanceof FollowerParticle && elapsed >= releaseTime) {
+  if (p instanceof FollowerParticle && elapsed >= releaseTime)
+  {
     const trail = p.leader.trail;
     const trailIdx = Math.max(0, trail.length - 1 - 2 * (exitGroups.get(p.exit!.x + ',' + p.exit!.y)!.indexOf(p)));
     const target = trail[trailIdx];
-    if (target) {
-      p.x = target.x;
-      p.y = target.y;
-    }
+    if (target) { p.x = target.x; p.y = target.y; }
   }
 
   const speed = Math.hypot(p.vx, p.vy);
-  if (speed > config.maxParticleSpeed) {
+  if (speed > config.maxParticleSpeed)
+  {
     p.vx = (p.vx / speed) * config.maxParticleSpeed;
     p.vy = (p.vy / speed) * config.maxParticleSpeed;
   }
@@ -196,7 +250,16 @@ function updateParticle(p: Particle, elapsed: number, leaders: LeaderParticle[],
   p.y += p.vy * speedFactor;
 }
 
-function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTime: number, leaders: LeaderParticle[], config: AnimationConfig) {
+/**
+ * Updates the movement of a leader particle based on the elapsed time and other factors.
+ * @param leader The leader particle to update.
+ * @param elapsed The elapsed time since the start of the animation.
+ * @param releaseTime The time at which the leader particle is released.
+ * @param leaders The array of leader particles.
+ * @param config The animation configuration.
+ */
+function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTime: number, leaders: LeaderParticle[], config: AnimationConfig)
+{
   if (elapsed < releaseTime) return;
 
   leader.circleProgress!++;
@@ -204,7 +267,8 @@ function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTi
   const targetX = leader.circleCenter!.x + Math.cos(leader.circleAngle!) * leader.circleRadius!;
   const targetY = leader.circleCenter!.y + Math.sin(leader.circleAngle!) * leader.circleRadius!;
 
-  if (leader.out) {
+  if (leader.out)
+  {
     const maxDist = Math.hypot(config.inputData.inputRect.width, config.inputData.inputRect.height) * 0.7;
     let tries = 0;
     let newCenter: Point;
@@ -214,9 +278,7 @@ function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTi
     do {
       const angle = Math.random() * Math.PI * 2;
       const radius = Math.random() * maxDist * 0.7;
-      newCenter = new Point(config.inputData.inputCenter.x + Math.cos(angle) * radius,
-        config.inputData.inputCenter.y + Math.sin(angle) * radius);
-      
+      newCenter = new Point(config.inputData.inputCenter.x + Math.cos(angle) * radius, config.inputData.inputCenter.y + Math.sin(angle) * radius);
       newRadius = 20 + Math.random() * 40;
 
       overlaps = leaders.some(other => {
@@ -246,8 +308,7 @@ function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTi
       const dy = leader.exit!.y - leader.y;
       const dist = Math.hypot(dx, dy) || 1;
       const step = Math.min(60, dist);
-      leader.circleCenter = new Point(leader.x + (dx / dist) * step + (Math.random() - 0.5) * 60,
-        leader.y + (dy / dist) * step + (Math.random() - 0.5) * 60);
+      leader.circleCenter = new Point(leader.x + (dx / dist) * step + (Math.random() - 0.5) * 60, leader.y + (dy / dist) * step + (Math.random() - 0.5) * 60);
       leader.circleRadius = 20 + Math.random() * 40;
       leader.circleDuration = 30 + Math.floor(Math.random() * 40);
       leader.circleProgress = 0;
@@ -264,6 +325,12 @@ function updateLeaderMovement(leader: LeaderParticle, elapsed: number, releaseTi
   if (leader.trail.length > 120) leader.trail.shift();
 }
 
+/**
+ * Draws a particle on the canvas.
+ * @param p The particle to draw.
+ * @param ctx The canvas rendering context.
+ * @param progress The progress of the particle's animation.
+ */
 function drawParticle(p: Particle, ctx: CanvasRenderingContext2D, progress: number)
 {
   p.alpha = p instanceof LeaderParticle ? 0 : 1 - progress;
@@ -275,13 +342,20 @@ function drawParticle(p: Particle, ctx: CanvasRenderingContext2D, progress: numb
   ctx.restore();
 }
 
+/**
+ * Draws the trails of leader particles on the canvas.
+ * @param ctx The canvas rendering context.
+ * @param leaders The array of leader particles.
+ */
 function drawTrails(ctx: CanvasRenderingContext2D, leaders: LeaderParticle[])
 {
   ctx.save();
   ctx.strokeStyle = "rgba(0,200,0,0.7)";
   ctx.lineWidth = 1.5;
-  for (const p of leaders) {
-    if (p.trail.length > 1) {
+  for (const p of leaders)
+  {
+    if (p.trail.length > 1)
+    {
       ctx.beginPath();
       p.trail.forEach((pt, i) => i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
       ctx.stroke();
@@ -290,6 +364,11 @@ function drawTrails(ctx: CanvasRenderingContext2D, leaders: LeaderParticle[])
   ctx.restore();
 }
 
+/**
+ * Draws the circles of leader particles on the canvas.
+ * @param ctx The canvas rendering context.
+ * @param leaders The array of leader particles.
+ */
 function drawLeaderCircles(ctx: CanvasRenderingContext2D, leaders: LeaderParticle[])
 {
   for (const leader of leaders)
@@ -303,26 +382,39 @@ function drawLeaderCircles(ctx: CanvasRenderingContext2D, leaders: LeaderParticl
   }
 }
 
-function findNearestPixel(exit: Point, pixels: Pixel[]): Pixel | null {
+/**
+ * Finds the nearest pixel to a given exit point.
+ * @param exit The exit point.
+ * @param pixels The array of pixels to search.
+ * @returns The nearest pixel or null if no pixels are available.
+ */
+function findNearestPixel(exit: Point, pixels: Pixel[]): Pixel | null
+{
   if (pixels.length === 0) return null;
   let nearest = pixels[0];
   let minDist = Math.hypot(exit.x - nearest.x, exit.y - nearest.y);
-  for (let i = 1; i < pixels.length; i++) {
+  for (let i = 1; i < pixels.length; i++)
+  {
     const p = pixels[i];
     const d = Math.hypot(exit.x - p.x, exit.y - p.y);
-    if (d < minDist) {
-      minDist = d;
-      nearest = p;
-    }
+    if (d < minDist) { minDist = d; nearest = p; }
   }
   return nearest;
 }
 
+/**
+ * Sets up particles with paths from exit points to pixels.
+ * @param EXIT_POINTS The array of exit points.
+ * @param pixels The array of pixels.
+ * @param PARTICLES_PER_EXIT The number of particles per exit point.
+ * @returns The array of particles.
+ */
 function setupParticlesWithPaths(EXIT_POINTS: Point[], pixels: Pixel[], PARTICLES_PER_EXIT: number): Particle[]
 {
   const particles: Particle[] = [];
 
-  for (const exit of EXIT_POINTS) {
+  for (const exit of EXIT_POINTS)
+  {
     const nearestPixel = findNearestPixel(exit, pixels);
     const relevantPixels = nearestPixel ? pixels.filter(p => p.charIdx === nearestPixel.charIdx) : [];
 
@@ -341,7 +433,8 @@ function setupParticlesWithPaths(EXIT_POINTS: Point[], pixels: Pixel[], PARTICLE
     (leader as any)._path = path;
     particles.push(leader);
 
-    for (let j = 0; j < PARTICLES_PER_EXIT - 1; j++) {
+    for (let j = 0; j < PARTICLES_PER_EXIT - 1; j++)
+    {
       const basePixel = relevantPixels.length > 0
         ? relevantPixels[Math.floor(Math.random() * relevantPixels.length)]
         : new Pixel(leader.x, leader.y, leader.charIdx);
@@ -351,8 +444,6 @@ function setupParticlesWithPaths(EXIT_POINTS: Point[], pixels: Pixel[], PARTICLE
       particles.push(follower);
     }
   }
-
   // Fix dei percorsi SOLO dopo aver creato tutti i leader
-
   return particles;
 }

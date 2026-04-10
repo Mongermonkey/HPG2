@@ -7,7 +7,7 @@ export function animateText(text: string, container: HTMLElement) {
   const canvas = setupCanvas();
   const ctx = canvas.getContext('2d')!;
   const pixels = getTextPixels(inputDataFromText(text, container, ctx));
-  console.log('Punti creati: ', pixels.length);
+  // console.log('Punti creati: ', pixels.length);
 
   // disegna subito i pixel
   drawPixels(ctx, pixels);

@@ -68,7 +68,7 @@ export async function chooseamovie(genre: string): Promise<void>
     {
         myWheel.setSegments(getUniformSegments([
             "The Monkey (2025)",
-            "The Lord of the Rings: The Fellowship of the Ring (2001)",
+            // "The Lord of the Rings: The Fellowship of the Ring (2001)",
             "The Lord of the Rings: The Two Towers (2002)",
             "The Lord of the Rings: The Return of the King (2003)",
             "The Twilight Saga: Eclipse (2010)",
@@ -80,7 +80,7 @@ export async function chooseamovie(genre: string): Promise<void>
             "Gangubai Kathiawadi (2022)",
             "Basic Instinct (1992)",
             "Exit 8 (2025)",
-            "Dhurandar The Revenge (2026)",
+            // "Dhurandar The Revenge (2026)",
         ]));
     }
     else    

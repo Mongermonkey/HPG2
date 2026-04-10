@@ -266,7 +266,6 @@ export class Wheel
    */
   public async spin(): Promise<WheelSegment>
   {
-    console.log('myWheel.spin() CALLED');
     (this.wheel as any).animation = { type: 'spinToStop', duration: 8 + Math.random() * 2, spins: 5 };
     const wasColorOn = (window as any).colorInterval != null;
     if (wasColorOn)

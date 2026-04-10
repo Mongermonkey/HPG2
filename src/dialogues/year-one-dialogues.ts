@@ -595,7 +595,7 @@ export async function mainQuest_Intro(clues: Clue[]): Promise<void>
 {
     await showText('During your first year at Hogwarts, you have been hearing some strange rumors around the school...\nFinally, you connect the dots.');
     
-    // if (clues.find(c => c.name === 'dumbledores_speech')!.discovered)
+    // aggiungere check su indizio 0 (?)
     await showText('You remember Dumbledore\'s speech about the third-floor corridor, and the danger about it...');
     if (clues.find(c => c.name === 'gringotts_theft')!.discovered) await showText('The failed robbery at Gringott\'s, the oldest magical bank of England...');
     if (clues.find(c => c.name === 'chocolate_frog')!.discovered) await showText('The connection between Hogwart\'s headmaster Dumbledore and Nicolas Flamel, the famous alchemist...');
