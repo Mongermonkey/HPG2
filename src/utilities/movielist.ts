@@ -1,20 +1,15 @@
 
 import { Wheel } from '../wheel_magic/Wheel';
 import * as io from "./input_output_helpers";
-import * as wheels from "../wheel_magic/wheel_helpers";
-import { WheelSegment } from "../wheel_magic/wheel_helpers";
-import * as chitchat from "../dialogues/year-one-dialogues";
+import { depr, getUniformSegments, seeWheel } from "../wheel_magic/wheel_helpers";
 
 const myWheel = (window as any).myWheel as Wheel;
-const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-const spinBtn = (window as any).spinBtn as HTMLButtonElement;
-
 export async function chooseamovie(genre: string): Promise<void>
 {
     await io.showText('What movie to watch?');
     if (genre === 'horror')
     {
-        myWheel.setSegments(wheels.getUniformSegments([
+        myWheel.setSegments(getUniformSegments([
             // "Mortal (2020)",
             // "The Innocents (2021)",
             // "Honeymoon (2014)",
@@ -71,7 +66,7 @@ export async function chooseamovie(genre: string): Promise<void>
     }
     else if (genre.toLowerCase() === 'ash')
     {
-        myWheel.setSegments(wheels.getUniformSegments([
+        myWheel.setSegments(getUniformSegments([
             "The Monkey (2025)",
             "The Lord of the Rings: The Fellowship of the Ring (2001)",
             "The Lord of the Rings: The Two Towers (2002)",
@@ -90,7 +85,7 @@ export async function chooseamovie(genre: string): Promise<void>
     }
     else    
     {
-        myWheel.setSegments(wheels.getUniformSegments([            
+        myWheel.setSegments(getUniformSegments([            
             "Elisa y Marcela (2019)",
             "My First Summer (2020)",
             "The World to Come (2020)",
@@ -99,8 +94,8 @@ export async function chooseamovie(genre: string): Promise<void>
             "Blue Is the Warmest Color (2013)",
         ]));
     }
-    wheels.seeWheel(true);
+    seeWheel(true);
 
-    await wheels.depr(myWheel);
+    await depr(myWheel);
     await io.nextEvent();
 }

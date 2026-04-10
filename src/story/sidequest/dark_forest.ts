@@ -15,9 +15,6 @@ import { MainChara, stress } from "../../characters/maincharacter";
  */
 export async function darkForest(chara: MainChara<'Wizard'>): Promise<void>
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     const buddy = await intro(chara);
     let aragogMet = chara.secrets.aragogMet;
     let voldemortMet = chara.secrets.darkForestVoldemort;

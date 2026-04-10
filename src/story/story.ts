@@ -1,8 +1,8 @@
 
 import * as ct from "../utilities/compositetypes";
 import { Grades } from "../utilities/compositetypes";
+import { MainChara } from "../characters/maincharacter";
 import { characterList } from "../characters/characters";
-import { MainChara, print } from "../characters/maincharacter";
 
 /**
  * The main story function.
@@ -10,7 +10,6 @@ import { MainChara, print } from "../characters/maincharacter";
 export async function startStory()
 {
   const wheels = await import('../wheel_magic/wheel_helpers');
-  const init = await import('../characters/character-creation');
   const yearOne = await import('./school-years/year1');
   
   wheels.seeWheel(false);

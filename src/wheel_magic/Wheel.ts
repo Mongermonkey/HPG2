@@ -1,8 +1,8 @@
 
+import { pct } from './wheel_helpers';
 import { newSegment } from './wheel_helpers';
 import { WheelSegment } from './wheel_helpers';
 import { percentToRatio } from './wheel_helpers';
-import { pct } from './wheel_helpers';
 
 export type Wheela =
 {
@@ -22,6 +22,11 @@ export type Wheela =
   };
 }
 
+/**
+ * Crea una nuova istanza di Wheela.
+ * @param canvasId L'id del canvas HTML su cui disegnare la ruota.
+ * @returns Una nuova istanza di Wheela.
+ */
 export function newWheela(canvasId: string): Wheela
 {
   const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
@@ -341,46 +346,4 @@ export class Wheel
     const eased = 1 - Math.pow(1 - t, 3); // easing cubic out
     return { rotation: startRotation + (total - startRotation) * eased, done: t >= 1 };
   }
-
-  /**
-   * Gestisce il frame dell'animazione.
-   * @param now Il tempo attuale in millisecondi.
-   */
-  private frame(now: number)
-  {
-    if (!this.spinParams) return;
-
-    const { wasColorOn, anim } = this.spinParams;
-    const { rotation, done } = this.getRotation(now, this.spinParams);
-    this.rotation = rotation;
-    this.draw();
-
-    if (!done) { requestAnimationFrame(this.frame.bind(this)); }
-    else
-    {
-      this.rotation %= Math.PI * 2;
-      this.draw();
-
-      if (wasColorOn) { (window as any).colorInterval = setInterval((window as any).rainbowWheel, 50); }
-      if (anim && typeof anim.callbackFinished === 'function') { try { anim.callbackFinished(); } catch (e) { console.error(e); }}
-
-      this.spinParams = undefined; // pulizia
-    }
-  }
-
 }
-
-
-// export class WheelSegment
-// {
-//   fillStyle: string;
-//   text: string;
-//   fraction: number; // frazione del giro (da 0 a 1)
-
-//   constructor(text: string, fraction: number, fillStyle?: string)
-//   {
-//     this.text = text;
-//     this.fraction = fraction;
-//     this.fillStyle = fillStyle ?? '#a1c4ff';
-//   }
-// }

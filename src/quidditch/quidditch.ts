@@ -1,13 +1,11 @@
 
 import * as random from '../utilities/random';
 import { Character } from '../characters/characters';
-import * as wheels from '../wheel_magic/wheel_helpers';
 import * as npc from '../characters/character-functions';
-import { newSegment } from '../wheel_magic/wheel_helpers';
-import { WheelSegment } from '../wheel_magic/wheel_helpers';
 import * as chitchat from '../dialogues/year-one-dialogues';
 import { QuidditchGame } from '../utilities/compositetypes';
 import { showText } from '../utilities/input_output_helpers';
+import { newSegment, spinWheel } from '../wheel_magic/wheel_helpers';
 import { hogwartsHouseName, quidditchRole } from '../utilities/basetypes';
 import { getSkill, MainChara, subjectIncrement } from '../characters/maincharacter';
 
@@ -56,7 +54,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
         let chance = Math.min(95, 10 + getSkill(chara, 'Flying') * 10);
         let segments = [ newSegment('Interested', chance), newSegment('Not Interested', 100 - chance) ];
 
-        let result = await wheels.spinWheel('Quidditch tryouts are now open! Interested in applying?', segments);
+        let result = await spinWheel('Quidditch tryouts are now open! Interested in applying?', segments);
         if (result === 'Not Interested')
         {
             await showText('You decided not to try out for the Quidditch team this year.');
@@ -68,7 +66,7 @@ export async function quidditchSelection(chara: MainChara<'Wizard'>): Promise<vo
     let pass = Math.min(95, getSkill(chara, 'Flying') * 10);
 
     let segments = [ newSegment('Pass', pass), newSegment('Fail', 100 - pass) ];
-    let test = await wheels.spinWheel('Do you pass the Quidditch selection?', segments);
+    let test = await spinWheel('Do you pass the Quidditch selection?', segments);
 
     if (test === 'Pass')
     {
@@ -107,7 +105,7 @@ async function spinQuidditchRole(chara: MainChara<'Wizard'>, captain: Character<
         newSegment('Keeper', keeper)
     ].filter(s => s.fraction > 0);
 
-    let result = await wheels.spinWheel('What role will you play?', segments);
+    let result = await spinWheel('What role will you play?', segments);
     chara.quidditchRole = result.toLowerCase() as quidditchRole;
     
     await showText('Congratulations! You have been selected as ' + result + ' for the ' + chara.house + ' Quidditch team!');
@@ -242,10 +240,10 @@ async function postQuidditch(chara: MainChara<'Wizard'>, game: QuidditchGame): P
 async function quidditchTeamBond(chara: MainChara<'Wizard'>): Promise<void>
 {
     let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
-    let chance = wheels.newSegment('Make friends', friendshipChance * 100),
-        notchance = wheels.newSegment('Mind your business', 100 - friendshipChance * 100);
+    let chance = newSegment('Make friends', friendshipChance * 100),
+        notchance = newSegment('Mind your business', 100 - friendshipChance * 100);
 
-    const result = await wheels.spinWheel('Friendship Wheel! What do you do?', [chance, notchance]);
+    const result = await spinWheel('Friendship Wheel! What do you do?', [chance, notchance]);
 
     if (result === 'Mind your business')
     {

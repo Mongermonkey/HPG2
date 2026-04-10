@@ -1,21 +1,20 @@
 
 import { libraryStudy } from "./classes";
 import { befriendHagrid } from "./Hagrid";
+import { PeevesPrank } from './PeevesPrank';
 import * as random from '../utilities/random';
 import { Character } from "../characters/characters";
-import * as wheels from "../wheel_magic/wheel_helpers";
-import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
 import { hogwartsHouseName } from "../utilities/basetypes";
 import * as chitchat from "../dialogues/year-one-dialogues";
 import { hogwartsHouse } from "../utilities/compositetypes";
-import { PeevesPrank } from './PeevesPrank';
 import { eoyFeast } from "../dialogues/multi-year-dialogues";
 import { quidditchPractice, sortGames } from "../quidditch/quidditch";
+import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import { mirrorOfErised, roomOfRequirement, secretPassages } from "./secrets";
 import { philosophersStoneQuest } from "../story/mainquest/philosophers_stone_quest";
-import { addSegment, getUniformSegments, newSegment, WheelSegment } from "../wheel_magic/wheel_helpers";
+import { addSegment, getUniformSegments, newSegment, WheelSegment, spinWheel, showWheelResult } from "../wheel_magic/wheel_helpers";
 
 // #region SCHOOL_WHEEL
 
@@ -25,7 +24,7 @@ import { addSegment, getUniformSegments, newSegment, WheelSegment } from "../whe
  */
 export async function schoolWheel(chara: MainChara<'Wizard'>): Promise<void>
 {
-    let result = await wheels.spinWheel('School Wheel! What happens?', getSegments(chara));
+    let result = await spinWheel('School Wheel! What happens?', getSegments(chara));
     switch (result)
     {
         case 'friendship wheel': await npc.friendshipWheel(chara, true);
@@ -112,7 +111,7 @@ async function stairsChange(chara: MainChara<'Wizard'>): Promise<void>
     await chitchat.stairsChange();
 
     let segments = [newSegment('Hagrid', 89), newSegment('Mirror of Erised', 10), newSegment('Room of Requirement', 1)];
-    let result = await wheels.spinWheel('Where do you end up?', segments);
+    let result = await spinWheel('Where do you end up?', segments);
     
     switch (result)
     {
@@ -130,19 +129,27 @@ async function stairsChange(chara: MainChara<'Wizard'>): Promise<void>
  */
 async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
     let hog = '';
     let hoghouse: hogwartsHouse = {name: 'none', points: 0};
-    let gry = newSegment('Gryffindor', 26), huf = newSegment('Hufflepuff', 24),
-    rav = newSegment('Ravenclaw', 24), sly = newSegment('Slytherin', 24), choice = newSegment('choice', 2);
+    // crea un array di 4 opzioni uguali + opzione extra 'choice' e assegna la % rimanente a una opzione a caso
+    const options = [24, 24, 24, 24, 2];
+    options[random.spin(20, 20, 20, 20, 20) - 1] += 2;
+    let [gry, huf, rav, sly, choice] = options;
 
     // Changing wheel based on the player's gifts
-    if (chara.gifts.metamorphmagus != 0) { huf.fraction = wheels.pct(huf.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); sly.fraction = wheels.pct(sly.fraction - 5); rav.fraction = wheels.pct(rav.fraction - 5); }
-    if (chara.gifts.parselmouth != 0) { sly.fraction = wheels.pct(sly.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); huf.fraction = wheels.pct(huf.fraction - 5); rav.fraction = wheels.pct(rav.fraction - 5); }
-    if (chara.gifts.sight) { rav.fraction = wheels.pct(rav.fraction + 15); gry.fraction = wheels.pct(gry.fraction - 5); huf.fraction = wheels.pct(huf.fraction - 5); sly.fraction = wheels.pct(sly.fraction - 5); }
+    if (chara.gifts.metamorphmagus != 0) { huf += 15; gry -= 5; sly -= 5; rav -= 5; }
+    if (chara.gifts.parselmouth != 0) { sly += 15; gry -= 5; huf -= 5; rav -= 5; }
+    if (chara.gifts.sight) { rav += 15; gry -= 5; huf -= 5; sly -= 5; }
 
-    let result = await wheels.spinWheel('Which house is your house?', [gry, huf, rav, sly, choice]);
+    let segments =
+    [
+        newSegment('Gryffindor', gry),
+        newSegment('Hufflepuff', huf),
+        newSegment('Ravenclaw', rav),
+        newSegment('Slytherin', sly),
+        newSegment('choice', choice)
+    ]
+    let result = await spinWheel('Which house is your house?', segments);
 
     if (result === 'choice')
     {
@@ -158,7 +165,7 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
     else hoghouse.name = result as hogwartsHouseName;
 
     chara.house = hoghouse.name;
-    wheels.showWheelResult('Your house is: ' + hoghouse.name + ' !');
+    showWheelResult('Your house is: ' + hoghouse.name + ' !');
     await io.nextEvent();
 }
 

@@ -6,14 +6,12 @@
  * - Gestione ruoli e docenti (getProfessorFromSubject, getRandomClassStudent, getHeadOfHouse, getQuidditchCaptain)
  */
 
-import { shiftAlignment, MainChara } from './maincharacter';
-import { Wheel } from '../wheel_magic/Wheel';
-import * as wheels from '../wheel_magic/wheel_helpers';
+import { spinEqual } from '../utilities/random';
 import * as io from '../utilities/input_output_helpers';
 import { Character, characterList } from './characters';
-import { spinEqual } from '../utilities/random';
-import { WheelSegment } from '../wheel_magic/wheel_helpers';
+import { shiftAlignment, MainChara } from './maincharacter';
 import { hogwartsHouseName, hogwartsRole } from '../utilities/basetypes';
+import { newSegment, seeWheel, spinWheel, WheelSegment } from '../wheel_magic/wheel_helpers';
 
 /**
  * Handles friendship interactions between mc and npcs.
@@ -23,16 +21,13 @@ import { hogwartsHouseName, hogwartsRole } from '../utilities/basetypes';
  */
 export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, senior?: boolean): Promise<void>
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     if (!sureFriend)
     {
         let friendshipChance = Math.min(0.55 + chara.fame - chara.stress + (chara.quidditchRole != 'none' ? 0.10 : 0), 1);
-        let chance = wheels.newSegment('Make friends', friendshipChance * 100),
-            notchance = wheels.newSegment('Mind your business', 100 - friendshipChance * 100);
+        let chance = newSegment('Make friends', friendshipChance * 100),
+            notchance = newSegment('Mind your business', 100 - friendshipChance * 100);
         
-        const result = await wheels.spinWheel('Friendship Wheel! What do you do?', [chance, notchance]);
+        const result = await spinWheel('Friendship Wheel! What do you do?', [chance, notchance]);
         if (result === 'Mind your business')
         {
             await io.showText('You decide to mind your own business.');
@@ -54,11 +49,11 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
  */
 export async function befriend(chara: MainChara<'Wizard'>, sameHouse: boolean, senior?: boolean): Promise<void>
 {
-    let result = await wheels.spinWheel('Who do you befriend?', getStudentList(chara, sameHouse, senior));
+    let result = await spinWheel('Who do you befriend?', getStudentList(chara, sameHouse, senior));
     let newFriend = getCharacterByLongname(characterList, result) as Character<'Student'>;
     
     await improveConnection(chara, newFriend);
-    wheels.seeWheel(false);
+    seeWheel(false);
 }
 
 /**
@@ -237,7 +232,7 @@ export function getStudentList(chara: MainChara<'Wizard'>, sameHouse: boolean = 
 
     const fraction = students.length > 0 ? 100 / students.length : 0;
 
-    return students.map(s => wheels.newSegment(s.longname, fraction));
+    return students.map(s => newSegment(s.longname, fraction));
 }
 
 /**

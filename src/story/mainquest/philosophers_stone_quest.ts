@@ -24,9 +24,6 @@ import { shiftAlignment, getMaxGrades, MainChara, subjectIncrement } from "../..
  */
 export async function questClue(chara: MainChara<'Wizard'>, clue: Clue)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     if (clue.discovered) return;
     
     // Probabilità di ottenere l'indizio: [(7 - numero di indizi già scoperti) * 10] %
@@ -54,9 +51,6 @@ export async function questClue(chara: MainChara<'Wizard'>, clue: Clue)
 // Gringott's theft
 export async function gringottsTheft(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-    
     if (npc.countFriends(chara.characterList) >= 2)
     {
         var friend = npc.getRandomFriend(chara.characterList);
@@ -71,9 +65,6 @@ export async function gringottsTheft(chara: MainChara<'Wizard'>)
 // Dumbledore's chocolate frog
 export async function chocolateFrog(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     if (npc.countFriends(chara.characterList) < 1) return;
 
     var friend = npc.getRandomFriend(chara.characterList);
@@ -85,9 +76,6 @@ export async function chocolateFrog(chara: MainChara<'Wizard'>)
 // Flamel's book in the library
 export async function library(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     await io.showText('While you\'re studying in the library, you find a suspicious large tome.\nSomeone must have left it there.');
 
     let chance = 30;
@@ -115,9 +103,6 @@ export async function library(chara: MainChara<'Wizard'>)
 // Snape & Quirrell argument
 export async function SnapeQuirrellTalk(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-
     let passage = await secretPassages(chara);
     if (!passage.internal) return;
 

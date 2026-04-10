@@ -1,11 +1,10 @@
 
-import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
-import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import * as npc from '../characters/character-functions';
 import * as chitchat from "../dialogues/year-one-dialogues";
-import { getUniformSegments } from "../wheel_magic/wheel_helpers";
+import { MainChara, subjectIncrement } from "../characters/maincharacter";
 import { roomOfRequirementDiscovery } from "../dialogues/multi-year-dialogues";
+import { getUniformSegments, showWheelResult, spinWheel } from "../wheel_magic/wheel_helpers";
 
 /**
  * Handles the discovery of secret passages in Hogwarts.
@@ -14,8 +13,6 @@ import { roomOfRequirementDiscovery } from "../dialogues/multi-year-dialogues";
  */
 export async function secretPassages(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
     await io.showText('While wandering the castle, you find a secret passage.');
     // io.showText('Do you want to enter it? (y/n)');
     // let answer = "";
@@ -31,7 +28,7 @@ export async function secretPassages(chara: MainChara<'Wizard'>)
     let secrets = chara.secretPassages.filter(p => !p.discovered);
     let segments = getUniformSegments(secrets.map(p => p.name));
 
-    const result = await wheels.spinWheel('Which secret passage did you discover?', segments);
+    const result = await spinWheel('Which secret passage did you discover?', segments);
     let newPassage = secrets.find(s => s.name === result);
     if (!newPassage) throw new Error('Secret passage not found.');
 
@@ -55,7 +52,7 @@ export async function mirrorOfErised(chara: MainChara<'Wizard'>)
 {
     await chitchat.mirrorOfErised();
     chara.secrets.mirrorOfErised = true;
-    wheels.showWheelResult('You discovered a secret!');
+    showWheelResult('You discovered a secret!');
     let dumbledore = chara.characterList.find(s => s.surname === 'Dumbledore');
     await npc.improveConnection(chara, dumbledore!);
 }
@@ -68,5 +65,5 @@ export async function roomOfRequirement(chara: MainChara<'Wizard'>)
 {
     await roomOfRequirementDiscovery(chara.name);
     chara.secrets.roomOfRequirement = true;
-    wheels.showWheelResult('You discovered a secret!');
+    showWheelResult('You discovered a secret!');
 }

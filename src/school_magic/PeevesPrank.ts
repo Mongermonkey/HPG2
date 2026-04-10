@@ -8,14 +8,13 @@
  */
 import { spinEqual } from "../utilities/random";
 import { Character } from "../characters/characters";
-import * as wheels from "../wheel_magic/wheel_helpers";
 import * as io from "../utilities/input_output_helpers";
 import * as npc from '../characters/character-functions';
 import { darkForest } from "../story/sidequest/dark_forest";
 import { alignmentChaos } from "../utilities/compositetypes";
 import { metamorphPrank } from "../dialogues/multi-year-dialogues";
-import { newSegment, WheelSegment } from "../wheel_magic/wheel_helpers";
 import { hogwartsRole, hogwartsHouseName } from "../utilities/basetypes";
+import { newSegment, showWheelResult, spinWheel, WheelSegment } from "../wheel_magic/wheel_helpers";
 import { shiftAlignment, fame, getAverageSkill, MainChara, stress } from "../characters/maincharacter";
 
 /**
@@ -24,16 +23,13 @@ import { shiftAlignment, fame, getAverageSkill, MainChara, stress } from "../cha
  */
 export async function PeevesPrank(chara: MainChara<'Wizard'>)
 {
-    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
-    nextBtn.disabled = true;
-    
     let peeves = npc.getCharacterByLongname(chara.characterList, 'Peeves')!;
     let filch = npc.getCharacterByLongname(chara.characterList, 'Filch')!;
     let prank = await randomPrankFromList();
     let newFriend = prank === 'Peeves is shutting someone into an armor.' ? npc.getRandomStudent(chara.characterList) : undefined;
 
     let segments = PeevesOptions(peeves, alignmentChaos(chara.alignment), chara.house);
-    let result = await wheels.spinWheel('What do you do?', segments);
+    let result = await spinWheel('What do you do?', segments);
 
     if (result === 'laugh along') await LaughAlong(chara, peeves, filch);
     else if (result === 'move away') await MoveAway(chara, peeves, filch);
@@ -108,7 +104,7 @@ async function LaughAlong(chara: MainChara<'Wizard'>, peeves: Character<hogwarts
     if (filch.connectionlvl != 'foe') { success+=20; failure-=20; }
 
     let segments = [newSegment('success', success), newSegment('failure', failure)];
-    let result = await wheels.spinWheel('Do you succeed?', segments);
+    let result = await spinWheel('Do you succeed?', segments);
 
     if (result === 'success')
     {
@@ -134,7 +130,7 @@ async function MoveAway(chara: MainChara<'Wizard'>, peeves: Character<hogwartsRo
     let success = 70, failure = 30;
 
     let segments = [newSegment('success', success), newSegment('failure', failure)];
-    let result = await wheels.spinWheel('Do you succeed?', segments);
+    let result = await spinWheel('Do you succeed?', segments);
 
     if (result === 'success')
     {
@@ -148,7 +144,7 @@ async function MoveAway(chara: MainChara<'Wizard'>, peeves: Character<hogwartsRo
         let meta = chara.gifts.metamorphmagus * 7;
         await io.showText('Using your gift, you try to metamorph into someone else.');
         segments = [newSegment('metamorph', meta), newSegment('failure', 100 - meta)];
-        result = await wheels.spinWheel('Do you succeed?', segments);
+        result = await spinWheel('Do you succeed?', segments);
     }
     
     if (result === 'failure')
@@ -179,7 +175,7 @@ async function StopPeeves(chara: MainChara<'Wizard'>, newFriend: Character<"Stud
     if(avg == 4) { success+=20; failure-=20; }
     if(avg > 4) { success+=40; failure-=40; }
     let segments = [newSegment('success', success), newSegment('failure', failure)];
-    let result = await wheels.spinWheel('Do you succeed?', segments);
+    let result = await spinWheel('Do you succeed?', segments);
 
     if (result === 'success')
     {
@@ -192,7 +188,7 @@ async function StopPeeves(chara: MainChara<'Wizard'>, newFriend: Character<"Stud
         await io.showText('Filch mutters something and goes referring to your head of House, ' + head.longname + '.');
         await io.showText('Points are added to ' + chara.house + ' because of your actions.');
         chara.housePoints+=5;
-        wheels.showWheelResult('+5 house points');
+        showWheelResult('+5 house points');
         await fame(chara);
         if (newFriend) await npc.improveConnection(chara, newFriend);
         return;
@@ -205,7 +201,7 @@ async function StopPeeves(chara: MainChara<'Wizard'>, newFriend: Character<"Stud
         let meta = chara.gifts.metamorphmagus * 7;
         await io.showText('Using your gift, you try to metamorph into someone else.');
         segments = [newSegment('metamorph', meta), newSegment('failure', 100 - meta)];
-        result = await wheels.spinWheel('Do you succeed?', segments);
+        result = await spinWheel('Do you succeed?', segments);
     }
 
     if (result === 'failure')
