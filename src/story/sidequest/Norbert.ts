@@ -4,8 +4,8 @@ import * as io from "../../utilities/input_output_helpers";
 import * as npc from '../../characters/character-functions';
 import { newSegment } from "../../wheel_magic/wheel_helpers";
 import * as chitchat from "../../dialogues/year-one-dialogues";
-import { getAverageSkill, housePointsIncrement, MainChara, stress, subjectIncrement } from "../../characters/maincharacter";
 import { alignmentChaos, alignmentDeath } from "../../utilities/compositetypes";
+import { getAverageSkill, housePointsIncrement, MainChara, shiftAlignment, stress, subjectIncrement } from "../../characters/maincharacter";
 
 /**
  * Norbert is born, Hagrid asks to keep it a secret.
@@ -84,15 +84,43 @@ export async function saveNorbert(chara: MainChara<'Wizard'>): Promise<boolean>
 
     let segments = [newSegment('success', success), newSegment('failure', failure)];
     let result = await wheels.spinWheel('Do you succeed in saving Norbert?', segments);
-    
-    if (result != "Success" && chara.gifts.sight > 0)
+    let metamorph_ending = false;
+
+    if (result != "success")
     {
-        await io.showText('Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.');
-        result = await wheels.spinWheel('Do you succeed?', segments);
+        let help = await giftHelping(chara, segments);
+        metamorph_ending = help && chara.gifts.metamorphmagus > 0;
+        result = help ? 'success' : 'failure';
     }
 
-    await result === 'success' ? NorbertGoodEnding(chara, harry && npc.isFriend(harry)) : NorbertBadEnding(chara, harry && npc.isFriend(harry));
+    if (metamorph_ending) await metamorphEnding(chara, harry && npc.isFriend(harry));
+    else result === 'success'
+        ? await NorbertGoodEnding(chara, harry && npc.isFriend(harry))
+        : await NorbertBadEnding(chara, harry && npc.isFriend(harry));
     return true;
+}
+
+/**
+ * Handles the gifts helping during the Norbert sidequest.
+ * @param chara The mc.
+ * @param segments The wheel segments.
+ * @returns The final result: true if the mc succeeds, false otherwise.
+ */
+async function giftHelping(chara: MainChara<'Wizard'>,  segments: wheels.WheelSegment[]): Promise<boolean>
+{
+    let sight = chara.gifts.sight, metamorphmagus = chara.gifts.metamorphmagus;
+    if (sight === 0 && metamorphmagus === 0) return false;    // No gifts = no help
+
+    await io.showText(sight > 0
+        ? 'Using the Sight, you foresee this event. With this knowledge, you try to reverse the odds in your favor.'
+        : 'Using your metamorphmagus abilities, you try to change the outcome in your favor.'
+    );
+
+    let success = (Number)(segments.find(s => s.text === 'success')?.fraction) ?? (() => { throw new Error('Segment not found'); })();
+    success = Math.min(success + (sight ? chara.gifts.sight : chara.gifts.metamorphmagus) * 2, 100);
+    segments = [newSegment('success', success), newSegment('failure', 100 - success)];
+            
+    return await wheels.spinWheel('Do you succeed?', segments) === 'success';
 }
 
 /**
@@ -119,4 +147,17 @@ async function NorbertGoodEnding(chara: MainChara<'Wizard'>, harryFriend: boolea
 
     await npc.improveConnection(chara, 'Hagrid');
     if (harryFriend) await npc.improveConnection(chara, 'Harry Potter');    
+}
+
+/**
+ * Handles the metamorph ending scenario for the Norbert sidequest.
+ * @param chara The mc.
+ * @param harryFriend Whether Harry Potter is a friend of the mc.
+ */
+async function metamorphEnding(chara: MainChara<'Wizard'>, harryFriend: boolean = false)
+{
+    await chitchat.NorbertFailure(harryFriend);
+    let student = npc.getRandomStudent(chara.characterList);
+    await io.showText('Using your metamorph powers, however, you manage to shift the blame onto another student:\n' + student!.longname + ' ('+ (student?.house) + ').');
+    await shiftAlignment(chara, 'chaos');
 }

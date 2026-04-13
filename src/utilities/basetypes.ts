@@ -7,6 +7,7 @@ export type cat = 'ginger' | 'black' | 'white' | 'tabby' | 'siamese';
 export type toad = 'common' | 'harlequin' | 'dragon' | 'natterjack' | 'threetoedtree';
 export type owl = 'brown' | 'barn' | 'tawny' | 'snowy' | 'screech';
 export type bloodStatus = 'pure' | 'half' | 'mud';
+export type race = 'human' | 'half-giant' | 'half-veela' | 'werewolf';
 export type gender = 'm' | 'f';
 export type hogwartsHouseName = 'none' | 'Gryffindor' | 'Hufflepuff' | 'Ravenclaw' | 'Slytherin';
 export type quidditchRole = 'none' | 'candidate' | 'seeker' | 'chaser' | 'beater' | 'keeper';

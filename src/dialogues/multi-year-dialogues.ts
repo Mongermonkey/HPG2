@@ -49,7 +49,7 @@ export async function metamorphPrank(foeName: string, deeds: boolean)
  * Handles the effects of taking the Wolfsbane potion.
  * @param param The result of the Wolfsbane potion decision. It can be either "No harm" or the name of the student attacked.
  */
-export async function takeWolfsBane(param?: string)
+export async function wolfsBane(param?: string)
 {
     if (!param)
     {

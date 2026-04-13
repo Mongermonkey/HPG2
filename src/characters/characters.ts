@@ -85,7 +85,7 @@ export const characterList: Character<hogwartsRole>[] =
     { role: 'Staff', id: 4, name: 'Irma', surname: 'Prince', longname: 'Madam Prince', male: false, alignement: NeutralAlignment, connectionlvl: 'neutral' },
     
     // Hogwarts Creatures (5-10)
-    { role: 'Creature', id: 5, name: '', surname: 'Peeves', longname: 'Peeves', male: true, alignement: NeutralAlignment, connectionlvl: 'foe', house: 'none' },
+    { role: 'Creature', id: 5, name: '', surname: 'Peeves', longname: 'Peeves', male: true, alignement: ChaosAlignment, connectionlvl: 'foe', house: 'none' },
     { role: 'Creature', id: 6, name: 'Myrtle', surname: '', longname: 'Moaning Myrtle', male: false, alignement: NeutralAlignment, connectionlvl: 'neutral', house: 'none' },
     { role: 'Creature', id: 7, name: 'Sir Nicholas', surname: 'de Mimsy-Porpington', longname: 'Nearly Headless Nick', male: true, alignement: NeutralAlignment, connectionlvl: 'neutral', house: 'Gryffindor' },
     { role: 'Creature', id: 8, name: 'The Fat Friar', surname: '', longname: 'The Fat Friar', male: true, alignement: NeutralAlignment, connectionlvl: 'neutral', house: 'Hufflepuff' },

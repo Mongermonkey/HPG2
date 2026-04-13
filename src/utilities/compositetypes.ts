@@ -1,5 +1,4 @@
 
-import { mirrorOfErised } from "../dialogues/year-one-dialogues";
 import { animal, sevenNums, subject, firstYearClue, hogwartsHouseName } from "./basetypes";
 
 /**
@@ -19,7 +18,6 @@ export type Gifts =
     metamorphmagus: sevenNums;
     parselmouth: sevenNums;
     sight: sevenNums;
-    lycanthropy: sevenNums;
 }
 
 /**
@@ -155,3 +153,5 @@ export const firstYearClues: Clue[] =
     { name: 'snape_quirrell_talk', discovered: false },
     { name: 'fluffy_talk', discovered: false },
 ];
+
+

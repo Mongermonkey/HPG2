@@ -1,9 +1,9 @@
 
-import { showText } from "../utilities/input_output_helpers";
 import * as random from "../utilities/random";
 import { Clue } from "../utilities/compositetypes";
 import { Character } from "../characters/characters";
-import { hogwartsHouseName, subject, bloodStatus } from "../utilities/basetypes";
+import { showText } from "../utilities/input_output_helpers";
+import { hogwartsHouseName, subject, bloodStatus, race } from "../utilities/basetypes";
 
 /**
  * Handles the sorting of the mc's blood status.
@@ -16,10 +16,29 @@ export async function sortBlood(blood: bloodStatus)
             await showText('Your parents are both wizards.\nYou were born a pure-blood wizard, with a long lineage of magical ancestors.\nYour family, one of the sacred twenty-eight, has always valued tradition and the old ways of magic.');
             break;
         case 'half':
-            await showText('Your parents do not come both from ancient magical lineages.\nYou are a half-blood wizard, with both magical and non-magical ancestry.');
+            await showText('Your parents do not come both from ancient magical lineages.\nYou are a half-blood wizard, with a rich and mixed ancestry.');
             break;
         case 'mud':
             await showText('Your parents are muggles.\nYou are a Muggle-born wizard, with no magical ancestry at all. Your magical abilities are a rare and precious gift.');
+            break;
+    }
+}
+
+export async function sortRace(race: race)
+{
+    switch (race)
+    {
+        case 'human': 
+            await showText('You are human.');
+            break;
+        case 'half-giant':
+            await showText('You are half human, half giant, possessing strength and magic resistance above that of a normal human.');
+            break;
+        case 'half-veela':
+            await showText('You are half human, half veela, inheriting beauty and charm from your veela ancestry.');
+            break;
+        case 'werewolf':
+            await showText('Alas, when you were a child, you were bitten by a werewolf.\nLycanthropy is a terrible curse, but you have learned to manage it with the help of the Wolfsbane.\nYou will forever have to be careful during the full moon.');
             break;
     }
 }

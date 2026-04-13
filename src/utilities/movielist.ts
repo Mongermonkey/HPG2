@@ -3,9 +3,16 @@ import { Wheel } from '../wheel_magic/Wheel';
 import * as io from "./input_output_helpers";
 import { depr, getUniformSegments, seeWheel } from "../wheel_magic/wheel_helpers";
 
-const myWheel = (window as any).myWheel as Wheel;
+function getMyWheel(): Wheel
+{
+    const myWheel = (window as any).myWheel as Wheel | undefined;
+    if (!myWheel) throw new Error('Wheel non inizializzata.');
+    return myWheel;
+}
+
 export async function chooseamovie(genre: string): Promise<void>
 {
+    const myWheel = getMyWheel();
     await io.showText('What movie to watch?');
     if (genre === 'horror')
     {
@@ -74,13 +81,17 @@ export async function chooseamovie(genre: string): Promise<void>
             "The Twilight Saga: Eclipse (2010)",
             "The Twilight Saga: Breaking Dawn - Part 1 (2011)",
             "The Twilight Saga: Breaking Dawn - Part 2 (2012)",
-            "Brüno (2009)",
+            // "Brüno (2009)",
             "The Matrix: Reloaded (2003)",
             "The Matrix Revolutions (2003)",
             "Gangubai Kathiawadi (2022)",
             "Basic Instinct (1992)",
             "Exit 8 (2025)",
             // "Dhurandar The Revenge (2026)",
+            "Homebound (2022)",
+            "One Day (2011)",
+            "Love and Other Drugs (2010)",
+            "Scarface (1983)",
         ]));
     }
     else    

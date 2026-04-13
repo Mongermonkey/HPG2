@@ -3,6 +3,7 @@ import * as ct from "../utilities/compositetypes";
 import { Grades } from "../utilities/compositetypes";
 import { MainChara } from "../characters/maincharacter";
 import { characterList } from "../characters/characters";
+import { createCharacter, urawizard } from "../characters/character-creation";
 
 /**
  * The main story function.
@@ -21,7 +22,8 @@ export async function startStory()
     gender: 'm',
     name: 'Matt',
     blood: 'half',
-    gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0, lycanthropy: 0 },
+    race: 'human',
+    gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0 },
     pet: { type: "cat", name: "Matt" },
     alignment: ct.NeutralAlignment,
     house: "Ravenclaw",
@@ -40,8 +42,8 @@ export async function startStory()
     mainQuestProgress: 0
   };
 
-  // let chara = await init.createCharacter();
-  // wiz = await init.urawizard(chara);
+  // let chara = await createCharacter();
+  // wiz = await urawizard(chara);
 
   (window as any).currentCharacter = wiz;
 

@@ -13,6 +13,7 @@ export type Baseclass<T extends gameclass> =
     gender: gender;
     name: string;
     blood: bloodStatus;
+    race: string;
     gifts: Gifts;
 }
 export type Wizard =
