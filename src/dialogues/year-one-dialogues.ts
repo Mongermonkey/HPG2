@@ -876,6 +876,7 @@ export async function mainQuest_GoodEnding(house: hogwartsHouseName): Promise<vo
     await showText('After you both moved to his office, he listens to you telling about the trials you have just overcome.');
     await showText('Professor Dumbledore decides to reward you with a special commendation for the services rendered to the school of Hogwarts.');
     await showText('Also, he awards 50 points to ' + house + '.');
+    await showText('The whole school murmurs of your feat, and you become quite popular among your peers!');
 }
 
 /**

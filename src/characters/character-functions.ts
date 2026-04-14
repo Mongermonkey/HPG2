@@ -247,17 +247,6 @@ export function getCharacterByLongname(characterlist: Character<hogwartsRole>[],
 }
 
 /**
- * Gets a character by their id.
- * @param characterlist The list of characters to search.
- * @param id The id of the character to find.
- * @returns The character with the matching id, or undefined if not found.
- */
-function getById(characterlist: Character<hogwartsRole>[], id: number): Character<hogwartsRole> | undefined
-{
-    return characterlist.find(c => c.id === id);
-}
-
-/**
  * Checks if a character is a friend.
  * @param characterlist The list of characters to search.
  * @param id The id of the character to check.
@@ -345,11 +334,13 @@ export function countFriends(characterList: Character<hogwartsRole>[]): number {
 /**
  * Restituisce un elemento random dalla lista che sia un amico (friend, bff, lover).
  * @param characterList Lista dei personaggi da cui estrarre.
+ * @param studsOnly Se true, considera solo gli studenti; se false, considera tutti i ruoli.
  * @returns Un Character che è amico, oppure undefined se nessuno trovato.
  */
-export function getRandomFriend(characterList: Character<hogwartsRole>[]): Character<hogwartsRole> | undefined
+export function getRandomFriend(characterList: Character<hogwartsRole>[], studsOnly: boolean = true): Character<hogwartsRole> | undefined
 {
-    const friends = characterList.filter(isFriend);
+    let friends = characterList.filter(isFriend);
+    if (studsOnly) friends = friends.filter(c => c.role === 'Student');
     if (friends.length === 0) return undefined;
     return spinEqual(friends);
 }

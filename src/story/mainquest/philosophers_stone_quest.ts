@@ -13,7 +13,7 @@ import * as npc from '../../characters/character-functions';
 import { secretPassages } from "../../school_magic/secrets";
 import * as chitchat from "../../dialogues/year-one-dialogues";
 import { newSegment, removeSegment } from "../../wheel_magic/wheel_helpers";
-import { shiftAlignment, getMaxGrades, MainChara, subjectIncrement } from "../../characters/maincharacter";
+import { shiftAlignment, getMaxGrades, MainChara, subjectIncrement, fame } from "../../characters/maincharacter";
 
 // #region QUEST CLUES
 
@@ -392,11 +392,16 @@ async function mirrorOfErisedTask(chara: MainChara<'Wizard'>, endofyear: boolean
 /**
  * Handles the good ending for the Philosopher's Stone quest.
  * @param chara The mc.
+ * @param endofyear A boolean indicating whether it's the end of the year.
  */
 async function goodEnding(chara: MainChara<'Wizard'>, endofyear: boolean)
 {
-    if (endofyear) await chitchat.mainQuest_MidYearEnding(chara.house);
-    else await chitchat.mainQuest_GoodEnding(chara.house);
+    if (endofyear)
+    {
+        await chitchat.mainQuest_GoodEnding(chara.house);
+        await fame(chara, 15);
+    }
+    else await chitchat.mainQuest_MidYearEnding(chara.house);
     
     chara.housePoints += 50;
     wheels.showWheelResult('house points++');

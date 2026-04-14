@@ -15,7 +15,7 @@ import { alignmentChaos } from "../utilities/compositetypes";
 import { metamorphPrank } from "../dialogues/multi-year-dialogues";
 import { hogwartsRole, hogwartsHouseName } from "../utilities/basetypes";
 import { newSegment, showWheelResult, spinWheel, WheelSegment } from "../wheel_magic/wheel_helpers";
-import { shiftAlignment, fame, getAverageSkill, MainChara, stress } from "../characters/maincharacter";
+import { shiftAlignment, fame, getAverageSkill, MainChara, stress, infamy } from "../characters/maincharacter";
 
 /**
  * Handles Peeves' Prank outcomes.
@@ -220,7 +220,7 @@ async function StopPeeves(chara: MainChara<'Wizard'>, newFriend: Character<"Stud
         let student = npc.getRandomStudent(chara.characterList);
         await metamorphPrank(student!.longname, true);
         await npc.worsenConnection(chara, student!);
-        await fame(chara);
+        await infamy(chara);
         await shiftAlignment(chara, 'chaos');
     }
 }

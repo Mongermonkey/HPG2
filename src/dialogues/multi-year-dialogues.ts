@@ -2,6 +2,8 @@
 import { showText } from "../utilities/input_output_helpers";
 import { MainChara } from "../characters/maincharacter";
 import { hogwartsHouse } from "../utilities/compositetypes";
+import { Character } from "../characters/characters";
+import { hogwartsRole } from "../utilities/basetypes";
 
 /**
  * Handles the discovery of the Room of Requirement.
@@ -49,7 +51,7 @@ export async function metamorphPrank(foeName: string, deeds: boolean)
  * Handles the effects of taking the Wolfsbane potion.
  * @param param The result of the Wolfsbane potion decision. It can be either "No harm" or the name of the student attacked.
  */
-export async function wolfsBane(param?: string)
+export async function takeWolfsBane(param?: string)
 {
     if (!param)
     {
@@ -68,6 +70,11 @@ export async function wolfsBane(param?: string)
     }
 }
 
+/**
+ * Handles the encounter with Aragog in the Dark Forest.
+ * @param chara The main character.
+ * @param buddy The name of the companion.
+ */
 export async function DarkForest_Aragog(chara: MainChara<'Wizard'>, buddy: string)
 {    
     await showText('For nearly half an hour, you walk through the woods. Both you and ' + buddy + ' collect some unicorn hair.');
@@ -83,4 +90,17 @@ export async function DarkForest_Aragog(chara: MainChara<'Wizard'>, buddy: strin
     await showText('But soon you hear another, more familiar voice: it\'s Hagrid, who has come to rescue you two.');
     await showText('Still trembling from what you witness, the two of you slowly make your way back to Hagrid\'s hut, where you can recover.');
     await showText('Neither you nor ' + buddy + ' can ever forget this night.');
+}
+
+/**
+ * Handles the half-giant bullying at Hogwarts.
+ * @param slytherin Whether the character is in Slytherin house.
+ * @param yearOne Whether the character is in their first year.
+ */
+export async function giantRacism(slytherin: boolean, yearOne: boolean)
+{
+    await showText((yearOne ? 'Once again, due' : 'Due') + ' to your giant blood, you are often the target of bullying from other students.');
+    if (yearOne) await showText('Some stupid kid has made it a thing to try new spells on you for fun, knowing that they will have little to no effect.');
+    if (slytherin) await showText('Your housemates are the worst' + (yearOne ? ', since they have access to your bedroom and can easily mess with your stuff.' : ''));
+    await showText('Hogwarts can be a cruel place for a half-giant, and you often feel like an outcast.');
 }

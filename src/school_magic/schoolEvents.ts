@@ -27,26 +27,16 @@ export async function schoolWheel(chara: MainChara<'Wizard'>): Promise<void>
     let result = await spinWheel('School Wheel! What happens?', getSegments(chara));
     switch (result)
     {
-        case 'friendship wheel': await npc.friendshipWheel(chara, true);
-            break;
-        case 'study': await libraryStudy(chara);
-            break;
-        case 'Peeves\' prank': await PeevesPrank(chara);
-            break;
-        case 'ghost': await ghostEncounter(chara);
-            break;
-        case 'stairs': await stairsChange(chara);
-            break;
-        case 'Quidditch practice': await quidditchPractice(chara);
-            break;
-        case 'Hagrid': await befriendHagrid(chara);
-            break;
-        case 'Moaning Myrtle': await moaningMyrtle(chara);
-            break;
-        case 'secret passage': await secretPassages(chara);
-            break;
-        case 'Philosopher\'s Stone': await philosophersStoneQuest(chara);
-            break;
+        case 'friendship wheel': await npc.friendshipWheel(chara, true); break;
+        case 'study': await libraryStudy(chara); break;
+        case 'Peeves\' prank': await PeevesPrank(chara); break;
+        case 'ghost': await ghostEncounter(chara); break;
+        case 'stairs': await stairsChange(chara); break;
+        case 'Quidditch practice': await quidditchPractice(chara); break;
+        case 'Hagrid': await befriendHagrid(chara); break;
+        case 'Moaning Myrtle': await moaningMyrtle(chara); break;
+        case 'secret passage': await secretPassages(chara); break;
+        case 'Philosopher\'s Stone': await philosophersStoneQuest(chara); break;
     }        
 }
 

@@ -5,7 +5,7 @@ import * as npc from '../../characters/character-functions';
 import { newSegment } from "../../wheel_magic/wheel_helpers";
 import * as chitchat from "../../dialogues/year-one-dialogues";
 import { alignmentChaos, alignmentDeath } from "../../utilities/compositetypes";
-import { getAverageSkill, housePointsIncrement, MainChara, shiftAlignment, stress, subjectIncrement } from "../../characters/maincharacter";
+import { getAverageSkill, housePointsIncrement, infamy, MainChara, shiftAlignment, stress, subjectIncrement } from "../../characters/maincharacter";
 
 /**
  * Norbert is born, Hagrid asks to keep it a secret.
@@ -159,5 +159,6 @@ async function metamorphEnding(chara: MainChara<'Wizard'>, harryFriend: boolean 
     await chitchat.NorbertFailure(harryFriend);
     let student = npc.getRandomStudent(chara.characterList);
     await io.showText('Using your metamorph powers, however, you manage to shift the blame onto another student:\n' + student!.longname + ' ('+ (student?.house) + ').');
+    await infamy(chara);
     await shiftAlignment(chara, 'chaos');
 }

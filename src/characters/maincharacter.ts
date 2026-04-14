@@ -3,7 +3,7 @@ import { nextEvent } from "../utilities/input_output_helpers";
 import { showWheelResult } from "../wheel_magic/wheel_helpers";
 import { alignment, Secrets } from "../utilities/compositetypes";
 import { Gifts, Grade, Pet, QuidditchGame, secretPassage, Clue } from "../utilities/compositetypes";
-import { bloodStatus, gameclass, gender, hogwartsHouseName, quidditchRole, sevenNums, subject } from "../utilities/basetypes";
+import { bloodStatus, race, gameclass, gender, hogwartsHouseName, quidditchRole, sevenNums, subject } from "../utilities/basetypes";
 
 export type { Pet };
 export type { Gifts };
@@ -13,7 +13,7 @@ export type Baseclass<T extends gameclass> =
     gender: gender;
     name: string;
     blood: bloodStatus;
-    race: string;
+    race: race;
     gifts: Gifts;
 }
 export type Wizard =
@@ -26,6 +26,7 @@ export type Wizard =
     quidditchCaptain: boolean;
     stress: number;
     fame: number;
+    infamy: number;
     clues: Clue[];
     secrets: Secrets;
     characterList: typeof characterList;
@@ -66,8 +67,9 @@ export function getCharacterInfoRows<T extends gameclass>(character: Baseclass<T
         rows.push({ key: null, value: characterName + ' (' + characterClass + ')' });
 
         const bloodValue = typeof raw.blood === 'string' ? raw.blood : 'unknown';
+        const raceValue = typeof raw.race === 'string' ? raw.race : 'unknown';
         const genderValue = raw.gender === 'm' ? 'male' : 'female';
-        rows.push({ key: null, value: bloodValue + 'blood ' + genderValue });
+        rows.push({ key: null, value: bloodValue + 'blood ' + raceValue + ' ' + genderValue });
 
         rows.push({ key: 'alignment', value: raw.alignment });
 
@@ -93,6 +95,7 @@ export function getCharacterInfoRows<T extends gameclass>(character: Baseclass<T
         rows.push({ key: 'pet', value: petName && petType ? petName + ' (' + petType + ')' : 'n/a' });
 
         rows.push({ key: 'fame', value: raw.fame });
+        rows.push({ key: 'infamy', value: raw.infamy });
         rows.push({ key: 'stress', value: raw.stress });
 
         rows.push({
@@ -110,10 +113,10 @@ export function getCharacterInfoRows<T extends gameclass>(character: Baseclass<T
         if (summarized)
         {
             if (key === 'name' || key === 'gameclass') continue;
-            if (key === 'blood' || key === 'gender') continue;
+            if (key === 'blood' || key === 'race' || key === 'gender') continue;
             if (key === 'alignment') continue;
             if (key === 'gifts' || key === 'pet') continue;
-            if (key === 'fame' || key === 'stress') continue;
+            if (key === 'fame' || key === 'infamy' || key === 'stress') continue;
             if (key === 'quidditchRole' || key === 'quidditchCaptain' || key === 'quidditchGames') continue;
             if (key === 'house' || key === 'housePoints') continue;
             if (hiddenSummaryKeys.has(key)) continue;
@@ -285,6 +288,18 @@ export async function fame(chara: MainChara<'Wizard'>, increment?: number)
 }
 
 /**
+ * Increases the infamy level of the character.
+ * @param chara The main character.
+ * @param increment The amount of infamy to add (default is 1).
+ */
+export async function infamy(chara: MainChara<'Wizard'>, increment?: number)
+{
+    chara.infamy += increment ?? 1;
+    showWheelResult('infamy++');
+    await nextEvent();
+}
+
+/**
  * Increases an alignment level of the character.
  * @param chara The main character.
  * @param alignment The alignment to increase ('phoenix_order', 'chaos', or 'death_eater').
@@ -314,7 +329,7 @@ export async function fixAlignment(chara: MainChara<'Wizard'>)
 }
 
 /**
- * Increases or decreases the skill value for a specific subject.
+ * Increases/decreases the skill value for a specific subject.
  * @param chara The main character.
  * @param subject The subject to increase/decrease.
  * @param increment The amount to change the skill by (default is 1).
@@ -329,7 +344,7 @@ export async function subjectIncrement(chara: MainChara<'Wizard'>, subject: subj
 }
 
 /**
- * Increases or decreases the house points of the character.
+ * Increases/decreases the house points of the character.
  * @param chara The main character.
  * @param increment The amount to change the house points by (default is 1).
  */
