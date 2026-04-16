@@ -11,7 +11,7 @@ import { PeevesPrank } from "./Peeves";
 import { befriendHagrid } from "./Hagrid";
 import { WheelSegment } from "../../utilities/_index";
 import { quidditchPractice } from "../quidditch/quidditch";
-import { philosophersStoneQuest } from "../mainquest/year_one";
+import { philosophersStoneQuest } from "../mainquest/year1";
 import { MainChara, Character, subject } from "../../basis/_index";
 import { secretPassages, mirrorOfErised, roomOfRequirement } from "./secrets";
 

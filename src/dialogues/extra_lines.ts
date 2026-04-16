@@ -1,20 +1,32 @@
 
+import { showText } from "../utilities/_index";
 import { MainChara, hogwartsHouse } from "../basis/_index";
-import { showText } from "../utilities/io_helpers";
 
 /**
- * Handles the discovery of the Room of Requirement.
+ * Handles each year's arrival at Hogwarts.
  */
-export async function roomOfRequirementDiscovery(name: string): Promise<void>
+export async function arrivalAtHogwarts(year: number): Promise<void>
 {
-    await showText('While wandering in the castle, you find a door that wasn\'t there before.');
-    await showText('You open it, and it leads you to a room that seems to be exactly what you need at that moment.');
-    await showText('You\'ve done it ' + name + ', you found the Room of Requirement!');
-    await showText('You spend some time in the room, and you find it very useful for your needs.');
+    if (year === 1)
+    {
+        await showText('On the first of September, you board the Hogwarts Express from platform nine and three-quarters at King\'s Cross Station.');
+        await showText('By the same evening, you arrive at the magnificent and mysterious Hogwarts Castle.');
+        await showText('In the Great Hall, under a velvety black ceiling dotted with stars, the Sorting Ceremony is about to begin...');
+        await showText('Everyone seems very excited about it.');
+        await showText('The Sorting Hat is brought in, looking old and worn.\nHe presents the four houses: Gryffindor, Hufflepuff, Ravenclaw and Slytherin.');
+        await showText('After a while, the Sorting Hat is placed on your head. It feels a bit heavy and itchy.');
+        await showText('"...Hmmmm... Interesting... Very interesting...", the hat recites.');
+    }
+    else
+    {
+        await showText('On the first of September, you board the Hogwarts Express from platform nine and three-quarters at King\'s Cross Station.');
+        await showText('By the same evening, you arrive at the Hogwarts Castle: you have missed the place during summer.');
+        await showText('Another year at Hogwarts is about to start, and you can\'t wait to see what it has in store for you.');
+    }
 }
 
 /**
- * Handles the end-of-year feast and the house cup ceremony
+ * Handles the end-of-year feast and the house cup ceremony.
  * @param first The house in first place.
  * @param second The house in second place.
  * @param third The house in third place.
@@ -30,6 +42,17 @@ export async function eoyFeast(chara: MainChara<'Wizard'>, first: hogwartsHouse,
     await showText(first.name + ' wins the house cup!');
     if (first.name === chara.house) await showText('Your house\'s table erupts in cheers, and you can\'t help but feel proud of your housemates.');
     else await showText('The feast starts, and you can\'t help but feel a bit sad that the year is coming to an end.');
+}
+
+/**
+ * Handles the discovery of the Room of Requirement.
+ */
+export async function roomOfRequirementDiscovery(name: string): Promise<void>
+{
+    await showText('While wandering in the castle, you find a door that wasn\'t there before.');
+    await showText('You open it, and it leads you to a room that seems to be exactly what you need at that moment.');
+    await showText('You\'ve done it ' + name + ', you found the Room of Requirement!');
+    await showText('You spend some time in the room, and you find it very useful for your needs.');
 }
 
 /**

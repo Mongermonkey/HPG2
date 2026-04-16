@@ -1,3 +1,4 @@
 
-export * from './multi-year-dialogues';
-export * from './year-one-dialogues';
+export * from './extra_lines';
+export * from './year1_lines';
+export * from './year2_lines';

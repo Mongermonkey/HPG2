@@ -1,9 +1,9 @@
 
 /**
- * Funzioni per la gestione della main quest del primo anno:
- * - region QUEST CLUES: funzioni per ogni indizio della quest (escluso il discorso di Silente a inizio anno e la ferita di Piton ad Halloween);
- * - region QUEST TASKS: Gestione flusso principale della quest + funzioni per ogni prova;
- * - region QUEST ENDINGS: Gestione dei possibili finali della quest.
+ * Functions for managing the main quest of the first year:
+ * - region QUEST CLUES: functions for each quest clue (excluding Dumbledore's speech at the beginning of the year and Snape's injury at Halloween);
+ * - region QUEST TASKS: Main quest flow management + functions for each trial;
+ * - region QUEST ENDINGS: Management of possible quest endings.
  */
 
 import * as b from '../../basis/_index';
@@ -23,10 +23,10 @@ export async function questClue(chara: MainChara<'Wizard'>, clue: Clue)
 {
     if (clue.discovered) return;
     
-    // Probabilità di ottenere l'indizio: [(7 - numero di indizi già scoperti) * 10] %
+    // Probability of obtaining the clue: [(7 - number of clues already discovered) * 10] %
     const discovered = chara.clues.filter(c => c.discovered).length;
     let prob = (7 - discovered) * 0.10 + 0.20;
-    // 0 indizi scoperti -> 90% di probabilità di scoprire il primo;
+    // 0 clues discovered -> 90% chance to discover the first;
     // 1 -> 80%, 2 -> 70%, 3 -> 60%, 4 -> 50%, 5 -> 40%, 6 -> 30%
     let getClue = Math.random() < prob;
     if (!getClue) return;

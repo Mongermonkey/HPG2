@@ -41,20 +41,6 @@ export async function sortRace(race: race)
 }
 
 /**
- * Handles the arrival at Hogwarts and the sorting ceremony.
- */
-export async function arrivalAtHogwarts(): Promise<void>
-{
-    await showText('On the first of September, you board the Hogwarts Express from platform nine and three-quarters at King\'s Cross Station.');
-    await showText('By the same evening, you arrive at the magnificent and mysterious Hogwarts Castle.');
-    await showText('In the Great Hall, under a velvety black ceiling dotted with stars, the Sorting Ceremony is about to begin...');
-    await showText('Everyone seems very excited about it.');
-    await showText('The Sorting Hat is brought in, looking old and worn.\nHe presents the four houses: Gryffindor, Hufflepuff, Ravenclaw and Slytherin.');
-    await showText('After a while, the Sorting Hat is placed on your head. It feels a bit heavy and itchy.');
-    await showText('"...Hmmmm... Interesting... Very interesting...", the hat recites.');
-}
-
-/**
  * Handles Dumbledore's speech after the sorting ceremony.
  * @param clue Whether the player has the clue about the third-floor corridor.
  */

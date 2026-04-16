@@ -16,7 +16,7 @@ import { MainChara, hogwartsHouse, hogwartsHouseName } from "../../basis/_index"
  */
 export async function schoolIntro(chara:MainChara<'Wizard'>): Promise<void>
 {
-    await d.arrivalAtHogwarts();
+    await d.arrivalAtHogwarts(chara.year);
     await sortingCeremony(chara);
 
     // quest clue #0 - Dumbledore's speech
