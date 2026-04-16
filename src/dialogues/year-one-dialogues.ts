@@ -1,9 +1,6 @@
 
-import * as random from "../utilities/random";
-import { Clue } from "../utilities/compositetypes";
-import { Character } from "../characters/characters";
-import { showText } from "../utilities/input_output_helpers";
-import { hogwartsHouseName, subject, bloodStatus, race } from "../utilities/basetypes";
+import { showText, spinEqual } from "../utilities/_index";
+import { Character, Clue, hogwartsHouseName, subject, bloodStatus, race } from "../basis/_index";
 
 /**
  * Handles the sorting of the mc's blood status.
@@ -98,7 +95,7 @@ export async function QuidditchSelection(captain: string, house: string): Promis
  */
 export async function quidditchMatch(houseA: hogwartsHouseName, houseB: hogwartsHouseName): Promise<void>
 {
-    await showText(random.spinEqual([
+    await showText(spinEqual([
         `${houseA} wins after a fierce and rainy match against ${houseB}.`,
         `${houseA} dominates the field while ${houseB} struggles to keep up.`,
         `It’s a close game, but ${houseA} snatches victory by catching the Snitch first.`,

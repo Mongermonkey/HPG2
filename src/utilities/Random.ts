@@ -1,26 +1,28 @@
 /**
- * Funzioni di supporto per operazioni casuali e sorteggi:
- * - Estrazione casuale da array (spinEqual)
- * - Generazione di eventi casuali (randomClassEvent)
- * - Sorteggio numerico e booleano (spin, spinbool)
+ * Helper functions for random operations and draws:
+ * - Random extraction from an array (spinEqual)
+ * - Generation of random class events (randomClassEvent)
+ * - Numeric and boolean draws (spin, spinbool)
  */
 
-import { Character } from "../characters/characters";
-import { sevenNums } from "./basetypes";
+import { Character } from "../basis/npcs/characters";
+import { sevenNums } from "../basis/types/base_types";
 
 /**
- * Estrae un elemento casuale da un array (probabilità uniforme).
+ * Extracts a random element from an array (uniform probability).
  */
 export function spinEqual<T>(arr: T[]): T
 {
-  if (!arr.length) throw new Error('Array vuoto in spinEqual');
+  if (!arr.length) throw new Error('Empty array in spinEqual');
   const idx = Math.floor(Math.random() * arr.length);
   return arr[idx];
 }
 
 /**
- * Restituisce un evento casuale di classe tra alcune opzioni predefinite.
- * Puoi personalizzare la logica secondo le tue esigenze.
+ * Returns a random class event from a set of predefined options.
+ * @param professor The professor teaching the class, which influences the type of events.
+ * @param buddy The student buddy, whose characteristics may also influence the events.
+ * @returns A string describing a random event that occurs during the class.
  */
 export function randomClassEvent(professor: Character<'Teacher'>, buddy: Character<'Student'>): string
 {
@@ -139,10 +141,10 @@ export function randomClassEvent(professor: Character<'Teacher'>, buddy: Charact
 }
 
 /**
- * Sorteggia un numero in base alle percentuali fornite.
- * @example spin(30, 70); // 30% di probabilità di ottenere 1, 70% di ottenere 2.
- * @param percentages Array di numeri che rappresentano le probabilità relative di ciascun risultato.
- * @returns Il numero sorteggiato (si parte da 1).
+ * Sorts a number based on the provided percentages.
+ * @example spin(30, 70); // 30% chance to get 1, 70% chance to get 2.
+ * @param percentages Array of numbers representing the relative probabilities of each outcome.
+ * @returns The drawn number (starting from 1).
  */
 export function spin(...percentages: number[]): number
 {
@@ -160,9 +162,9 @@ export function spin(...percentages: number[]): number
 }
 
 /**
- * Restituisce true con probabilità proporzionale al primo parametro, false al secondo.
- * @example spinbool(30, 70); // 30% di probabilità true, 70% di false.
- * @param a Probabilità (relativa) di ottenere true
- * @param b Probabilità (relativa) di ottenere false
+ * Returns true with a probability proportional to the first parameter, false to the second.
+ * @example spinbool(30, 70); // 30% chance to get true, 70% chance to get false.
+ * @param a Probability (relative) of getting true
+ * @param b Probability (relative) of getting false
  */
 export function spinbool(a: number, b: number): boolean { return spin(a, b) === 1; }

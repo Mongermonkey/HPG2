@@ -1,7 +1,7 @@
 
-import { Wheel } from '../wheel_magic/Wheel';
-import * as io from "./input_output_helpers";
-import { depr, getUniformSegments, seeWheel } from "../wheel_magic/wheel_helpers";
+import { Wheel } from './wheel_magic/Wheel';
+import * as io from "./io_helpers";
+import { depr, getUniformSegments, seeWheel } from "./wheel_magic/wheel_helpers";
 
 function getMyWheel(): Wheel
 {

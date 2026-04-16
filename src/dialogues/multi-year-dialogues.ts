@@ -1,9 +1,6 @@
 
-import { showText } from "../utilities/input_output_helpers";
-import { MainChara } from "../characters/maincharacter";
-import { hogwartsHouse } from "../utilities/compositetypes";
-import { Character } from "../characters/characters";
-import { hogwartsRole } from "../utilities/basetypes";
+import { MainChara, hogwartsHouse } from "../basis/_index";
+import { showText } from "../utilities/io_helpers";
 
 /**
  * Handles the discovery of the Room of Requirement.

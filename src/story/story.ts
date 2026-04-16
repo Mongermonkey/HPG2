@@ -1,17 +1,15 @@
 
-import * as ct from "../utilities/compositetypes";
-import { Grades } from "../utilities/compositetypes";
-import { MainChara } from "../characters/maincharacter";
-import { characterList } from "../characters/characters";
-import { createCharacter, urawizard } from "../characters/character-creation";
+import * as b from "../basis/_index";
+import { MainChara } from "../basis/_index";
+import { attend as attendFirstYear } from './years/year1';
+import { attend as attendSecondYear } from './years/year2';
 
 /**
  * The main story function.
  */
 export async function startStory()
 {
-  const wheels = await import('../wheel_magic/wheel_helpers');
-  const yearOne = await import('./school-years/year1');
+  const wheels = await import('../utilities/_index');
   
   wheels.seeWheel(false);
 
@@ -25,7 +23,7 @@ export async function startStory()
     race: 'human',
     gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0 },
     pet: { type: "cat", name: "Matt" },
-    alignment: ct.NeutralAlignment,
+    alignment: b.NeutralAlignment,
     house: "Ravenclaw",
     housePoints: 0,
     quidditchRole: "none",
@@ -33,21 +31,22 @@ export async function startStory()
     stress: 0,
     fame: 0,
     infamy: 0,
-    clues: ct.firstYearClues,
-    secrets: ct.HogwartsSecrets,
-    characterList: [...characterList],
+    clues: b.firstYearClues,
+    secrets: b.HogwartsSecrets,
+    characterList: [...b.characterList],
     quidditchGames: [],
     year: 1,
-    grades: Grades,
-    secretPassages: [...ct.freshPassages],
+    grades: b.Grades,
+    secretPassages: [...b.freshPassages],
     mainQuestProgress: 0
   };
 
-  // let chara = await createCharacter();
-  // wiz = await urawizard(chara);
+  // let chara = await b.createCharacter();
+  // wiz = await b.urawizard(chara);
 
   (window as any).currentCharacter = wiz;
 
-  yearOne.attend(wiz);
+  attendFirstYear(wiz);
+  attendSecondYear(wiz);
   
 }

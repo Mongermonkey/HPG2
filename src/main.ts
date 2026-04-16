@@ -1,7 +1,7 @@
 
-import { Wheel } from './wheel_magic/Wheel';
+import { Wheel } from './utilities/_index';
 import { startStory } from './story/story';
-import { getCharacterInfoRows } from './characters/maincharacter';
+import { getCharacterInfoRows } from './basis/_index';
 
 document.addEventListener('DOMContentLoaded', () => {
   const output = document.getElementById('game-output')!;
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   (window as any).nextBtn = nextBtn;
   (window as any).spinBtn = spinBtn;
 
-  // Nascondi subito tutta l'area della ruota
+  // Hide the entire wheel area immediately
   if (wheelArea) wheelArea.style.visibility = 'hidden';
 
   const myWheel = new Wheel('canvas');
@@ -203,6 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Avvia il gioco
+  // Start the game
   startStory();
 });
