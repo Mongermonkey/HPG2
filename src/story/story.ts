@@ -46,7 +46,7 @@ export async function startStory()
 
   (window as any).currentCharacter = wiz;
 
-  attendFirstYear(wiz);
-  attendSecondYear(wiz);
+  await attendFirstYear(wiz);
+  await attendSecondYear(wiz);
   
 }

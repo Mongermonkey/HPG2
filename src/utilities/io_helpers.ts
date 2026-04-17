@@ -6,6 +6,7 @@
  */
 
 import { animateText } from "./visual_magic/dust_animation";
+import { speakDialogueText, stopDialogueAudio } from "./talkify_audio";
 
 let current_msg = 0;
 
@@ -20,6 +21,7 @@ export async function showText(text: string | null, waitForNext: boolean = true)
   const input = (window as any).input as HTMLInputElement;
   const nextBtn = (window as any).nextBtn as HTMLButtonElement;
   const isFastSkipEnabled = Boolean((window as any).fastSkipEnabled);
+  stopDialogueAudio();
   output.innerHTML = "";
   input.value = "";
   nextBtn.disabled = !(waitForNext && isFastSkipEnabled);
@@ -30,6 +32,8 @@ export async function showText(text: string | null, waitForNext: boolean = true)
     if (waitForNext) nextBtn.disabled = false;
     return;
   }
+
+  speakDialogueText(text);
 
   // Incremento il token per questa animazione
   const myToken = ++current_msg;
@@ -44,6 +48,7 @@ export async function showText(text: string | null, waitForNext: boolean = true)
 
     // Interrompe immediatamente il dialogo corrente e lascia spazio al successivo.
     current_msg++;
+    stopDialogueAudio();
     output.innerHTML = "";
     nextBtn.removeEventListener('click', onFastSkip);
     if (skipSignal) skipSignal();
@@ -59,6 +64,7 @@ export async function showText(text: string | null, waitForNext: boolean = true)
     // Se è partita una nuova showText, interrompo questa
     if (myToken !== current_msg)
     {
+      stopDialogueAudio();
       nextBtn.removeEventListener('click', onFastSkip);
       return;
     }

@@ -194,6 +194,9 @@
       top: 12px;
       left: 12px;
       z-index: 1100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     #settings-overlay {
@@ -220,6 +223,46 @@
     }
 
     #settings-btn:hover {
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+
+    #audio-toggle-btn {
+      padding: 8px 12px;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      min-width: 46px;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .audio-icon {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .audio-icon path,
+    .audio-icon polygon,
+    .audio-icon line {
+      stroke: #ffffff;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    #audio-toggle-btn:hover,
+    #audio-toggle-btn:focus,
+    #audio-toggle-btn:focus-visible {
+      outline: none;
       border-color: rgb(180, 180, 220);
       box-shadow: 0 0 5px rgb(180, 180, 220);
     }
@@ -311,6 +354,7 @@
   <div id="settings-overlay"></div>
   <div class="settings-container">
     <button id="settings-btn">⚙</button>
+    <button id="audio-toggle-btn" type="button" title="Dialogue audio: OFF" aria-label="Dialogue audio: OFF"></button>
     <div id="settings-menu" class="settings-menu">
       <button id="color-btn" class="settings-option" type="button"><span class="settings-option-label">Change color</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
       <button id="fast-skip-btn" class="settings-option" type="button"><span class="settings-option-label">Fast skip</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
@@ -355,6 +399,31 @@
     let progress = 0;
     const step = 0.02;
     window.fastSkipEnabled = false;
+    const DIALOGUE_AUDIO_STORAGE_KEY = 'hpg2-dialogue-audio-enabled';
+
+    function loadDialogueAudioSetting() {
+      try
+      {
+        return localStorage.getItem(DIALOGUE_AUDIO_STORAGE_KEY) === 'true';
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
+    function saveDialogueAudioSetting(isEnabled) {
+      try
+      {
+        localStorage.setItem(DIALOGUE_AUDIO_STORAGE_KEY, String(isEnabled));
+      }
+      catch
+      {
+        // Ignore storage issues and keep runtime toggle working.
+      }
+    }
+
+    window.dialogueAudioEnabled = loadDialogueAudioSetting();
 
     function rainbowWheel() {
       const endColor = hexToRgb(colorPalette[endColorIndex]);
@@ -421,6 +490,27 @@
 
     document.getElementById('fast-skip-btn').addEventListener('click', toggleFastSkip);
 
+    const audioToggleBtn = document.getElementById('audio-toggle-btn');
+    const audioIconOn = '<svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,10 7,10 12,6 12,18 7,14 3,14"></polygon><path d="M16 9 C18 10.5,18 13.5,16 15"></path><path d="M18.8 6.5 C22.2 9.3,22.2 14.7,18.8 17.5"></path></svg>';
+    const audioIconOff = '<svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,10 7,10 12,6 12,18 7,14 3,14"></polygon><line x1="5" y1="5" x2="19" y2="19"></line></svg>';
+
+    function syncAudioToggleUi() {
+      const isOn = Boolean(window.dialogueAudioEnabled);
+      audioToggleBtn.innerHTML = isOn ? audioIconOn : audioIconOff;
+      audioToggleBtn.title = `Dialogue audio: ${isOn ? 'ON' : 'OFF'}`;
+      audioToggleBtn.setAttribute('aria-label', `Dialogue audio: ${isOn ? 'ON' : 'OFF'}`);
+    }
+
+    function toggleDialogueAudio(event) {
+      if (event) event.stopPropagation();
+      window.dialogueAudioEnabled = !window.dialogueAudioEnabled;
+      saveDialogueAudioSetting(window.dialogueAudioEnabled);
+      syncAudioToggleUi();
+    }
+
+    audioToggleBtn.addEventListener('click', toggleDialogueAudio);
+    syncAudioToggleUi();
+
     const settingsBtn = document.getElementById('settings-btn');
     const settingsMenu = document.getElementById('settings-menu');
     const settingsOverlay = document.getElementById('settings-overlay');
@@ -441,7 +531,7 @@
 
     document.addEventListener(
       'click', (e) => {
-      if (settingsMenu.classList.contains('show') && !settingsMenu.contains(e.target) && e.target !== settingsBtn)
+      if (settingsMenu.classList.contains('show') && !settingsMenu.contains(e.target) && e.target !== settingsBtn && e.target !== audioToggleBtn)
       {
         setSettingsMenuOpen(false);
       }
@@ -451,6 +541,7 @@
     changeColor();
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/talkify-tts/dist/talkify.min.js"></script>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
