@@ -254,6 +254,7 @@ export function getMinGrades(chara: MainChara<'Wizard'>, n: number): Grade[]
 {
     if (!chara.grades || chara.grades.length === 0) return [];
     return [...chara.grades]
+        .filter(g => g.score !== 0)
         .sort((a, b) => a.score - b.score)
         .slice(0, n);
 }

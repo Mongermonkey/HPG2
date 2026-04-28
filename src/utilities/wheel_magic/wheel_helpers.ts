@@ -37,16 +37,32 @@ export const sevenSegments: WheelSegment[] =
 ];
 
 /**
+ * Crea un array di WheelSegment numerati ('1', '2', ...) dai valori forniti.
+ * @param values Array di percentuali (interi)
+ * @param fillStyle Colore opzionale
+ * @returns Array di WheelSegment
+ */
+export function getNumberedSegments(values: number[], fillStyle?: string): WheelSegment[]
+{
+  return values.map((v, i) => newSegment((i + 1).toString(), v, fillStyle));
+}
+
+/**
  * Mostra il risultato della ruota nell'elemento #wheel-output, in giallo.
  */
-export function showWheelResult(result: string)
+export async function showWheelResult(result: string, msgOnly: boolean = false)
 {
   const wheelOutput = document.getElementById('wheel-output') as HTMLElement;
   if (wheelOutput) {
     wheelOutput.innerHTML = result.replace(/\n/g, '<br>');
     wheelOutput.style.color = '#ffd700';
-    // wheelOutput.style.visibility = "visible";
   }
+  if (msgOnly) return;
+
+  // Attendi input utente prima di chiudere la ruota
+  if ((window as any).u?.nextEvent) await (window as any).u.nextEvent();
+  await io.nextEvent();
+  seeWheel(false);
 }
 
 export function depr(myWheel: Wheel): Promise<WheelSegment>
@@ -99,14 +115,13 @@ export function getUniformSegments(strings: string[], fillStyle?: string): Wheel
  * @param hideAfterSpin Se true, nasconde la ruota subito dopo lo spin
  * @returns Testo del segmento su cui si ferma la ruota
  */
-export async function spinWheel(message: string, segments: WheelSegment[], hideAfterSpin: boolean = true): Promise<string>
+export async function spinWheel(message: string, segments: WheelSegment[]): Promise<string>
 {  
     const myWheel = (window as any).myWheel as Wheel;
     myWheel.setSegments(segments);
     seeWheel(true);
     await io.showText(message, false);
     const wheelStop = await depr(myWheel);
-    if (hideAfterSpin) seeWheel(false);
 
     return wheelStop.text;
 }

@@ -77,7 +77,6 @@ async function sortingCeremony(chara:MainChara<'Wizard'>): Promise<void>
 
     chara.house = hoghouse.name;
     await u.showWheelResult('Your house is: ' + hoghouse.name + ' !');
-    await u.nextEvent();
 }
 
 /**

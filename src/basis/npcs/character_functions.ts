@@ -36,7 +36,6 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
 
     await u.showText('You make friends!');
 
-    await u.showText('Who do you befriend?');
     await befriend(chara, false, senior);
 }
 

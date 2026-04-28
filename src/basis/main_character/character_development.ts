@@ -102,7 +102,7 @@ export async function stress(chara: MainChara<'Wizard'>, increment?: number)
 {
     chara.stress += increment ?? 1;
     chara.stress = Math.max(0, chara.stress); // Ensure stress does not go below 0
-    u.showWheelResult('stress++');
+    u.showWheelResult(increment && increment > 0 ? 'stress++' : 'stress--');
     await u.nextEvent();
 }
 
@@ -193,6 +193,7 @@ export function housePointsIncrement(chara: MainChara<'Wizard'>, increment?: num
  */
 export async function libraryStudy(chara: MainChara<'Wizard'>): Promise<void>
 {
+    // modificare: al momento, prende anche le materie a 0 (non studiate)
     let lowSub = getMinGrades(chara, 1)[0];
     let chance = chara.stress < 10 ? 60 : 50;
     if (isFriendByLongname(chara.characterList, 'Hermione Granger')) chance += 15;

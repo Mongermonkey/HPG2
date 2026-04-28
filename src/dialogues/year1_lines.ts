@@ -233,7 +233,7 @@ export async function remembrallIntro(): Promise<void>
     await showText('Madam Hooch, the flying instructor, blows her whistle and tries to stop him, without success.');
     await showText('As everyone begins to panic, Neville falls from the broom and crashes to the ground!');
     await showText('Madam Hooch rushes to his side and helps him up, taking him to the infirmary.');
-    await showText('While leaving, she makes VERY CLEAR that no one is to fly until she comes back.');
+    await showText('While leaving, she makes VERY CLEAR that NO ONE IS TO FLY until she comes back.');
     await showText('As Neville is taken away, you notice Draco Malfoy smirking and holding a small, round object.');
     await showText('It\'s Neville\'s Remembrall! He must have lost it during the fall.\nDraco is making fun of Neville with his friends.');
 }

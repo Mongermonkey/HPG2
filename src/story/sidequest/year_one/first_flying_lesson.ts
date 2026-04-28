@@ -7,6 +7,7 @@ import * as b from '../../../basis/_index';
 import * as d from '../../../dialogues/_index';
 import * as u from '../../../utilities/_index';
 import { MainChara, Character } from '../../../basis/_index';
+import { getNumberedSegments as gns } from '../../../utilities/wheel_magic/wheel_helpers';
 
 /**
  * Handles the first flying lesson.
@@ -29,9 +30,27 @@ export async function firstFlyingLesson(chara: MainChara<'Wizard'>): Promise<voi
     let result = await u.spinWheel('How many hoops can you get through?', segments);
     await flightWheelOutcome(chara, result);
 
-    result = await u.spinWheel('Second try! How many hoops can you get through?', segments);
-    await flightWheelOutcome(chara, result);
+    let seg2 = getSecondAttemptSegments(result, u);
+    let result2 = await u.spinWheel('Second try! How many hoops can you get through?', seg2);
+    await flightWheelOutcome(chara, result2);
 }
+
+// Funzione estratta per calcolare i segmenti dinamici del secondo tentativo
+export function getSecondAttemptSegments(firstResult: string, u: any)
+{
+    switch (firstResult)
+    {
+        case '1': return gns([9, 14, 20, 21, 16, 11, 9]);
+        case '2': return gns([9, 14, 19, 21, 17, 11, 9]);
+        case '3': return gns([9, 13, 18, 21, 18, 12, 9]);
+        case '4': return gns([8, 12, 17, 21, 19, 13, 10]);
+        case '5': return gns([7, 11, 16, 21, 20, 14, 11]);
+        case '6': return gns([6, 10, 15, 21, 21, 15, 12]);
+        case '7': return gns([5, 9, 14, 21, 22, 16, 13]);
+        default: return gns([10, 15, 21, 21, 15, 10, 8]);
+    }
+}
+
 
 /**
  * Outputs the result of the first flying class event based on the wheel spin result.

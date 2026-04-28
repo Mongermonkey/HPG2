@@ -46,6 +46,7 @@ export async function chooseamovie(genre: string): Promise<void>
             // "Dark Water (2002)",
             // "Synchronic (2019)",
             // "The Ugly Stepsister (2025)",
+            // "The Djinn (2021)",
             "Son (2021)",
 
             "Southbound (2015)",
@@ -66,7 +67,6 @@ export async function chooseamovie(genre: string): Promise<void>
             "V/H/S (2012)",
             "Let Her Out (2016)",
             "Sinister (2012)",
-            "The Djinn (2021)",
             "Under the Shadow (2016)",
             "I Spit on Your Grave (1978)",
         ]));

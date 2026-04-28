@@ -65,7 +65,7 @@ async function chooseGender(): Promise<"m" | "f">
     do { gender = (await u.handleInput())?.toLowerCase(); }
     while (gender !== 'm' && gender !== 'f');
 
-    u.showWheelResult(gender === 'm' ? 'male' : 'female');
+    await u.showWheelResult(gender === 'm' ? 'male' : 'female', true);
     nextBtn.disabled = false;
     return gender as 'm' | 'f';
 }
@@ -84,7 +84,7 @@ async function writeName(): Promise<string>
     do { name = await u.handleInput(); }
     while (!name || name.length < 2);
 
-    u.showWheelResult('Your name is: \'' + name + '\'.');
+    await u.showWheelResult('Your name is \'' + name + '\'.', true);
     nextBtn.disabled = false;
     return name;
 }
@@ -231,7 +231,7 @@ async function sortPet(): Promise<Pet>
     do { name = await u.handleInput(); }
     while (!name || name.length < 2);
 
-    u.showWheelResult('Your ' + result + '\'s name is: \'' + name + '\'.');
+    await u.showWheelResult('Your ' + result + '\'s name is: \'' + name + '\'.');
 
     return {type: result, name: name};
 }
@@ -251,7 +251,7 @@ async function sortSkills(): Promise<Grade[]>
     for (let i = 0; i < coreSubjects.length; i++)
     {
         const subject = coreSubjects[i];
-        let result = await u.spinWheel('Let\'s spin for ' + subject + '...', u.sevenSegments, false);
+        let result = await u.spinWheel('Let\'s spin for ' + subject + '...', u.sevenSegments);
         grades.push({subject, score: Number(result)});
         u.showWheelResult('Your skill in ' + subject + ': ' + result);
         await u.nextEvent();
