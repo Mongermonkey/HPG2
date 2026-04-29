@@ -384,10 +384,145 @@
     // --- Pulsanti overlay ---
     document.getElementById('voice-loading-action').addEventListener('click', function() {
       sessionStorage.setItem('fromStartMenu', '1');
+      sessionStorage.removeItem('mainChara');
+      sessionStorage.removeItem('saveFile');
+      sessionStorage.removeItem('startYear');
       window.location.href = 'index.html';
     });
-    document.getElementById('voice-loading-load').addEventListener('click', function() {
-      alert('Funzione "Load game" non ancora implementata.');
+    document.getElementById('voice-loading-load').addEventListener('click', async function() {
+      // Overlay per selezione file
+      let overlay = document.createElement('div');
+      overlay.id = 'loadgame-overlay';
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(8,8,16,0.85)';
+      overlay.style.zIndex = '6000';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.innerHTML = `<div id="loadgame-box" style="background:rgb(20,20,30);border-radius:12px;padding:28px 24px;min-width:320px;max-width:90vw;box-shadow:0 0 20px #000;border:2px solid #444;position:relative;">
+        <div style='font-size:18px;margin-bottom:12px;font-family:monospace;color:#e8e8f0;'>Select a save file</div>
+        <div id="loadgame-list"></div>
+      </div>`;
+      document.body.appendChild(overlay);
+
+      // Chiudi overlay cliccando fuori
+      overlay.addEventListener('mousedown', function(e) {
+        if (e.target === overlay) {
+          overlay.remove();
+        }
+      });
+
+      // Carica lista file json dalla cartella saves (solo lato locale, non server)
+      let saves = [];
+      try {
+        // In ambiente web statico, non si può leggere la cartella. Simuliamo con fetch di un file noto.
+        // In produzione, qui si dovrebbe avere una API o una lista generata lato server.
+        saves = ['matt.json']; // TODO: automatizzare se serve
+      } catch {
+        saves = [];
+      }
+      const listDiv = overlay.querySelector('#loadgame-list');
+      if (!saves.length) {
+        listDiv.innerHTML = '<div style="color:#bbb;">No save files found.</div>';
+        return;
+      }
+      let selected = null;
+      function renderList() {
+        listDiv.innerHTML = '';
+        saves.forEach(f => {
+          const btn = document.createElement('button');
+          btn.textContent = f;
+          btn.style.display = 'block';
+          btn.style.width = '100%';
+          btn.style.margin = '6px 0';
+          btn.style.padding = '10px';
+          btn.style.fontFamily = 'monospace';
+          btn.style.fontSize = '15px';
+          btn.style.background = selected === f ? '#282860' : '#282830';
+          btn.style.color = selected === f ? '#fff' : '#e8e8f0';
+          btn.style.border = selected === f ? '2px solid #b4b4dc' : '2px solid #444';
+          btn.style.borderRadius = '8px';
+          btn.style.cursor = 'pointer';
+          btn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            selected = f;
+            renderList();
+            showConfirm();
+          });
+          listDiv.appendChild(btn);
+        });
+      }
+      renderList();
+
+      // Pop-up conferma scelta
+      function showConfirm() {
+        let confirmDiv = document.createElement('div');
+        confirmDiv.style.position = 'fixed';
+        confirmDiv.style.left = '0';
+        confirmDiv.style.top = '0';
+        confirmDiv.style.width = '100vw';
+        confirmDiv.style.height = '100vh';
+        confirmDiv.style.background = 'rgba(0,0,0,0.25)';
+        confirmDiv.style.display = 'flex';
+        confirmDiv.style.alignItems = 'center';
+        confirmDiv.style.justifyContent = 'center';
+        confirmDiv.style.zIndex = '7000';
+        confirmDiv.innerHTML = `<div style='background:rgb(30,30,40);padding:32px 28px;border-radius:12px;box-shadow:0 0 16px #000;border:2px solid #888;min-width:220px;text-align:center;'>
+          <div style='font-size:16px;margin-bottom:18px;color:#e8e8f0;font-family:monospace;'>Confirm choice?</div>
+          <button id='loadgame-yes' style='margin:0 12px 0 0;padding:8px 18px;border-radius:8px;border:2px solid #444;background:#282830;color:#fff;font-family:monospace;font-size:15px;cursor:pointer;'>Yes</button>
+          <button id='loadgame-no' style='padding:8px 18px;border-radius:8px;border:2px solid #444;background:#282830;color:#fff;font-family:monospace;font-size:15px;cursor:pointer;'>No</button>
+        </div>`;
+        document.body.appendChild(confirmDiv);
+        confirmDiv.addEventListener('mousedown', function(e) {
+          if (e.target === confirmDiv) confirmDiv.remove();
+        });
+        confirmDiv.querySelector('#loadgame-no').addEventListener('click', function() {
+          confirmDiv.remove();
+        });
+        confirmDiv.querySelector('#loadgame-yes').addEventListener('click', async function() {
+          confirmDiv.remove();
+          // Carica file selezionato
+          try {
+            const resp = await fetch('saves/' + selected);
+            const data = await resp.json();
+            let year = Number(data.year);
+            if (year === 7) {
+              // Game ended
+              let endedDiv = document.createElement('div');
+              endedDiv.style.position = 'fixed';
+              endedDiv.style.left = '0';
+              endedDiv.style.top = '0';
+              endedDiv.style.width = '100vw';
+              endedDiv.style.height = '100vh';
+              endedDiv.style.background = 'rgba(0,0,0,0.25)';
+              endedDiv.style.display = 'flex';
+              endedDiv.style.alignItems = 'center';
+              endedDiv.style.justifyContent = 'center';
+              endedDiv.style.zIndex = '8000';
+              endedDiv.innerHTML = `<div style='background:rgb(30,30,40);padding:32px 28px;border-radius:12px;box-shadow:0 0 16px #000;border:2px solid #888;min-width:220px;text-align:center;'>
+                <div style='font-size:16px;margin-bottom:18px;color:#e8e8f0;font-family:monospace;'>Game ended</div>
+                <button id='ended-ok' style='padding:8px 18px;border-radius:8px;border:2px solid #444;background:#282830;color:#fff;font-family:monospace;font-size:15px;cursor:pointer;'>OK</button>
+              </div>`;
+              document.body.appendChild(endedDiv);
+              endedDiv.querySelector('#ended-ok').addEventListener('click', function() {
+                endedDiv.remove();
+              });
+              return;
+            }
+            // Avvia gioco da year{year+1}.ts
+            sessionStorage.setItem('saveFile', selected);
+            sessionStorage.setItem('fromStartMenu', '1');
+            sessionStorage.setItem('startYear', String(year + 1));
+            sessionStorage.setItem('mainChara', JSON.stringify(data));
+            overlay.remove();
+            window.location.href = 'index.html';
+          } catch {
+            alert('Errore nel caricamento del file di salvataggio.');
+            overlay.remove();
+          }
+        });
+      }
     });
   </script>
 </body>

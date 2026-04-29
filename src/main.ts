@@ -30,7 +30,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Avvio diretto del gioco (senza overlay menù start)
   unlockDialogueAudioFromGesture();
   await ensureDialogueVoiceReady();
-  startStory();
+  let mainChara = undefined;
+  try {
+    const mainCharaStr = sessionStorage.getItem('mainChara');
+    if (mainCharaStr) mainChara = JSON.parse(mainCharaStr);
+  } catch {}
+  startStory(mainChara);
 
   // Popup e controlli personaggio
   setupCharacterPopup(window);

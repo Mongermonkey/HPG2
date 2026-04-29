@@ -62,5 +62,6 @@ export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wiz
     
     await school.feast(chara);
 
+    chara.year = 2;     // TODO: necessario salvare il pg con l'anno aumentato.
     return chara;
 }
