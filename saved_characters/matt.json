@@ -1,0 +1,1387 @@
+{
+  "gameclass": "Wizard",
+  "gender": "m",
+  "name": "Matt",
+  "blood": "half",
+  "race": "human",
+  "gifts": {
+    "metamorphmagus": 0,
+    "parselmouth": 0,
+    "sight": 0
+  },
+  "pet": {
+    "type": "cat",
+    "name": "Matt"
+  },
+  "alignment": {
+    "neutral": 100,
+    "phoenix_order": 0,
+    "chaos": 0,
+    "death_eater": 0
+  },
+  "house": "Ravenclaw",
+  "housePoints": 0,
+  "quidditchRole": "none",
+  "quidditchCaptain": false,
+  "stress": 0,
+  "fame": 0,
+  "infamy": 0,
+  "clues": [
+    {
+      "name": "dumbledores_speech",
+      "discovered": false
+    },
+    {
+      "name": "snape_halloween",
+      "discovered": false
+    },
+    {
+      "name": "gringotts_theft",
+      "discovered": false
+    },
+    {
+      "name": "library",
+      "discovered": false
+    },
+    {
+      "name": "chocolate_frog",
+      "discovered": false
+    },
+    {
+      "name": "snape_quirrell_talk",
+      "discovered": false
+    },
+    {
+      "name": "fluffy_talk",
+      "discovered": false
+    }
+  ],
+  "secrets": {
+    "mirrorOfErised": false,
+    "roomOfRequirement": false,
+    "darkForestPunishment": false,
+    "aragogMet": false,
+    "darkForestVoldemort": false
+  },
+  "characterList": [
+    {
+      "role": "Staff",
+      "id": 1,
+      "name": "Albus Percival Wulfric Brian",
+      "surname": "Dumbledore",
+      "longname": "Professor Dumbledore",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral"
+    },
+    {
+      "role": "Staff",
+      "id": 2,
+      "name": "Rubeus",
+      "surname": "Hagrid",
+      "longname": "Hagrid",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral"
+    },
+    {
+      "role": "Staff",
+      "id": 3,
+      "name": "Argus",
+      "surname": "Filch",
+      "longname": "Filch",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "foe"
+    },
+    {
+      "role": "Staff",
+      "id": 4,
+      "name": "Irma",
+      "surname": "Prince",
+      "longname": "Madam Prince",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral"
+    },
+    {
+      "role": "Creature",
+      "id": 5,
+      "name": "",
+      "surname": "Peeves",
+      "longname": "Peeves",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 0,
+        "chaos": 100,
+        "death_eater": 0
+      },
+      "connectionlvl": "foe",
+      "house": "none"
+    },
+    {
+      "role": "Creature",
+      "id": 6,
+      "name": "Myrtle",
+      "surname": "",
+      "longname": "Moaning Myrtle",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "house": "none"
+    },
+    {
+      "role": "Creature",
+      "id": 7,
+      "name": "Sir Nicholas",
+      "surname": "de Mimsy-Porpington",
+      "longname": "Nearly Headless Nick",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Creature",
+      "id": 8,
+      "name": "The Fat Friar",
+      "surname": "",
+      "longname": "The Fat Friar",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Creature",
+      "id": 9,
+      "name": "Helena",
+      "surname": "Ravenclaw",
+      "longname": "The Grey Lady",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Creature",
+      "id": 10,
+      "name": "The Bloody Baron",
+      "surname": "",
+      "longname": "The Bloody Baron",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "house": "Slytherin"
+    },
+    {
+      "role": "Teacher",
+      "id": 20,
+      "name": "Minerva",
+      "surname": "McGonagall",
+      "longname": "Professor McGonagall",
+      "male": false,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Transfiguration",
+      "isHeadofHouse": true,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Teacher",
+      "id": 21,
+      "name": "Pomona",
+      "surname": "Sprout",
+      "longname": "Professor Sprout",
+      "male": false,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Herbology",
+      "isHeadofHouse": true,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Teacher",
+      "id": 22,
+      "name": "Filius",
+      "surname": "Flitwick",
+      "longname": "Professor Flitwick",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Charms",
+      "isHeadofHouse": true,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Teacher",
+      "id": 23,
+      "name": "Severus",
+      "surname": "Snape",
+      "longname": "Professor Snape",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Potions",
+      "isHeadofHouse": true,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Teacher",
+      "id": 24,
+      "name": "Aurora",
+      "surname": "Sinistra",
+      "longname": "Professor Sinistra",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Astronomy",
+      "isHeadofHouse": false,
+      "house": "none"
+    },
+    {
+      "role": "Teacher",
+      "id": 25,
+      "name": "Cuthbert",
+      "surname": "Binns",
+      "longname": "Professor Binns",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "History of Magic",
+      "isHeadofHouse": false,
+      "house": "none"
+    },
+    {
+      "role": "Teacher",
+      "id": 26,
+      "name": "Rolanda",
+      "surname": "Hooch",
+      "longname": "Madam Hooch",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "subject": "Flying",
+      "isHeadofHouse": false,
+      "house": "none"
+    },
+    {
+      "role": "Teacher",
+      "id": 27,
+      "name": "Quirinus",
+      "surname": "Quirrell",
+      "longname": "Professor Quirrell",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 100
+      },
+      "connectionlvl": "neutral",
+      "subject": "Defense Against the Dark Arts",
+      "isHeadofHouse": false,
+      "house": "none"
+    },
+    {
+      "role": "Student",
+      "id": 40,
+      "name": "Oliver",
+      "surname": "Wood",
+      "longname": "Oliver Wood",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "keeper",
+      "senior": true,
+      "captain": true,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 41,
+      "name": "Angelina",
+      "surname": "Johnson",
+      "longname": "Angelina Johnson",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "chaser",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 42,
+      "name": "Katie",
+      "surname": "Bell",
+      "longname": "Katie Bell",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "chaser",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 43,
+      "name": "Alicia",
+      "surname": "Spinnet",
+      "longname": "Alicia Spinnet",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "chaser",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 44,
+      "name": "Lee",
+      "surname": "Jordan",
+      "longname": "Lee Jordan",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 45,
+      "name": "Fred",
+      "surname": "Weasley",
+      "longname": "Fred Weasley",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "beater",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 46,
+      "name": "George",
+      "surname": "Weasley",
+      "longname": "George Weasley",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "beater",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 47,
+      "name": "Percy",
+      "surname": "Weasley",
+      "longname": "Percy Weasley",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 48,
+      "name": "Cedric",
+      "surname": "Diggory",
+      "longname": "Cedric Diggory",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "seeker",
+      "senior": true,
+      "captain": true,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 49,
+      "name": "Cho",
+      "surname": "Chang",
+      "longname": "Cho Chang",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 50,
+      "name": "Marietta",
+      "surname": "Edgecombe",
+      "longname": "Marietta Edgecombe",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 51,
+      "name": "Roger",
+      "surname": "Davies",
+      "longname": "Roger Davies",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "seeker",
+      "senior": true,
+      "captain": true,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 52,
+      "name": "Marcus",
+      "surname": "Belby",
+      "longname": "Marcus Belby",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 53,
+      "name": "Penelope",
+      "surname": "Clearwater",
+      "longname": "Penelope Clearwater",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 54,
+      "name": "Marcus",
+      "surname": "Flint",
+      "longname": "Marcus Flint",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": true,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 55,
+      "name": "Harry",
+      "surname": "Potter",
+      "longname": "Harry Potter",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "seeker",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 56,
+      "name": "Ron",
+      "surname": "Weasley",
+      "longname": "Ron Weasley",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 57,
+      "name": "Hermione",
+      "surname": "Granger",
+      "longname": "Hermione Granger",
+      "male": false,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 58,
+      "name": "Neville",
+      "surname": "Longbottom",
+      "longname": "Neville Longbottom",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 100,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 59,
+      "name": "Seamus",
+      "surname": "Finnigan",
+      "longname": "Seamus Finnigan",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 60,
+      "name": "Dean",
+      "surname": "Thomas",
+      "longname": "Dean Thomas",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 61,
+      "name": "Lavender",
+      "surname": "Brown",
+      "longname": "Lavender Brown",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 62,
+      "name": "Parvati",
+      "surname": "Patil",
+      "longname": "Parvati Patil",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Gryffindor"
+    },
+    {
+      "role": "Student",
+      "id": 63,
+      "name": "Ernie",
+      "surname": "McMillan",
+      "longname": "Ernie McMillan",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 59,
+      "name": "Hannah",
+      "surname": "Abbott",
+      "longname": "Hannah Abbott",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 64,
+      "name": "Susan",
+      "surname": "Bones",
+      "longname": "Susan Bones",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 65,
+      "name": "Justin",
+      "surname": "Finch-Fletchley",
+      "longname": "Justin Finch-Fletchley",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 66,
+      "name": "Kevin",
+      "surname": "Entwhistle",
+      "longname": "Kevin Entwhistle",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 67,
+      "name": "Wayne",
+      "surname": "Hopkins",
+      "longname": "Wayne Hopkins",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Hufflepuff"
+    },
+    {
+      "role": "Student",
+      "id": 68,
+      "name": "Padma",
+      "surname": "Patil",
+      "longname": "Padma Patil",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 69,
+      "name": "Michael",
+      "surname": "Corner",
+      "longname": "Michael Corner",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 70,
+      "name": "Terry",
+      "surname": "Boot",
+      "longname": "Terry Boot",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 71,
+      "name": "Lisa",
+      "surname": "Turpin",
+      "longname": "Lisa Turpin",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 72,
+      "name": "Anthony",
+      "surname": "Goldstein",
+      "longname": "Anthony Goldstein",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 73,
+      "name": "Mandy",
+      "surname": "Brocklehurst",
+      "longname": "Mandy Brocklehurst",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 74,
+      "name": "Morag",
+      "surname": "MacDougal",
+      "longname": "Morag MacDougal",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 75,
+      "name": "Bradley",
+      "surname": "Shaw",
+      "longname": "Bradley Shaw",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Ravenclaw"
+    },
+    {
+      "role": "Student",
+      "id": 76,
+      "name": "Draco",
+      "surname": "Malfoy",
+      "longname": "Draco Malfoy",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 100
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 77,
+      "name": "Vincent",
+      "surname": "Crabbe",
+      "longname": "Vincent Crabbe",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 100
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 78,
+      "name": "Gregory",
+      "surname": "Goyle",
+      "longname": "Gregory Goyle",
+      "male": true,
+      "alignement": {
+        "neutral": 0,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 100
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 79,
+      "name": "Blaise",
+      "surname": "Zabini",
+      "longname": "Blaise Zabini",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 80,
+      "name": "Theodore",
+      "surname": "Nott",
+      "longname": "Theodore Nott",
+      "male": true,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 81,
+      "name": "Pansy",
+      "surname": "Parkinson",
+      "longname": "Pansy Parkinson",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 82,
+      "name": "Astoria",
+      "surname": "Greengrass",
+      "longname": "Astoria Greengrass",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    },
+    {
+      "role": "Student",
+      "id": 83,
+      "name": "Millicent",
+      "surname": "Bulstrode",
+      "longname": "Millicent Bulstrode",
+      "male": false,
+      "alignement": {
+        "neutral": 100,
+        "phoenix_order": 0,
+        "chaos": 0,
+        "death_eater": 0
+      },
+      "connectionlvl": "neutral",
+      "quidditchRole": "none",
+      "senior": false,
+      "captain": false,
+      "house": "Slytherin"
+    }
+  ],
+  "quidditchGames": [],
+  "year": 1,
+  "grades": [
+    {
+      "subject": "Astronomy",
+      "score": 5
+    },
+    {
+      "subject": "Charms",
+      "score": 4
+    },
+    {
+      "subject": "Defense Against the Dark Arts",
+      "score": 4
+    },
+    {
+      "subject": "Herbology",
+      "score": 2
+    },
+    {
+      "subject": "History of Magic",
+      "score": 3
+    },
+    {
+      "subject": "Potions",
+      "score": 4
+    },
+    {
+      "subject": "Transfiguration",
+      "score": 4
+    },
+    {
+      "subject": "Flying",
+      "score": 4
+    },
+    {
+      "subject": "Ancient Runes",
+      "score": 0
+    },
+    {
+      "subject": "Arithmancy",
+      "score": 0
+    },
+    {
+      "subject": "Divination",
+      "score": 0
+    },
+    {
+      "subject": "Care of Magical Creatures",
+      "score": 0
+    },
+    {
+      "subject": "Muggle Studies",
+      "score": 0
+    }
+  ],
+  "secretPassages": [
+    {
+      "name": "Timothy the Timid",
+      "password": "flaming earwigs",
+      "description": "A painting of Timothy the Timid hid a shortcut between the fifth-floor corridor and the Herbology corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Giffard Abbot",
+      "password": "dragon's egg",
+      "description": "A painting of Giffard Abbot hid a shortcut between the Grand Staircase and the Middle Courtyard.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Damara Dodderidge",
+      "password": "chops and gravy",
+      "description": "A painting of Damara Dodderidge hid a shortcut between the Grand Staircase and the Clock Tower Entrance.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Edward Rabnott",
+      "password": "three heads are better than one",
+      "description": "A painting of Edward Rabnott hid a shortcut between the second - floor corridor and the fourth-floor corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "George von Rheticus",
+      "password": "scurrilous scoundrel",
+      "description": "A painting of George von Rheticus hid a shortcut between the Grand Staircase and the seventh-floor corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Temeritus Shanks",
+      "password": "no news is good news",
+      "description": "A painting of Temeritus Shanks hid a shortcut between the Library and the fourth-floor corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Google Stump",
+      "password": "volo futurus unus",
+      "description": "A painting of Google Stump hid a shortcut between the Viaduct Entrance and the first - floor corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Percival Pratt",
+      "password": "this password is absurd",
+      "description": "A painting of Percival Pratt hid a shortcut between the Grand Staircase and the Boathouse.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Elizabeth Burke",
+      "password": "slytherins are supreme",
+      "description": "A painting of Elizabeth Burke hid a shortcut between the Entrance Dungeon and the Dungeons near the Potions Classroom.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "Boris the Bewildered",
+      "password": "forget-me-never",
+      "description": "A painting of Boris the Bewildered hid a shortcut between the second-floor corridor and the third-floor corridor.",
+      "internal": true,
+      "discovered": false
+    },
+    {
+      "name": "One-Eyed Witch",
+      "password": "",
+      "description": "The One-Eyed Witch statue in the third-floor corridor hid a passageway that leads to Honeydukes Sweet Shop.",
+      "internal": false,
+      "discovered": false
+    },
+    {
+      "name": "Fourth-Floor Mirror",
+      "password": "",
+      "description": "The Fourth-Floor Mirror hid a passageway that leads to Hogsmeade Village.",
+      "internal": false,
+      "discovered": false
+    },
+    {
+      "name": "Whomping Will",
+      "password": "",
+      "description": "Under the Whomping Will opens a passageway that leads to the Shrieking Shack.",
+      "internal": false,
+      "discovered": false
+    },
+    {
+      "name": "Gregory The Smarmy",
+      "password": "",
+      "description": "The Gregory The Smarmy statue hid a passageway that leads To Hogsmeade Village.",
+      "internal": false,
+      "discovered": false
+    },
+    {
+      "name": "West Tower floor",
+      "password": "",
+      "description": "On the ground floor of the Castle's West Tower lies a passageway within the West Well, that leads to a fountain In Hogsmeade Village.",
+      "internal": false,
+      "discovered": false
+    }
+  ],
+  "mainQuestProgress": 0
+}

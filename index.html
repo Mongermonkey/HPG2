@@ -350,11 +350,23 @@
   </style>
 </head>
 <body>
+  <script>
+    // Se l'utente apre index.html direttamente, lo reindirizza a start.html
+    // Permette il ritorno solo se c'è un flag nella sessionStorage
+    if (!sessionStorage.getItem('fromStartMenu')) {
+      window.location.replace('start.html');
+    } else {
+      sessionStorage.removeItem('fromStartMenu');
+    }
+  </script>
   <!-- MENU SETTINGS -->
   <div id="settings-overlay"></div>
   <div class="settings-container">
-    <button id="settings-btn">⚙</button>
-    <button id="audio-toggle-btn" type="button" title="Dialogue audio: OFF" aria-label="Dialogue audio: OFF"></button>
+    <button id="settings-btn" title="Settings">⚙</button>
+
+    <button id="audio-toggle-btn" type="button" title="Audio" aria-label="Dialogue audio: OFF">
+      <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,10 7,10 12,6 12,18 7,14 3,14"></polygon><path d="M16 9 C18 10.5,18 13.5,16 15"></path><path d="M18.8 6.5 C22.2 9.3,22.2 14.7,18.8 17.5"></path></svg>
+    </button>
     <div id="settings-menu" class="settings-menu">
       <button id="color-btn" class="settings-option" type="button"><span class="settings-option-label">Change color</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
       <button id="fast-skip-btn" class="settings-option" type="button"><span class="settings-option-label">Fast skip</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
@@ -398,7 +410,22 @@
     let endColorIndex = 2 % colorPalette.length;
     let progress = 0;
     const step = 0.02;
-    window.fastSkipEnabled = false;
+    const COLOR_OPTION_KEY = 'hpg2-color-option-enabled';
+    const FAST_SKIP_OPTION_KEY = 'hpg2-fast-skip-enabled';
+    // Carica stato opzioni da localStorage
+    function loadColorOption() {
+      try { return localStorage.getItem(COLOR_OPTION_KEY) === 'true'; } catch { return false; }
+    }
+    function saveColorOption(isEnabled) {
+      try { localStorage.setItem(COLOR_OPTION_KEY, String(isEnabled)); } catch {}
+    }
+    function loadFastSkipOption() {
+      try { return localStorage.getItem(FAST_SKIP_OPTION_KEY) === 'true'; } catch { return false; }
+    }
+    function saveFastSkipOption(isEnabled) {
+      try { localStorage.setItem(FAST_SKIP_OPTION_KEY, String(isEnabled)); } catch {}
+    }
+    window.fastSkipEnabled = loadFastSkipOption();
     const DIALOGUE_AUDIO_STORAGE_KEY = 'hpg2-dialogue-audio-enabled';
 
     function loadDialogueAudioSetting() {
@@ -466,12 +493,14 @@
       {
         colorInterval = setInterval(rainbowWheel, 50);
         setOptionState(btn, 'Change color', true);
+        saveColorOption(true);
       }
       else
       {
         clearInterval(colorInterval);
         colorInterval = null;
         setOptionState(btn, 'Change color', false);
+        saveColorOption(false);
       }
     }
 
@@ -486,9 +515,21 @@
       const btn = document.getElementById('fast-skip-btn');
       window.fastSkipEnabled = !window.fastSkipEnabled;
       setOptionState(btn, 'Fast skip', window.fastSkipEnabled);
+      saveFastSkipOption(window.fastSkipEnabled);
     }
 
     document.getElementById('fast-skip-btn').addEventListener('click', toggleFastSkip);
+
+    // All'avvio, imposta lo stato delle opzioni in base a localStorage
+    const colorBtn = document.getElementById('color-btn');
+    if (loadColorOption()) {
+      colorInterval = setInterval(rainbowWheel, 50);
+      setOptionState(colorBtn, 'Change color', true);
+    } else {
+      setOptionState(colorBtn, 'Change color', false);
+    }
+    const fastSkipBtn = document.getElementById('fast-skip-btn');
+    setOptionState(fastSkipBtn, 'Fast skip', window.fastSkipEnabled);
 
     const audioToggleBtn = document.getElementById('audio-toggle-btn');
     const audioIconOn = '<svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,10 7,10 12,6 12,18 7,14 3,14"></polygon><path d="M16 9 C18 10.5,18 13.5,16 15"></path><path d="M18.8 6.5 C22.2 9.3,22.2 14.7,18.8 17.5"></path></svg>';
@@ -497,8 +538,8 @@
     function syncAudioToggleUi() {
       const isOn = Boolean(window.dialogueAudioEnabled);
       audioToggleBtn.innerHTML = isOn ? audioIconOn : audioIconOff;
-      audioToggleBtn.title = `Dialogue audio: ${isOn ? 'ON' : 'OFF'}`;
-      audioToggleBtn.setAttribute('aria-label', `Dialogue audio: ${isOn ? 'ON' : 'OFF'}`);
+      audioToggleBtn.title = `Audio: ${isOn ? 'ON' : 'OFF'}`;
+      audioToggleBtn.setAttribute('aria-label', `Audio: ${isOn ? 'ON' : 'OFF'}`);
     }
 
     function toggleDialogueAudio(event) {
@@ -538,7 +579,7 @@
     });
 
     // Inizia con il cambio colore attivo
-    changeColor();
+    // (Gestito sopra con localStorage)
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/talkify-tts/dist/talkify.min.js"></script>
