@@ -5,6 +5,7 @@ import { MainChara } from "../../basis/_index";
 
 import * as school from '../school/_index';
 import * as main_q from '../mainquest/year1';
+import { saveProgress } from "./saveProgress";
 import * as quidditch from '../quidditch/quidditch';
 import * as side_q from '../sidequest/year_one/_index';
 
@@ -62,6 +63,7 @@ export async function attend(chara: MainChara<'Wizard'>): Promise<MainChara<'Wiz
     
     await school.feast(chara);
 
+    saveProgress(chara);
     chara.year = 2;     // TODO: necessario salvare il pg con l'anno aumentato.
     return chara;
 }

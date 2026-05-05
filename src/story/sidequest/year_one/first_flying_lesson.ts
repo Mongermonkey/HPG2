@@ -100,7 +100,7 @@ async function remembrall(chara: MainChara<'Wizard'>): Promise<void>
 {
     let draco = b.getCharacterByLongname(chara.characterList, 'Draco Malfoy'),
         neville = b.getCharacterByLongname(chara.characterList, 'Neville Longbottom');
-    await d.remembrallIntro();
+    await d.remembrallIntro(b.isFriend(draco));
 
     let laughChance = 15, askChance = 15, actChance = 5;
     if (b.isFriend(draco)) { laughChance += 25; }

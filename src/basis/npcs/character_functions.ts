@@ -16,9 +16,10 @@ import { shiftAlignment } from '../main_character/character_development';
  * Handles friendship interactions between mc and npcs.
  * @param chara The mc.
  * @param sureFriend If true, the wheel will not include the "mind your business" option, and the player will always befriend someone.
+ * @param sameHouse If true, only consider characters from the same house as the mc.
  * @param senior True to consider only senior students, false for non-senior, undefined for all.
  */
-export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, senior?: boolean): Promise<void>
+export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: boolean, sameHouse?: boolean, senior?: boolean): Promise<void>
 {
     if (!sureFriend)
     {
@@ -36,7 +37,7 @@ export async function friendshipWheel(chara: MainChara<'Wizard'>, sureFriend?: b
 
     await u.showText('You make friends!');
 
-    await befriend(chara, false, senior);
+    await befriend(chara, sameHouse ?? false, senior);
 }
 
 /**

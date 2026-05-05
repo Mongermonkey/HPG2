@@ -103,10 +103,15 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
   updateStarState();
 
   // Funzione per forzare download in cartella fissa
+  function getDefaultCharacterFileName(character: any): string {
+    let baseName = character?.name ? character.name.replace(/[^a-zA-Z0-9_-]/g, '_') : 'character';
+    let yearSuffix = (character && typeof character.year === 'number') ? `_y${character.year}` : '';
+    return 'HPG2_' + baseName + yearSuffix;
+  }
+
   function saveCharacterToFile(character: any)
   {
-    let baseName = character?.name ? character.name.replace(/[^a-zA-Z0-9_-]/g, '_') : 'character';
-    let defaultName = 'HPG2_' + baseName;
+    const defaultName = getDefaultCharacterFileName(character);
 
     // Overlay
     const modalOverlay = document.createElement('div');
@@ -223,7 +228,9 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
         input.focus();
         return;
       }
+      // Rimuovi eventuale estensione .json (case-insensitive)
       filename = filename.replace(/\.[jJ][sS][oO][nN]$/, '');
+      // NON aggiungere _y{year}, rispetta il nome scelto dall'utente
       filename += '.json';
       closeModal();
       const json = JSON.stringify(character, null, 2);
@@ -406,7 +413,8 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
 export function saveCharacterToFile(character: any)
 {
   let baseName = character?.name ? character.name.replace(/[^a-zA-Z0-9_-]/g, '_') : 'character';
-  let defaultName = 'HPG2_' + baseName;
+  let yearSuffix = (character && typeof character.year === 'number') ? `_y${character.year}` : '';
+  let defaultName = 'HPG2_' + baseName + yearSuffix;
 
   // Overlay
   const modalOverlay = document.createElement('div');
@@ -523,7 +531,9 @@ export function saveCharacterToFile(character: any)
       input.focus();
       return;
     }
+    // Rimuovi eventuale .json finale
     filename = filename.replace(/\.[jJ][sS][oO][nN]$/, '');
+    // NON aggiungere _y{year}, rispetta il nome scelto dall'utente
     filename += '.json';
     closeModal();
     const json = JSON.stringify(character, null, 2);

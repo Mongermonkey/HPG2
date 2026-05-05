@@ -65,7 +65,6 @@ export async function chocolateFrog(chara: MainChara<'Wizard'>)
     if (b.countFriends(chara.characterList) < 1) return;
 
     var friend = b.getRandomFriend(chara.characterList);
-    await u.showText(friend!.name + ' gifts a chocolate frog to you.');
     await d.chocolateFrog(friend!.name);
     chara.clues.find(c => c.name === 'chocolate_frog')!.discovered = true;
 }
@@ -116,7 +115,7 @@ let sightBonus = 0;
 // Quest intro
 export async function philosophersStoneQuest(chara: MainChara<'Wizard'>, endofyear: boolean = false)
 {
-    chara.mainQuestProgress++;
+    chara.questProgress.main++;
     await d.mainQuest_Intro(chara.clues);
 
     sightBonus = chara.gifts.sight;
@@ -140,7 +139,7 @@ export async function philosophersStoneQuest(chara: MainChara<'Wizard'>, endofye
  */
 async function doorTask(chara: MainChara<'Wizard'>): Promise<boolean>
 {
-    if (chara.mainQuestProgress > 0) return true;
+    if (chara.questProgress.main > 0) return true;
     let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
     let chance = Math.min(95, (50 + charmSkill * 5));
 
@@ -165,7 +164,7 @@ async function FluffyTask(chara: MainChara<'Wizard'>, endofyear: boolean): Promi
 {
     let FluffyClue = chara.clues.find(c => c.name === 'fluffy_talk')!.discovered;
     
-    await d.Fluffy_intro(chara.mainQuestProgress != 0, FluffyClue, endofyear);
+    await d.Fluffy_intro(chara.questProgress.main != 0, FluffyClue, endofyear);
     if (endofyear) return true;    
 
     let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
@@ -188,6 +187,7 @@ async function FluffyTask(chara: MainChara<'Wizard'>, endofyear: boolean): Promi
     
     await d.mainQuest_HospitalFailure(chara.house);
     await b.improveConnection(chara, 'Professor Dumbledore');
+    await b.housePointsIncrement(chara, 10);
     return false;
 }
 
@@ -219,6 +219,7 @@ async function DevilsSnareTask(chara: MainChara<'Wizard'>): Promise<boolean>
     
     await d.mainQuest_HospitalFailure(chara.house);
     await b.improveConnection(chara, 'Professor Dumbledore');
+    await b.housePointsIncrement(chara, 10);
     return false;
 }
 
@@ -250,6 +251,7 @@ async function wingedKeysTask(chara: MainChara<'Wizard'>): Promise<boolean>
     
     await d.mainQuest_HospitalFailure(chara.house);
     await b.improveConnection(chara, 'Professor Dumbledore');
+    await b.housePointsIncrement(chara, 10);
     return false;
 }
 
@@ -264,7 +266,7 @@ async function WizardsChessTask(chara: MainChara<'Wizard'>): Promise<boolean>
 
     let charmSkill = chara.grades.find(g => g.subject === 'Charms')!.score;
     let trasfigurationSkill = chara.grades.find(g => g.subject === 'Transfiguration')!.score;
-    let chance = Math.min(95, (20 + charmSkill * 4 + trasfigurationSkill * 4 + chara.mainQuestProgress > 1 ? 10 : 0));
+    let chance = Math.min(95, (20 + charmSkill * 4 + trasfigurationSkill * 4 + chara.questProgress.main > 1 ? 10 : 0));
     
     let segments = [ u.newSegment('Success', chance), u.newSegment('Failure', 100 - chance) ];
     let result = await u.spinWheel('You try to play the chess game and win. Do you succeed?', segments);
@@ -281,6 +283,7 @@ async function WizardsChessTask(chara: MainChara<'Wizard'>): Promise<boolean>
     
     await d.mainQuest_HospitalFailure(chara.house);
     await b.improveConnection(chara, 'Professor Dumbledore');
+    await b.housePointsIncrement(chara, 10);
     return false;
 }
 
@@ -313,6 +316,7 @@ async function mountainTrollTask(chara: MainChara<'Wizard'>, endofyear: boolean)
 
     await d.mainQuest_HospitalFailure(chara.house);
     await b.improveConnection(chara, 'Professor Dumbledore');
+    await b.housePointsIncrement(chara, 10);
     return false;
 }
 
@@ -401,7 +405,7 @@ async function goodEnding(chara: MainChara<'Wizard'>, endofyear: boolean)
     else await d.mainQuest_MidYearEnding(chara.house);
     
     chara.housePoints += 50;
-    u.showWheelResult('house points++');
+    await u.showWheelResult('house points++');
     await b.improveConnection(chara, 'Professor Dumbledore');
     await b.shiftAlignment(chara, 'phoenix_order', 7);
 }

@@ -123,7 +123,7 @@ export async function schoolWheel(chara: MainChara<'Wizard'>): Promise<void>
     let result = await u.spinWheel('School Wheel! What happens?', getSegments(chara));
     switch (result)
     {
-        case 'friendship wheel': await b.friendshipWheel(chara, true); break;
+        case 'friendship wheel': await b.friendshipWheel(chara, true, undefined, undefined); break;
         case 'study': await b.libraryStudy(chara); break;
         case 'Peeves\' prank': await PeevesPrank(chara); break;
         case 'ghost': await ghostEncounter(chara); break;

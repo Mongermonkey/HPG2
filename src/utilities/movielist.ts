@@ -92,6 +92,14 @@ export async function chooseamovie(genre: string): Promise<void>
             "One Day (2011)",
             "Love and Other Drugs (2010)",
             "Scarface (1983)",
+            "Rockstar (2011)",
+            "Tamasha (2015)",
+            "Padmaavat (2018)",
+            "Hercules (1997)",
+            "Mulan (1998)",
+            "The Usual Suspects (1995)",
+            "Ju-On: The Grudge (2002)",
+            "The Woman in Black (2012)",
         ]));
     }
     else    

@@ -95,7 +95,11 @@ function PeevesOptions(peeves: Character<b.hogwartsRole>, chaosAlg: boolean, hou
 async function LaughAlong(chara: MainChara<'Wizard'>, peeves: Character<b.hogwartsRole>, filch: Character<b.hogwartsRole>)
 {
     await u.showText('You laugh along with Peeves. He seems to like that, and you two have fun together.');
-    if (!b.isFriend(peeves)) await b.improveConnection(chara, peeves);
+    if (!b.isFriend(peeves))
+    {
+        await b.improveConnection(chara, peeves);
+        await b.shiftAlignment(chara, 'chaos', 5);
+    }
     await u.showText('A moment later, Filch arrives and demands an explanation. Peeves has already fled the scene.');
     let success = 50, failure = 50;
     if (filch.connectionlvl != 'foe') { success+=20; failure-=20; }

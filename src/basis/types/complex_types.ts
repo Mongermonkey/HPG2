@@ -154,4 +154,18 @@ export const firstYearClues: Clue[] =
     { name: 'fluffy_talk', discovered: false },
 ];
 
+export type questProgression =
+{
+    main: number;
+    darkForest: number;
+    norbert: number;
+}
 
+export const questProgress: questProgression =
+{
+    main: 0,
+    darkForest: 0,
+
+    // first year uniques
+    norbert: 0,
+}

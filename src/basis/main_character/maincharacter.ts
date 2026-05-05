@@ -1,6 +1,6 @@
 
 import { characterList } from "../npcs/characters";
-import { alignment, Secrets, Gifts, Grade, Pet, QuidditchGame, secretPassage, Clue } from "../types/complex_types";
+import { alignment, Secrets, Gifts, Grade, Pet, QuidditchGame, secretPassage, Clue, questProgression } from "../types/complex_types";
 import { bloodStatus, race, gameclass, gender, hogwartsHouseName, quidditchRole, sevenNums, subject } from "../types/base_types";
 
 export type Baseclass<T extends gameclass> =
@@ -30,7 +30,7 @@ export type Wizard =
     year: sevenNums;
     grades: Grade[];
     secretPassages: secretPassage[];
-    mainQuestProgress: number;
+    questProgress: questProgression;
 }
 
 export type CustomClass =

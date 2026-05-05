@@ -18,6 +18,7 @@ export async function meetNorbert(chara: MainChara<'Wizard'>, lost: boolean = fa
     let hagrid = chara.characterList.find(c => c.longname === 'Hagrid')!;
     await d.meetingNorbert(lost);
 
+    chara.questProgress.norbert++;
     let keep = hagrid?.connectionlvl === 'friend' ? 70 : 80;
     let slip = (100 - keep) /2, report = (100 - keep) /2;
     if (b.alignmentChaos(chara.alignment)) { keep = 33; slip = 34; report = 33; }
@@ -68,7 +69,7 @@ export async function meetNorbert(chara: MainChara<'Wizard'>, lost: boolean = fa
 export async function saveNorbert(chara: MainChara<'Wizard'>): Promise<boolean>
 {
     let hagrid = chara.characterList.find(c => c.longname === 'Hagrid');    
-    if (!hagrid || !b.isFriend(hagrid)) return false;     // Impossible if Hagrid is not a friend
+    if (!hagrid || !b.isFriend(hagrid) || chara.questProgress.norbert === 0) return false;
 
     await d.savingNorbert();    
     let harry = chara.characterList.find(c => c.longname === 'Harry Potter');

@@ -11,7 +11,8 @@ import { Wheel } from '../../utilities/_index';
 import { characterList } from '../npcs/characters';
 import { Baseclass, MainChara } from './maincharacter';
 import { animal, race, subject, bloodStatus, sevenNums } from '../types/base_types';
-import { firstYearClues, freshPassages, Grade, NeutralAlignment, HogwartsSecrets, Gifts, Pet } from '../types/complex_types';
+import { firstYearClues, freshPassages, Grade, NeutralAlignment, HogwartsSecrets, Gifts, Pet, questProgress } from '../types/complex_types';
+import { saveProgress } from '../../story/years/saveProgress';
 
 function getMyWheel(): Wheel
 {
@@ -34,6 +35,37 @@ function getNextBtn(): HTMLButtonElement
  */
 export async function createCharacter(): Promise<Baseclass<'Default'>>
 {
+    let test_character: MainChara<'Wizard'> =
+    {
+        gameclass: 'Wizard',
+        gender: 'm',
+        name: 'Test Character',
+        blood: 'half',
+        race: 'human',
+        gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0 },
+        pet: { type: 'cat', name: 'Whiskers' },
+
+        alignment: { neutral: 50, phoenix_order: 20, chaos: 20, death_eater: 10 },
+        house: 'Ravenclaw',
+        housePoints: 10,
+        year: 1,
+        quidditchRole: 'seeker',
+        quidditchCaptain: false,
+        quidditchGames: [],
+        fame: 0,
+        infamy: 0,
+        stress: 0,
+        clues: [ { name: 'dumbledores_speech', discovered: false }, { name: 'gringotts_theft', discovered: false },
+            { name: 'chocolate_frog', discovered: false }, { name: 'library', discovered: false }, { name: 'snape_quirrell_talk', discovered: false }, ],
+        grades: [],
+        secrets: {mirrorOfErised: false, roomOfRequirement: false, darkForestPunishment: false, aragogMet: false, darkForestVoldemort: false},
+        characterList: characterList,
+        secretPassages: [],
+        questProgress: { 'main': 0, 'darkForest': 0, 'norbert': 0 }
+    }
+    saveProgress(test_character);
+
+
     let gender = await chooseGender();
     await new Promise(resolve => setTimeout(resolve, 0));
     await u.nextEvent();
@@ -128,12 +160,12 @@ async function sortGifts(name: string): Promise<Gifts>
 {
     // spinBtn.disabled = true;
     let giftOptions = [ u.newSegment('none', 90), u.newSegment('gift', 10) ];
-    let result = await u.spinWheel('Were you marked by any gift or curse?', giftOptions);
+    let result = await u.spinWheel('Were you marked by a gift?', giftOptions);
     await u.nextEvent();
 
     if (result === 'none')
     {
-        await u.showText('No gift or curse has been bestowed upon you, ' + name + '.\n Not yet, at least...');
+        await u.showText('No gift has been bestowed upon you, ' + name + '.');
         return { metamorphmagus: 0, parselmouth: 0, sight: 0 };
     }
 
@@ -205,7 +237,7 @@ export async function urawizard(chara: Baseclass<'Default'>): Promise<MainChara<
         year: 1,
         grades: grades,
         secretPassages: freshPassages,
-        mainQuestProgress: 0
+        questProgress: { ...questProgress }
     };
 }
 

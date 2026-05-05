@@ -225,7 +225,7 @@ export async function mirrorOfErised(): Promise<void>
 /**
  * Handles the introduction to the Remembrall sidequest.
  */
-export async function remembrallIntro(): Promise<void>
+export async function remembrallIntro(knowDraco: boolean): Promise<void>
 {
     await showText('During the first exercise, you notice a boy struggling with his broom.');
     await showText('It\'s Neville Longbottom, a clumsy-looking Gryffindor student.');
@@ -626,8 +626,8 @@ export async function Fluffy_intro(firstTry: boolean, FluffyClue: boolean, endof
     await showText(showedText);
 
     showedText = firstTry
-        ? 'This time, strangely, an enchanted haarp is playing. And the dog is sleeping.'
-        : 'An enchanted haarp is playing, and the dog is sleeping.';
+        ? 'An enchanted haarp is playing, and the dog is sleeping.\nYou can easily get past it and open the trapdoor.'
+        : 'This time, strangely, an enchanted haarp is playing. And the dog is sleeping.';
     if (endofyear) await showText(showedText);
 }
 
@@ -825,7 +825,7 @@ export async function mirror_intro(endofyear: boolean, discoveredMirror: boolean
 export async function mainQuest_HospitalFailure(house: hogwartsHouseName): Promise<void>
 {
     await showText('You wake up, a few days later, in the Hospital Wing.');
-    await showText('As you open your eyes, you notice that there is only a person in the room.');
+    await showText('As you open your eyes, you notice that there is only another person in the room.');
     await showText('It\'s the headmaster, who seems to be eating some candy from a bag on your bedside table.');
     await showText('Professor Dumbledore does not spend many words investigating why you were in the dungeon...');
     await showText('Just as you begin to wonder if he could read minds, he recognizes the qualities you have demonstrated.');

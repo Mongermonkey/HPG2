@@ -100,9 +100,10 @@ async function GiantRacism(chara: MainChara<'Wizard'>)
  */
 export async function stress(chara: MainChara<'Wizard'>, increment?: number)
 {
-    chara.stress += increment ?? 1;
+    increment = increment ? increment : 1;
+    chara.stress += increment;
     chara.stress = Math.max(0, chara.stress); // Ensure stress does not go below 0
-    u.showWheelResult(increment && increment > 0 ? 'stress++' : 'stress--');
+    u.showWheelResult(increment > 0 ? 'stress++' : 'stress--');
     await u.nextEvent();
 }
 
@@ -113,8 +114,9 @@ export async function stress(chara: MainChara<'Wizard'>, increment?: number)
  */
 export async function fame(chara: MainChara<'Wizard'>, increment?: number)
 {
-    chara.fame += increment ?? 1;
-    u.showWheelResult('fame++');
+    increment = increment ? increment : 1;
+    chara.fame += increment;
+    u.showWheelResult(increment > 0 ? 'fame++' : 'fame--');
     await u.nextEvent();
 }
 
@@ -201,7 +203,7 @@ export async function libraryStudy(chara: MainChara<'Wizard'>): Promise<void>
     let success = u.spinbool(chance, 100 - chance);
     lowSub.score += success ? 2 : 1;
     await d.subjectStudy(lowSub.subject, success);
-    u.showWheelResult(lowSub.subject + '++');
+    await u.showWheelResult(lowSub.subject + '++');
 }
 
 /**

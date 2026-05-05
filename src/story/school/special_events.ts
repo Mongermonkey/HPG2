@@ -26,9 +26,9 @@ export async function schoolIntro(chara:MainChara<'Wizard'>): Promise<void>
 
     // friendship wheels
     await u.showText('You are brought to your house\'s common room,\nwhere you can spend some time with your new housemates.');
-    await b.friendshipWheel(chara);
-    await b.friendshipWheel(chara);
-    await b.friendshipWheel(chara);
+    await b.friendshipWheel(chara, false, true);
+    await b.friendshipWheel(chara, false, true);
+    await b.friendshipWheel(chara, false, true);
 
     // sort quidditch games
     sortGames(chara);
@@ -91,6 +91,7 @@ export async function feast(chara: MainChara<'Wizard'>): Promise<void>
         .sort((a, b) => b.points - a.points);
 
     await d.eoyFeast(chara, first, second, third, fourth);
+    if (first.name === chara.house) await b.friendshipWheel(chara, true, true);
 }
 
 /**

@@ -413,47 +413,47 @@
         }
       });
 
-      // Carica lista file json dalla cartella saves (solo lato locale, non server)
-      let saves = [];
-      try {
-        // In ambiente web statico, non si può leggere la cartella. Simuliamo con fetch di un file noto.
-        // In produzione, qui si dovrebbe avere una API o una lista generata lato server.
-        saves = ['matt.json']; // TODO: automatizzare se serve
-      } catch {
-        saves = [];
-      }
+
+      // Carica lista file json dalla cartella saves/list.json
       const listDiv = overlay.querySelector('#loadgame-list');
-      if (!saves.length) {
-        listDiv.innerHTML = '<div style="color:#bbb;">No save files found.</div>';
-        return;
-      }
       let selected = null;
-      function renderList() {
-        listDiv.innerHTML = '';
-        saves.forEach(f => {
-          const btn = document.createElement('button');
-          btn.textContent = f;
-          btn.style.display = 'block';
-          btn.style.width = '100%';
-          btn.style.margin = '6px 0';
-          btn.style.padding = '10px';
-          btn.style.fontFamily = 'monospace';
-          btn.style.fontSize = '15px';
-          btn.style.background = selected === f ? '#282860' : '#282830';
-          btn.style.color = selected === f ? '#fff' : '#e8e8f0';
-          btn.style.border = selected === f ? '2px solid #b4b4dc' : '2px solid #444';
-          btn.style.borderRadius = '8px';
-          btn.style.cursor = 'pointer';
-          btn.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            selected = f;
-            renderList();
-            showConfirm();
-          });
-          listDiv.appendChild(btn);
+        fetch('scripts/savelist.json')
+        .then(resp => resp.json())
+        .then(saves => {
+          if (!Array.isArray(saves) || !saves.length) {
+            listDiv.innerHTML = '<div style="color:#bbb;">No save files found.</div>';
+            return;
+          }
+          function renderList() {
+            listDiv.innerHTML = '';
+            saves.forEach(f => {
+              const btn = document.createElement('button');
+              btn.textContent = f;
+              btn.style.display = 'block';
+              btn.style.width = '100%';
+              btn.style.margin = '6px 0';
+              btn.style.padding = '10px';
+              btn.style.fontFamily = 'monospace';
+              btn.style.fontSize = '15px';
+              btn.style.background = selected === f ? '#282860' : '#282830';
+              btn.style.color = selected === f ? '#fff' : '#e8e8f0';
+              btn.style.border = selected === f ? '2px solid #b4b4dc' : '2px solid #444';
+              btn.style.borderRadius = '8px';
+              btn.style.cursor = 'pointer';
+              btn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                selected = f;
+                renderList();
+                showConfirm();
+              });
+              listDiv.appendChild(btn);
+            });
+          }
+          renderList();
+        })
+        .catch(() => {
+          listDiv.innerHTML = '<div style="color:#bbb;">No save files found.</div>';
         });
-      }
-      renderList();
 
       // Pop-up conferma scelta
       function showConfirm() {
