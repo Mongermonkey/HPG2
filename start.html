@@ -215,7 +215,7 @@
 <body>
 
 
-  <!-- MENU SETTINGS (come index.html, fuori overlay) -->
+  <!-- MENU SETTINGS (come hpg2-main.html, fuori overlay) -->
   <div id="settings-overlay"></div>
   <div class="settings-container">
     <button id="settings-btn" title="Settings">⚙</button>
@@ -387,7 +387,7 @@
       sessionStorage.removeItem('mainChara');
       sessionStorage.removeItem('saveFile');
       sessionStorage.removeItem('startYear');
-      window.location.href = 'index.html';
+      window.location.href = 'hpg2-main.html';
     });
     document.getElementById('voice-loading-load').addEventListener('click', async function() {
       // Overlay per selezione file
@@ -516,7 +516,7 @@
             sessionStorage.setItem('startYear', String(year + 1));
             sessionStorage.setItem('mainChara', JSON.stringify(data));
             overlay.remove();
-            window.location.href = 'index.html';
+            window.location.href = 'hpg2-main.html';
           } catch {
             alert('Errore nel caricamento del file di salvataggio.');
             overlay.remove();

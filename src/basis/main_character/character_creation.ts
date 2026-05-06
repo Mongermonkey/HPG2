@@ -63,7 +63,7 @@ export async function createCharacter(): Promise<Baseclass<'Default'>>
         secretPassages: [],
         questProgress: { 'main': 0, 'darkForest': 0, 'norbert': 0 }
     }
-    saveProgress(test_character);
+    // saveProgress(test_character);
 
 
     let gender = await chooseGender();
