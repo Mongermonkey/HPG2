@@ -26,26 +26,20 @@ function getNextBtn(): HTMLButtonElement {
 }
 
 
-export async function createCharacter(): Promise<Baseclass<'Default'>> {
-    console.log('[HPG2] createCharacter: INIZIO');
+export async function createCharacter(): Promise<Baseclass<'Default'>>
+{
     let gender = await chooseGender();
-    console.log('[HPG2] createCharacter: gender scelto', gender);
     await new Promise(resolve => setTimeout(resolve, 0));
     await u.nextEvent();
 
     let name = await writeName();
-    console.log('[HPG2] createCharacter: nome scelto', name);
     await new Promise(resolve => setTimeout(resolve, 0));
     await u.nextEvent();
 
     let blood = await sortBlood();
-    console.log('[HPG2] createCharacter: blood', blood);
     let race = await sortRace(blood);
-    console.log('[HPG2] createCharacter: race', race);
     let gifts = await sortGifts(name);
-    console.log('[HPG2] createCharacter: gifts', gifts);
     let chara: Baseclass<'Default'> = {gameclass: 'Default', gender, name, blood, race, gifts};
-    console.log('[HPG2] createCharacter: FINE', chara);
     return chara;
 }
 

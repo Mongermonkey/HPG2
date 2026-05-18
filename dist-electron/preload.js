@@ -1,1 +1,1 @@
-"use strict";const e=require("electron");e.contextBridge.exposeInMainWorld("electronAPI",{ping:()=>e.ipcRenderer.invoke("ping"),loadGamePage:()=>e.ipcRenderer.invoke("load-game-page")});
+"use strict";const e=require("electron");e.contextBridge.exposeInMainWorld("electronAPI",{ping:()=>e.ipcRenderer.invoke("ping"),loadGamePage:()=>e.ipcRenderer.invoke("load-game-page"),openLoadGameDialog:()=>e.ipcRenderer.invoke("open-load-game-dialog"),listSaveFiles:()=>e.ipcRenderer.invoke("list-save-files"),loadSaveFile:i=>e.ipcRenderer.invoke("load-save-file",i)});

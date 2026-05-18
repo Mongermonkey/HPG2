@@ -116,6 +116,7 @@ export function createVoiceLoadingOverlay(LOGO_PATH: string | null, onStart: () 
   const loadingTitle = loadingOverlay.querySelector('#voice-loading-title') as HTMLDivElement;
   const loadingSubtitle = loadingOverlay.querySelector('#voice-loading-subtitle') as HTMLDivElement;
   const loadingAction = loadingOverlay.querySelector('#voice-loading-action') as HTMLButtonElement;
+  const loadingLoad = loadingOverlay.querySelector('#voice-loading-load') as HTMLButtonElement;
   let startupInProgress = false;
 
   async function start() {
@@ -140,5 +141,118 @@ export function createVoiceLoadingOverlay(LOGO_PATH: string | null, onStart: () 
     }
   }
   loadingAction.addEventListener('click', start);
+
+  // Handler per il bottone "Load game" - mostra popup custom
+  loadingLoad.addEventListener('click', async () => {
+    if (startupInProgress) return;
+    startupInProgress = true;
+    loadingLoad.disabled = true;
+    try {
+      if (isElectronPreload() && window.electronAPI && window.electronAPI.listSaveFiles) {
+        const files = await window.electronAPI.listSaveFiles();
+        showSaveListPopup(files);
+      }
+    } finally {
+      startupInProgress = false;
+      loadingLoad.disabled = false;
+    }
+  });
+
+  // Crea e mostra la finestra custom per la lista salvataggi
+  function showSaveListPopup(files: string[]) {
+    // Rimuovi eventuale popup precedente
+    const oldPopup = document.getElementById('save-list-popup');
+    if (oldPopup) oldPopup.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'save-list-popup';
+    popup.style.position = 'fixed';
+    popup.style.left = '0';
+    popup.style.top = '0';
+    popup.style.width = '100vw';
+    popup.style.height = '100vh';
+    popup.style.background = 'rgba(8,8,16,0.92)';
+    popup.style.zIndex = '6000';
+    popup.style.display = 'flex';
+    popup.style.alignItems = 'center';
+    popup.style.justifyContent = 'center';
+
+    // Chiudi popup cliccando fuori dal card
+    popup.addEventListener('mousedown', (e) => {
+      if (e.target === popup) popup.remove();
+    });
+
+    const card = document.createElement('div');
+    card.style.background = 'rgb(20,20,30)';
+    card.style.border = '2px solid rgb(80,80,88)';
+    card.style.borderRadius = '12px';
+    card.style.padding = '28px 32px';
+    card.style.minWidth = '320px';
+    card.style.maxWidth = '90vw';
+    card.style.boxShadow = '0 0 20px rgba(0,0,0,0.45)';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'center';
+
+    const title = document.createElement('div');
+    title.textContent = 'Seleziona un salvataggio';
+    title.style.fontSize = '18px';
+    title.style.marginBottom = '18px';
+    title.style.color = 'rgb(232,232,240)';
+    title.style.fontFamily = 'monospace';
+    card.appendChild(title);
+
+    if (files.length === 0) {
+      const empty = document.createElement('div');
+      empty.textContent = 'Nessun salvataggio trovato.';
+      empty.style.color = 'rgb(176,176,188)';
+      empty.style.marginBottom = '12px';
+      card.appendChild(empty);
+    } else {
+      const list = document.createElement('ul');
+      list.style.listStyle = 'none';
+      list.style.padding = '0';
+      list.style.margin = '0 0 18px 0';
+      list.style.width = '100%';
+      files.forEach(file => {
+        const li = document.createElement('li');
+        li.style.marginBottom = '10px';
+        const btn = document.createElement('button');
+        btn.textContent = file;
+        btn.className = 'voice-loading-btn';
+        btn.style.width = '100%';
+        btn.onclick = async () => {
+          popup.remove();
+          // Carica il file JSON dalla cartella saves tramite IPC
+          if (isElectronPreload() && window.electronAPI && window.electronAPI.loadSaveFile) {
+            try {
+              const json = await window.electronAPI.loadSaveFile(file);
+              if (json) {
+                // Salva il json in sessionStorage e vai a hpg2-main.html
+                sessionStorage.setItem('hpg2-resume-save', JSON.stringify(json));
+                window.location.href = 'hpg2-main.html';
+              }
+            } catch (e) {
+              alert('Errore nel caricamento del salvataggio: ' + e);
+            }
+          }
+        };
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+      card.appendChild(list);
+    }
+
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Annulla';
+    closeBtn.className = 'voice-loading-btn';
+    closeBtn.style.marginTop = '8px';
+    closeBtn.onclick = () => popup.remove();
+    card.appendChild(closeBtn);
+
+    popup.appendChild(card);
+    document.body.appendChild(popup);
+  }
+
   loadingTitle.style.display = '';
 }

@@ -19,17 +19,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }, 500);
 
+  // NON resettare sessionStorage/localStorage se sto caricando un salvataggio
+  let resumeSave: any = null;
+  try {
+    const resumeStr = sessionStorage.getItem('hpg2-resume-save');
+    if (resumeStr) {
+      resumeSave = JSON.parse(resumeStr);
+      sessionStorage.removeItem('hpg2-resume-save');
+    }
+  } catch {}
 
-  // RESET: svuota sessionStorage e localStorage per forzare nuova partita
-  sessionStorage.clear();
-  localStorage.clear();
   window.addEventListener('beforeunload', () => {
     try { stopDialogueAudio(); } catch {}
   });
 
   // Inizializza riferimenti DOM e oggetti globali
-
-  // output già dichiarato sopra per debug
   const input = document.getElementById('player-input');
   const nextBtn = document.getElementById('next-btn');
   const spinBtn = document.getElementById('spin-btn');
@@ -44,10 +48,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   const myWheel = new Wheel('canvas');
   (window as any).myWheel = myWheel;
 
-  // Avvia direttamente la logica di gioco
-
+  // Avvia la logica di gioco
   unlockDialogueAudioFromGesture();
   await ensureDialogueVoiceReady();
-  await startStory();
+  if (resumeSave) {
+    await startStory(resumeSave);
+  } else {
+    sessionStorage.clear();
+    localStorage.clear();
+    await startStory();
+  }
   setupCharacterPopup(window);
 });

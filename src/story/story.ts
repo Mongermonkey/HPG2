@@ -28,9 +28,38 @@ export async function startStory(mainChara?: MainChara<'Wizard'>)
   }
   else
   {
-    let chara = await b.createCharacter();
-    wiz = await b.urawizard(chara);
-    startYear = 1;
+    // let chara = await b.createCharacter();
+    // wiz = await b.urawizard(chara);
+    // startYear = 1;
+
+    wiz =
+        {
+            gameclass: 'Wizard',
+            gender: 'm',
+            name: 'Test Character',
+            blood: 'half',
+            race: 'human',
+            gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0 },
+            pet: { type: 'cat', name: 'Whiskers' },
+    
+            alignment: { neutral: 50, phoenix_order: 20, chaos: 20, death_eater: 10 },
+            house: 'Ravenclaw',
+            housePoints: 10,
+            year: 1,
+            quidditchRole: 'seeker',
+            quidditchCaptain: false,
+            quidditchGames: [],
+            fame: 0,
+            infamy: 0,
+            stress: 0,
+            clues: [ { name: 'dumbledores_speech', discovered: false }, { name: 'gringotts_theft', discovered: false },
+                { name: 'chocolate_frog', discovered: false }, { name: 'library', discovered: false }, { name: 'snape_quirrell_talk', discovered: false }, ],
+            grades: [],
+            secrets: {mirrorOfErised: false, roomOfRequirement: false, darkForestPunishment: false, aragogMet: false, darkForestVoldemort: false},
+            characterList: b.characterList,
+            secretPassages: [],
+            questProgress: { 'main': 0, 'darkForest': 0, 'norbert': 0 }
+        }
   }
 
   (window as any).currentCharacter = wiz;
