@@ -1,12 +1,13 @@
 import { testElectronPing } from '../utilities/testElectron';
 import { isElectronPreload } from '../utilities/electronHelpers';
 // Overlay di caricamento voce/narratore
-export function createVoiceLoadingOverlay(LOGO_PATH: string, onStart: () => Promise<void>) {
+
+export function createVoiceLoadingOverlay(LOGO_PATH: string | null, onStart: () => Promise<void>) {
   const loadingOverlay = document.createElement('div');
   loadingOverlay.id = 'voice-loading-overlay';
   loadingOverlay.innerHTML = `
     <div id="voice-loading-card">
-      <img id="voice-loading-logo" src="${LOGO_PATH}" alt="HPG2 Logo" style="max-width: 440px; margin-bottom: 48px; margin-top: 0;" />
+      ${LOGO_PATH ? `<img id="voice-loading-logo" src="${LOGO_PATH}" alt="HPG2 Logo" />` : ''}
       <div id="voice-loading-spinner" style="display:none;"></div>
       <div id="voice-loading-title" style="display:none;"></div>
       <div id="voice-loading-subtitle"></div>
