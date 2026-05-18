@@ -259,25 +259,40 @@ const warmupSpeechTrack = (voice: SpeechSynthesisVoice): Promise<boolean> => {
   });
 };
 
-export async function ensureDialogueVoiceReady(): Promise<void>
-{
+export async function ensureDialogueVoiceReady(): Promise<void> {
+  // DEBUG: log visibile a schermo e in console
+  //
+
   if (voiceReadyPromise) return voiceReadyPromise;
 
   voiceReadyPromise = (async () => {
+
+    let bypassed = false;
     while (true)
     {
-      await waitForSpeechVoices();
+      let voicesLoaded = false;
+      let timeout = false;
+      await Promise.race([
+        (async () => { await waitForSpeechVoices(); voicesLoaded = true; })(),
+        new Promise(res => setTimeout(() => { timeout = true; res(undefined); }, 1000))
+      ]);
 
       const selected = pickPreferredEnglishVoice();
-      if (!selected)
-      {
+      // BYPASS: se dopo 1 secondo non ci sono voci, esci e prosegui senza audio
+      if ((!selected || !voicesLoaded) && timeout && !bypassed) {
+        bypassed = true;
+        voicesInitialized = false;
+        preferredEnglishVoice = null;
+        audioTrackReady = false;
+        return;
+      }
+      if (!selected) {
         await waitForUserInteraction();
         continue;
       }
 
       const warmupOk = await warmupSpeechTrack(selected);
-      if (!warmupOk)
-      {
+      if (!warmupOk) {
         await waitForUserInteraction();
         continue;
       }
@@ -286,8 +301,7 @@ export async function ensureDialogueVoiceReady(): Promise<void>
       preferredEnglishVoice = selected;
       audioTrackReady = true;
 
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window)
-      {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.addEventListener('voiceschanged', () => {
           preferredEnglishVoice = pickPreferredEnglishVoice();
         });

@@ -1,0 +1,8 @@
+{
+  "shortcuts": [
+    {
+      "match": "/",
+      "redirect": "/start.html"
+    }
+  ]
+}

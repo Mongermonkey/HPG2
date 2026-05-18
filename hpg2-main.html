@@ -351,9 +351,8 @@
 </head>
 <body>
   <script>
-    // Se l'utente apre hpg2-main.html direttamente, lo reindirizza a start.html
-    // Permette il ritorno solo se c'è un flag nella sessionStorage
-    if (!sessionStorage.getItem('fromStartMenu')) {
+    // Se l'utente apre hpg2-main.html direttamente, lo reindirizza a start.html SOLO se non siamo in Electron
+    if (!window.electronAPI && !sessionStorage.getItem('fromStartMenu')) {
       window.location.replace('start.html');
     } else {
       sessionStorage.removeItem('fromStartMenu');

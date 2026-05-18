@@ -1,3 +1,5 @@
+import { testElectronPing } from '../utilities/testElectron';
+import { isElectronPreload } from '../utilities/electronHelpers';
 // Overlay di caricamento voce/narratore
 export function createVoiceLoadingOverlay(LOGO_PATH: string, onStart: () => Promise<void>) {
   const loadingOverlay = document.createElement('div');
@@ -12,7 +14,11 @@ export function createVoiceLoadingOverlay(LOGO_PATH: string, onStart: () => Prom
       <button id="voice-loading-action" class="voice-loading-btn" type="button">New game</button>
     </div>
   `;
+
   document.body.appendChild(loadingOverlay);
+
+  // Test: se siamo in Electron, ping dal preload
+  testElectronPing();
 
   const loadingStyle = document.createElement('style');
   loadingStyle.textContent = `
@@ -118,9 +124,13 @@ export function createVoiceLoadingOverlay(LOGO_PATH: string, onStart: () => Prom
     loadingTitle.textContent = 'Preparing narrator voice...';
     loadingSubtitle.textContent = 'Please wait while audio is being initialized.';
     try {
-      await onStart();
+      if (isElectronPreload() && window.electronAPI && window.electronAPI.loadGamePage) {
+        await window.electronAPI.loadGamePage();
+        return;
+      }
       loadingOverlay.remove();
       loadingStyle.remove();
+      await onStart();
     } catch {
       startupInProgress = false;
       loadingAction.disabled = false;

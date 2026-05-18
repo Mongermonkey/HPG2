@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>HPG2 - Start Menu</title>
+  <style>
+                        /* Nascondi i bottoni info/salva personaggio nel menu start */
+                        #show-character-control {
+                          display: none !important;
+                        }
+                    .settings-menu button {
+                      width: 100%;
+                      text-align: left;
+                      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                    }
+                .settings-option {
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                  border-radius: 0;
+                  padding: 2px 0;
+                  margin: 0;
+                  cursor: pointer;
+                  font-size: 13px;
+                  font-weight: 400;
+                }
+                .settings-option:hover,
+                .settings-option:focus,
+                .settings-option:focus-visible,
+                .settings-option:active {
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                  outline: none;
+                }
+                .settings-option-label {
+                  color: rgb(162, 208, 255);
+                }
+                .settings-option-sep {
+                  color: rgb(210, 210, 220);
+                }
+                .settings-option-state {
+                  color: rgb(198, 236, 182);
+                }
+                .settings-option-state.is-off {
+                  color: rgb(250, 206, 147);
+                }
+            .settings-menu {
+              position: absolute;
+              top: calc(100% + 8px);
+              left: 0;
+              width: min(165px, calc(100vw - 24px));
+              max-height: calc(100vh - 90px);
+              overflow: auto;
+              visibility: hidden;
+              opacity: 0;
+              background-color: rgb(16, 16, 28);
+              border: 2px solid rgb(80, 80, 88);
+              border-radius: 12px;
+              padding: 12px;
+              box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+              transition: opacity 0.25s ease, visibility 0.25s ease;
+            }
+            .settings-menu.show {
+              visibility: visible;
+              opacity: 1;
+            }
+        #settings-btn {
+          padding: 8px 12px;
+          background-color: rgb(40, 40, 48);
+          color: rgb(232, 232, 240);
+          border: 2px solid rgb(80, 80, 88);
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 14px;
+          letter-spacing: 0.08em;
+        }
+        #settings-btn:hover {
+          border-color: rgb(180, 180, 220);
+          box-shadow: 0 0 5px rgb(180, 180, 220);
+        }
+        #audio-toggle-btn {
+          padding: 8px 12px;
+          background-color: rgb(40, 40, 48);
+          color: rgb(232, 232, 240);
+          border: 2px solid rgb(80, 80, 88);
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 14px;
+          letter-spacing: 0.08em;
+          min-width: 46px;
+          text-align: center;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .audio-icon {
+          width: 18px;
+          height: 18px;
+          display: block;
+        }
+        .audio-icon path,
+        .audio-icon polygon,
+        .audio-icon line {
+          stroke: #ffffff;
+          fill: none;
+          stroke-width: 2;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+        #audio-toggle-btn:hover,
+        #audio-toggle-btn:focus,
+        #audio-toggle-btn:focus-visible {
+          outline: none;
+          border-color: rgb(180, 180, 220);
+          box-shadow: 0 0 5px rgb(180, 180, 220);
+        }
+    .settings-container {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 6000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #settings-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 5990;
+      display: none;
+      background: rgba(0, 0, 0, 0.22);
+    }
+    #settings-overlay.show {
+      display: block;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: rgb(8, 8, 16);
+      color: rgb(232, 232, 240);
+      font-family: sans-serif;
+      width: 100vw;
+      min-height: 100vh;
+    }
+    #voice-loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      background: rgba(8, 8, 16, 0.96);
+      backdrop-filter: blur(2px);
+      width: 100vw;
+      height: 100vh;
+    }
+    #voice-loading-card {
+      margin-top: 7vh;
+      width: min(420px, calc(100vw - 32px));
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 12px;
+      background: rgb(20, 20, 30);
+      min-height: 320px;
+      padding: 18px 20px;
+      text-align: center;
+      font-family: monospace;
+      color: rgb(232, 232, 240);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    #voice-loading-logo {
+      max-width: 440px;
+      margin-bottom: 48px;
+      margin-top: 0;
+    }
+    .voice-loading-btn {
+      padding: 8px 14px;
+      background-color: rgb(40, 40, 48);
+      color: rgb(232, 232, 240);
+      border: 2px solid rgb(80, 80, 88);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: monospace;
+      width: 35%;
+      box-sizing: border-box;
+      margin-top: 10px;
+      font-size: 16px;
+      transition: background 0.2s, border 0.2s;
+    }
+    .voice-loading-btn:first-of-type {
+      margin-top: auto;
+    }
+    .voice-loading-btn:hover,
+    .voice-loading-btn:focus,
+    .voice-loading-btn:focus-visible {
+      outline: none;
+      border-color: rgb(180, 180, 220);
+      box-shadow: 0 0 5px rgb(180, 180, 220);
+    }
+    .voice-loading-btn:disabled {
+      cursor: wait;
+      opacity: 0.8;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/start-Cc0feX3H.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/characterPopup-P2n-s9fy.js">
+  <link rel="stylesheet" crossorigin href="./assets/characterPopup-DIBebWhW.css">
+</head>
+<body>
+
+
+  <!-- MENU SETTINGS (come hpg2-main.html, fuori overlay) -->
+  <div id="settings-overlay"></div>
+  <div class="settings-container">
+    <button id="settings-btn" title="Settings">⚙</button>
+
+    <button id="audio-toggle-btn" type="button" title="Audio" aria-label="Audio">
+      <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="3,10 7,10 12,6 12,18 7,14 3,14"></polygon><path d="M16 9 C18 10.5,18 13.5,16 15"></path><path d="M18.8 6.5 C22.2 9.3,22.2 14.7,18.8 17.5"></path></svg>
+    </button>
+    <div id="settings-menu" class="settings-menu">
+      <button id="color-btn" class="settings-option" type="button"><span class="settings-option-label">Change color</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
+      <button id="fast-skip-btn" class="settings-option" type="button"><span class="settings-option-label">Fast skip</span><span class="settings-option-sep">: </span><span class="settings-option-state is-off">OFF</span></button>
+    </div>
+  </div>
+
+  <!-- OVERLAY E BOTTONI START -->
+  <div id="voice-loading-overlay">
+    <div id="voice-loading-card">
+      <img id="voice-loading-logo" src="./assets/HPG2_title-DyN6F_xP.png" alt="HPG2 Logo" />
+      <div id="voice-loading-spinner" style="display:none;"></div>
+      <div id="voice-loading-title" style="display:none;"></div>
+      <div id="voice-loading-subtitle"></div>
+      <button id="voice-loading-load" class="voice-loading-btn" type="button">Load game</button>
+      <button id="voice-loading-action" class="voice-loading-btn" type="button">New game</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/talkify-tts/dist/talkify.min.js"></script>
+</body>
+</html>

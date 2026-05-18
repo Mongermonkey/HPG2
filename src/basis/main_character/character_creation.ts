@@ -4,7 +4,6 @@
  * - Sorteggio delle caratteristiche (sortBlood, sortGifts)
  * - Inizializzazione del mago e delle sue proprietà (urawizard, sortPet, sortSkills)
  */
-
 import * as d from '../../dialogues/_index';
 import * as u from '../../utilities/_index';
 import { Wheel } from '../../utilities/_index';
@@ -14,71 +13,39 @@ import { animal, race, subject, bloodStatus, sevenNums } from '../types/base_typ
 import { firstYearClues, freshPassages, Grade, NeutralAlignment, HogwartsSecrets, Gifts, Pet, questProgress } from '../types/complex_types';
 import { saveProgress } from '../../story/years/saveProgress';
 
-function getMyWheel(): Wheel
-{
+function getMyWheel(): Wheel {
     const myWheel = (window as any).myWheel as Wheel | undefined;
     if (!myWheel) throw new Error('Wheel non inizializzata.');
     return myWheel;
 }
 
-function getNextBtn(): HTMLButtonElement
-{
+function getNextBtn(): HTMLButtonElement {
     const nextBtn = (window as any).nextBtn as HTMLButtonElement | undefined;
     if (!nextBtn) throw new Error('Pulsante Next non inizializzato.');
     return nextBtn;
 }
 
-// #region Character Creation
 
-/**
- * Creates the main character.
- */
-export async function createCharacter(): Promise<Baseclass<'Default'>>
-{
-    let test_character: MainChara<'Wizard'> =
-    {
-        gameclass: 'Wizard',
-        gender: 'm',
-        name: 'Test Character',
-        blood: 'half',
-        race: 'human',
-        gifts: { metamorphmagus: 0, parselmouth: 0, sight: 0 },
-        pet: { type: 'cat', name: 'Whiskers' },
-
-        alignment: { neutral: 50, phoenix_order: 20, chaos: 20, death_eater: 10 },
-        house: 'Ravenclaw',
-        housePoints: 10,
-        year: 1,
-        quidditchRole: 'seeker',
-        quidditchCaptain: false,
-        quidditchGames: [],
-        fame: 0,
-        infamy: 0,
-        stress: 0,
-        clues: [ { name: 'dumbledores_speech', discovered: false }, { name: 'gringotts_theft', discovered: false },
-            { name: 'chocolate_frog', discovered: false }, { name: 'library', discovered: false }, { name: 'snape_quirrell_talk', discovered: false }, ],
-        grades: [],
-        secrets: {mirrorOfErised: false, roomOfRequirement: false, darkForestPunishment: false, aragogMet: false, darkForestVoldemort: false},
-        characterList: characterList,
-        secretPassages: [],
-        questProgress: { 'main': 0, 'darkForest': 0, 'norbert': 0 }
-    }
-    // saveProgress(test_character);
-
-
+export async function createCharacter(): Promise<Baseclass<'Default'>> {
+    console.log('[HPG2] createCharacter: INIZIO');
     let gender = await chooseGender();
+    console.log('[HPG2] createCharacter: gender scelto', gender);
     await new Promise(resolve => setTimeout(resolve, 0));
     await u.nextEvent();
 
     let name = await writeName();
+    console.log('[HPG2] createCharacter: nome scelto', name);
     await new Promise(resolve => setTimeout(resolve, 0));
     await u.nextEvent();
-    
-    let blood = await sortBlood();
-    let race = await sortRace(blood);
-    let gifts = await sortGifts(name);
 
-    let chara: Baseclass<'Default'> = {gameclass: 'Default', gender, name, blood, race, gifts}
+    let blood = await sortBlood();
+    console.log('[HPG2] createCharacter: blood', blood);
+    let race = await sortRace(blood);
+    console.log('[HPG2] createCharacter: race', race);
+    let gifts = await sortGifts(name);
+    console.log('[HPG2] createCharacter: gifts', gifts);
+    let chara: Baseclass<'Default'> = {gameclass: 'Default', gender, name, blood, race, gifts};
+    console.log('[HPG2] createCharacter: FINE', chara);
     return chara;
 }
 
@@ -88,7 +55,7 @@ export async function createCharacter(): Promise<Baseclass<'Default'>>
  */ 
 async function chooseGender(): Promise<"m" | "f">
 {
-    const nextBtn = getNextBtn();
+    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
     nextBtn.disabled = true;
     let gender: string | undefined = '';
 
@@ -106,9 +73,8 @@ async function chooseGender(): Promise<"m" | "f">
  * Permette al giocatore di scegliere il nome del personaggio.
  * @returns Il nome scelto.
  */
-async function writeName(): Promise<string>
-{
-    const nextBtn = getNextBtn();
+async function writeName(): Promise<string> {
+    const nextBtn = (window as any).nextBtn as HTMLButtonElement;
     nextBtn.disabled = true;
     let name: string | undefined = '';
     

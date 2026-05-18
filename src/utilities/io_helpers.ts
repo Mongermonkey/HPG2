@@ -17,10 +17,27 @@ let current_msg = 0;
  */
 export async function showText(text: string | null, waitForNext: boolean = true)
 {
-  const output = (window as any).output as HTMLElement;
-  const input = (window as any).input as HTMLInputElement;
-  const nextBtn = (window as any).nextBtn as HTMLButtonElement;
+  let output = (window as any).output as HTMLElement;
+  let input = (window as any).input as HTMLInputElement;
+  let nextBtn = (window as any).nextBtn as HTMLButtonElement;
   const isFastSkipEnabled = Boolean((window as any).fastSkipEnabled);
+  // Diagnostica: logga se non trova gli elementi
+  if (!output || !input || !nextBtn) {
+    console.error('[showText] Elementi DOM mancanti:', { output, input, nextBtn });
+    // Prova a recuperarli dal DOM
+    output = document.getElementById('game-output') as HTMLElement;
+    input = document.getElementById('player-input') as HTMLInputElement;
+    nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+    if (!output || !input || !nextBtn) {
+      console.error('[showText] Elementi DOM ancora mancanti dopo tentativo di recupero.');
+      return;
+    } else {
+      // Aggiorna window
+      (window as any).output = output;
+      (window as any).input = input;
+      (window as any).nextBtn = nextBtn;
+    }
+  }
   stopDialogueAudio();
   output.innerHTML = "";
   input.value = "";

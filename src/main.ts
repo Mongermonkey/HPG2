@@ -3,19 +3,37 @@ import { Wheel } from './utilities/_index';
 import { startStory } from './story/story';
 import { setupCharacterPopup } from './ui/characterPopup';
 import { stopDialogueAudio } from './utilities/talkify_audio';
-import { createVoiceLoadingOverlay } from './ui/voiceLoadingOverlay';
 import { ensureDialogueVoiceReady, unlockDialogueAudioFromGesture } from './utilities/talkify_audio';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const output = document.getElementById('game-output');
+  setTimeout(() => {
+    const input = document.getElementById('player-input') as HTMLInputElement;
+    if (input) {
+      input.focus();
+      input.addEventListener('keydown', (e) => {
+        console.log('[HPG2] keydown su input:', e.key, input.value);
+      });
+    } else {
+      console.warn('[HPG2] input non trovato');
+    }
+  }, 500);
+
+
+  // RESET: svuota sessionStorage e localStorage per forzare nuova partita
+  sessionStorage.clear();
+  localStorage.clear();
   window.addEventListener('beforeunload', () => {
     try { stopDialogueAudio(); } catch {}
   });
 
-  const output = document.getElementById('game-output')!;
-  const input = document.getElementById('player-input') as HTMLInputElement;
-  const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
-  const spinBtn = document.getElementById('spin-btn') as HTMLButtonElement;
-  const wheelArea = document.getElementById('wheel-area') as HTMLElement;
+  // Inizializza riferimenti DOM e oggetti globali
+
+  // output già dichiarato sopra per debug
+  const input = document.getElementById('player-input');
+  const nextBtn = document.getElementById('next-btn');
+  const spinBtn = document.getElementById('spin-btn');
+  const wheelArea = document.getElementById('wheel-area');
 
   (window as any).output = output;
   (window as any).input = input;
@@ -26,17 +44,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const myWheel = new Wheel('canvas');
   (window as any).myWheel = myWheel;
 
+  // Avvia direttamente la logica di gioco
 
-  // Avvio diretto del gioco (senza overlay menù start)
   unlockDialogueAudioFromGesture();
   await ensureDialogueVoiceReady();
-  let mainChara = undefined;
-  try {
-    const mainCharaStr = sessionStorage.getItem('mainChara');
-    if (mainCharaStr) mainChara = JSON.parse(mainCharaStr);
-  } catch {}
-  startStory(mainChara);
-
-  // Popup e controlli personaggio
+  await startStory();
   setupCharacterPopup(window);
 });
