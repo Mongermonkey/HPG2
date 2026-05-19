@@ -13,11 +13,14 @@ import { attend as attendSeventhYear } from './years/year7';
  * The main story function.
  * @param mainChara An optional main character to start the story with. If not provided, a new character will be created.
  */
+import { setupCharacterPopup } from '../ui/characterPopup';
 export async function startStory(mainChara?: MainChara<'Wizard'>)
 {
   console.log('Starting story with character:', mainChara);
   const wheels = await import('../utilities/_index');  
   wheels.seeWheel(false);
+  // Inizializza i bottoni personaggio SOLO quando parte la storia vera
+  setupCharacterPopup(window);
 
   let wiz: MainChara<'Wizard'>;
   let startYear = 1;

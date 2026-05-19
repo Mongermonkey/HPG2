@@ -1,4 +1,4 @@
-import{d as G}from"./characterPopup-P2n-s9fy.js";function E(){return typeof window<"u"&&!!window.electronAPI}async function $(){if(E()&&window.electronAPI&&window.electronAPI.ping){const e=await window.electronAPI.ping();return console.log("Ping result from main process:",e),e}else return console.log("Not running in Electron."),null}function V(e,l){const n=document.createElement("div");n.id="voice-loading-overlay",n.innerHTML=`
+import{d as G}from"./characterPopup-BX48GtjG.js";function E(){return typeof window<"u"&&!!window.electronAPI}async function $(){if(E()&&window.electronAPI&&window.electronAPI.ping){const e=await window.electronAPI.ping();return console.log("Ping result from main process:",e),e}else return console.log("Not running in Electron."),null}function V(e,l){const n=document.createElement("div");n.id="voice-loading-overlay",n.innerHTML=`
     <div id="voice-loading-card">
       ${`<img id="voice-loading-logo" src="${e}" alt="HPG2 Logo" />`}
       <div id="voice-loading-spinner" style="display:none;"></div>

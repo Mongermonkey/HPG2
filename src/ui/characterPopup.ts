@@ -264,11 +264,17 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
 
   characterPopup.appendChild(characterPopupOutput);
   characterOverlay.appendChild(characterPopup);
-  // Se viene passato un contenitore, inserisci lì i bottoni, altrimenti su body
+  // Se viene passato un contenitore, inserisci lì i bottoni, altrimenti cerca il div #character-buttons
   if (targetContainer) {
     targetContainer.appendChild(showCharacterControl);
   } else {
-    document.body.appendChild(showCharacterControl);
+    const charBtnDiv = document.getElementById('character-buttons');
+    if (charBtnDiv) {
+      charBtnDiv.appendChild(showCharacterControl);
+    } else {
+      // fallback: in fondo al body
+      document.body.appendChild(showCharacterControl);
+    }
   }
   document.body.appendChild(characterOverlay);
 

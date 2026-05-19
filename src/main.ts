@@ -1,7 +1,7 @@
+import { setupCharacterPopup } from './ui/characterPopup';
 
 import { Wheel } from './utilities/_index';
 import { startStory } from './story/story';
-import { setupCharacterPopup } from './ui/characterPopup';
 import { stopDialogueAudio } from './utilities/talkify_audio';
 import { ensureDialogueVoiceReady, unlockDialogueAudioFromGesture } from './utilities/talkify_audio';
 
@@ -58,5 +58,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     localStorage.clear();
     await startStory();
   }
-  setupCharacterPopup(window);
+  // RIMOSSO: setupCharacterPopup(window); ora viene chiamato solo quando serve
 });

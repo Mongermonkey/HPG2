@@ -1,3 +1,19 @@
+#character-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  left: auto;
+  width: auto;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+#character-buttons > * {
+  pointer-events: auto;
+}
 html, body {
   margin: 0;
   padding: 0;
@@ -39,11 +55,13 @@ html, body {
   border-radius: 10px;
 }
 
+
 #show-character-control {
-  position: fixed;
-  top: 14px;
-  right: 16px;
-  z-index: 1100;
+  position: fixed !important;
+  top: 14px !important;
+  right: 16px !important;
+  left: auto !important;
+  z-index: 1200;
 }
 
 #show-character-btn {
