@@ -43,40 +43,6 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
   showCharacterBtn.appendChild(starSpan);
   showCharacterBtn.appendChild(document.createTextNode('📜'));
 
-  // Bottone salvataggio personaggio
-  const saveCharacterBtn = document.createElement('button');
-  saveCharacterBtn.id = 'save-character-btn';
-  saveCharacterBtn.type = 'button';
-  saveCharacterBtn.title = 'Save character';
-  // Usa SVG calderone con freccia
-  saveCharacterBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
-    <path d="M16 6v12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M12 14l4 4 4-4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M6 26 Q16 30 26 26" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>`;
-  // Uniforma stile al bottone info
-  saveCharacterBtn.style.padding = '8px 12px';
-  saveCharacterBtn.style.backgroundColor = 'rgb(40, 40, 48)';
-  saveCharacterBtn.style.color = 'rgb(232, 232, 240)';
-  saveCharacterBtn.style.border = '2px solid rgb(80, 80, 88)'; // stesso colore del bottone info
-  saveCharacterBtn.style.borderRadius = '8px';
-  saveCharacterBtn.style.cursor = 'pointer';
-  saveCharacterBtn.style.fontSize = '20px';
-  saveCharacterBtn.style.height = '38px';
-  saveCharacterBtn.style.lineHeight = '22px';
-  saveCharacterBtn.style.letterSpacing = '0.08em';
-  saveCharacterBtn.style.transition = 'background 0.2s, border 0.2s';
-  saveCharacterBtn.addEventListener('mouseenter', () => {
-    saveCharacterBtn.style.backgroundColor = 'rgb(40, 40, 48)';
-    saveCharacterBtn.style.borderColor = 'rgb(180, 180, 220)';
-    saveCharacterBtn.style.boxShadow = '0 0 5px rgb(180, 180, 220)';
-  });
-  saveCharacterBtn.addEventListener('mouseleave', () => {
-    saveCharacterBtn.style.backgroundColor = 'rgb(40, 40, 48)';
-    saveCharacterBtn.style.borderColor = 'rgb(80, 80, 88)';
-    saveCharacterBtn.style.boxShadow = 'none';
-  });
-
   // Toggle vista estesa
   const extendedViewToggle = document.createElement('input');
   extendedViewToggle.id = 'character-extended-toggle';
@@ -84,9 +50,8 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
   extendedViewToggle.title = 'Show extended view';
   extendedViewToggle.checked = false;
 
-  // Ordine: info | salva | toggle
+  // Ordine: info | toggle (rimosso salva)
   showCharacterControl.appendChild(showCharacterBtn);
-  showCharacterControl.appendChild(saveCharacterBtn);
   showCharacterControl.appendChild(extendedViewToggle);
 
   // Funzione per aggiornare la stellina in base allo stato del toggle
@@ -247,11 +212,7 @@ export function setupCharacterPopup(windowObj: any, targetContainer?: HTMLElemen
     input.select();
   }
 
-  saveCharacterBtn.addEventListener('click', () => {
-    const currentCharacter = (windowObj as any).currentCharacter;
-    if (!currentCharacter) return;
-    saveCharacterToFile(currentCharacter);
-  });
+
 
   const characterOverlay = document.createElement('div');
   characterOverlay.id = 'character-popup-overlay';
